@@ -13,14 +13,14 @@ class Personne(models.Model) :
   
   user = models.OneToOneField(User, on_delete=models.CASCADE)
   
-  personne_age = models.IntegerField()
-  personne_genre = models.CharField(max_length=20, choices=GENRE_CHOIX)
-  personne_type = models.CharField(max_length=1, choices=TYPE_MEMBRE)
-  personne_photo = models.ImageField(upload_to='photo/personne/',null=True,blank=True)
-  personne_dateNaissance = models.DateField()
+  age = models.IntegerField()
+  sexe = models.CharField(max_length=20, choices=GENRE_CHOIX)
+  type_membre = models.CharField(max_length=1, choices=TYPE_MEMBRE)
+  photo = models.ImageField(upload_to='photo/personne/',null=True,blank=True)
+  date_naissance = models.DateField()
 
   def __str__(self):
-        return self.personne_login
+        return self.user.username
 
 
 
