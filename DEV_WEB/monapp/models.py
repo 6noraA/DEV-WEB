@@ -1,26 +1,34 @@
 from django.db import models
 
 # Create your models here.
-GENRE_CHOIX = (('H', _('Homme')),
-               ('F', _('Femme')))
+GENRE_CHOIX = [('H','Homme'),
+               ('F', 'Femme')]
 
-TYPE_MEMBRE = (('citoyen', _('Citoyen')),
-               ('etudiant', _('Etudiant')),
-               ('technicien', _('Technicien')),
-               ('administrateur', _('administrateur')))
+TYPE_MEMBRE = [('citoyen','Citoyen'),
+               ('etudiant', 'Etudiant'),
+               ('technicien','Technicien'),
+               ('administrateur','administrateur')]
 
 class Personne(models.Model) :
-  personne_login = models.charField(max_length=40,primary_keys=True)
+  personne_login = models.charField(max_length=40,primary_keys=True,unique=True)
   personne_age = models.IntegerField()
-  personne_genre = models.CharField(_('genre'),max_length=1, choices=GENRE_CHOIX)
-  personne_type = models.CharField(_('type'),max_length=20, choices = TYPE_MEMBRE)
+  personne_genre = models.CharField(max_length=1, choices=GENRE_CHOIX)
+  personne_type = models.CharField(max_length=1, choices=TYPE_MEMBRE)
   personne_photo = models.ImageField(upload_to='photo/personne/',null True,blank=True)
   personne_dateNaissance = models.DateField()
-  personne_nom = models.charField(max_length=40)
+
+  #Partie privée
+  personne_nom = models.CharField(max_length=40)
   personne_prenom = models.charField(max_length=40)
-  personne_mdp =
+  personne_mdp = models.CharField(max_length=40)
+
   
-                        
+  def set_password(self, raw_password):
+        """Hash le mot de passe avant de le sauvegarder"""
+        self.mot_de_passe = make_password(raw_password)
+
+  def __str__(self):
+        return self.pseudonyme
   
   
   
