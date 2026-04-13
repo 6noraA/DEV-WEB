@@ -25,7 +25,7 @@ class Personne(models.Model) :
   
   def set_password(self, raw_password):
         """Hash le mot de passe avant de le sauvegarder"""
-        self.mot_de_passe = make_password(raw_password)
+        self.personne_mdp = make_password(raw_password)
 
   def __str__(self):
         return self.pseudonyme
