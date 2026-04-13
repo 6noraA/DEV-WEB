@@ -28,7 +28,7 @@ class Personne(models.Model) :
         self.personne_mdp = make_password(raw_password)
 
   def __str__(self):
-        return self.pseudonyme
+        return self.personne_login
   
   
   
