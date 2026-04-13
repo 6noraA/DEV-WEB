@@ -21,7 +21,13 @@ class Personne(models.Model) :
 
   def __str__(self):
         return self.user.username
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
+@receiver(post_save, sender=User)
+def create_profil(sender, instance, created, **kwargs):
+    if created:
+        Personne.objects.create(user=instance)
 
 
 
