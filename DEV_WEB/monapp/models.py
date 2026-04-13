@@ -13,7 +13,6 @@ class Personne(models.Model) :
   
   user = models.OneToOneField(User, on_delete=models.CASCADE)
   
-  personne_login = models.charField(max_length=40,primary_keys=True,unique=True)
   personne_age = models.IntegerField()
   personne_genre = models.CharField(max_length=20, choices=GENRE_CHOIX)
   personne_type = models.CharField(max_length=1, choices=TYPE_MEMBRE)
