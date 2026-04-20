@@ -1,10 +1,12 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MaVille - Accueil</title>
-  <link rel="stylesheet" href="accueil.css" />
+  <link rel="stylesheet" href="{% static 'monapp/accueil.css' %}" />
 </head>
 <body>
 
@@ -12,12 +14,12 @@
     <nav>
       <h1>MaVille</h1>
       <ul>
-        <li><a href="#">Accueil</a></li>
-        <li><a href="#">Transports</a></li>
-        <li><a href="#">Incidents</a></li>
-        <li><a href="#">Services</a></li>
+        <li><a href="{% url 'accueil' %}">Accueil</a></li>
+        <li><a href="{% url 'transport' %}">Transports</a></li>
+        <li><a href="{% url 'incident' %}">Incidents</a></li>
+        <li><a href="{% url 'services-public' %}">Services</a></li>
         <li><a href="#">Actualités</a></li>
-        <li><a href="#">Connexion</a></li>
+        <li><a href="{% url 'connexion' %}">Connexion</a></li>
       </ul>
     </nav>
 
@@ -28,7 +30,9 @@
         transports, signalement d’incidents, informations locales,
         réservations de services publics et actualités municipales.
       </p>
-      <button>Explorer les services</button>
+      <a href="{% url 'services-public' %}">
+        <button>Explorer les services</button>
+      </a>
     </div>
   </header>
 
@@ -37,50 +41,32 @@
     <div class="cards">
       <div class="card">
         <h4>Transports</h4>
-        <p>
-          Consultez les horaires, les itinéraires, l’état du trafic
-          et les informations utiles sur les déplacements dans la ville.
-        </p>
+        <p>Consultez les horaires, les itinéraires, l’état du trafic et les informations utiles.</p>
       </div>
 
       <div class="card">
         <h4>Signalement d’incidents</h4>
-        <p>
-          Signalez rapidement un problème urbain :
-          éclairage défaillant, voirie abîmée, encombrants ou autre incident.
-        </p>
+        <p>Signalez rapidement un problème urbain : éclairage, voirie, encombrants ou autre incident.</p>
       </div>
 
       <div class="card">
         <h4>Informations locales</h4>
-        <p>
-          Retrouvez les actualités de la commune, les événements,
-          les annonces importantes et les informations utiles du quotidien.
-        </p>
+        <p>Retrouvez les actualités de la commune, les événements et les annonces importantes.</p>
       </div>
 
       <div class="card">
         <h4>Services publics</h4>
-        <p>
-          Accédez plus facilement aux démarches et services proposés
-          par la mairie et les structures municipales.
-        </p>
+        <p>Accédez plus facilement aux démarches et services proposés par la mairie.</p>
       </div>
 
       <div class="card">
         <h4>Réservations</h4>
-        <p>
-          Réservez certains équipements ou services publics :
-          salles, installations sportives ou rendez-vous administratifs.
-        </p>
+        <p>Réservez certains équipements ou services publics : salles, sport ou rendez-vous administratifs.</p>
       </div>
 
       <div class="card">
         <h4>Vie citoyenne</h4>
-        <p>
-          Renforcez votre lien avec la ville grâce à un espace centralisé,
-          pratique et accessible à tous les habitants.
-        </p>
+        <p>Renforcez votre lien avec la ville grâce à un espace centralisé et accessible.</p>
       </div>
     </div>
   </section>
@@ -90,9 +76,7 @@
     <p>
       Cette plateforme a pour objectif de faciliter la vie quotidienne
       des habitants en regroupant les principaux services urbains
-      dans un seul espace numérique. Elle permet un accès rapide
-      à l’information, une meilleure communication avec la ville
-      et une gestion plus efficace des besoins du quotidien.
+      dans un seul espace numérique.
     </p>
   </section>
 
