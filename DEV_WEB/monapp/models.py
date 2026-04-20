@@ -15,7 +15,7 @@ class Personne(models.Model) :
   
   age = models.IntegerField()
   sexe = models.CharField(max_length=20, choices=GENRE_CHOIX)
-  type_membre = models.CharField(max_length=1, choices=TYPE_MEMBRE)
+  type_membre = models.CharField(max_length=20, choices=TYPE_MEMBRE)
   photo = models.ImageField(upload_to='photo/personne/',null=True,blank=True)
   date_naissance = models.DateField()
 

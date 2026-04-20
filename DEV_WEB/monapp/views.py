@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect
-from .form import ProduitForm
+from .form import ProduitForm, InscriptionForm, PersonneForm
 from .models import Produit
 
 
 from django.contrib.auth import login, authenticate, logout
-from .forms import InscriptionForm, PersonneForm
 
 def creer_produit(request):
     if request.method == 'POST' :
@@ -30,10 +29,10 @@ def inscription(request):
             user.save()
 
             profil = user.personne
-            profil.age = profil_form.cleaned_data['age']
-            profil.sexe = profil_form.cleaned_data['sexe']
-            profil.date_naissance = profil_form.cleaned_data['date_naissance']
-            profil.type_membre = profil_form.cleaned_data['type_membre']
+            profil.age = personne_form.cleaned_data['age']
+            profil.sexe = personne_form.cleaned_data['sexe']
+            profil.date_naissance = personne_form.cleaned_data['date_naissance']
+            profil.type_membre = personne_form.cleaned_data['type_membre']
             profil.save()
 
             return redirect('login')
@@ -56,7 +55,7 @@ def connexion(request):
             login(request, user)
             return redirect('home')
 
-    return render(request, 'connexion.html')
+    return render(request, 'monapp/connexion.html')
 
 
 def deconnexion(request):
@@ -64,7 +63,20 @@ def deconnexion(request):
     return redirect('login')
 
 
-    
+def liste_produits(request):
+    produits = Produit.objects.all()
+    return render(request, 'produits/liste_produits.html', {'produits': produits})
+
+
+def detail_produit(request, id):
+    try:
+        prod = Produit.objects.get(pk=id)
+    except Produit.DoesNotExist:
+        prod = None
+    return render(request, 'produits/detail_produit.html', {'produit': prod})
+
+
+
 
 
 
