@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from .form import ProduitForm
 from .models import Produit
 
@@ -6,18 +7,40 @@ from .models import Produit
 from django.contrib.auth import login, authenticate, logout
 from .forms import InscriptionForm, PersonneForm
 
+@login_required
 def creer_produit(request):
     if request.method == 'POST' :
         form = ProduitForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            return redirect('liste_produits')
         else:
             print(form.errors)
     elif request.method == 'GET':
         form = ProduitForm()
 
     return render(request, 'produits/creer_produit.html', {'form': form})
-# Create your views here.
+
+def liste_produits(request):
+    produits =Produit.objects.all()
+    return render(request, 'produits/liste_produits.html', {'produits': produits})
+
+@login_required
+def modifier_produit(request, id):
+    produit = Produit.objects.get(ID=id)
+
+    if request.method == "POST":
+        form = ProduitForm(request.POST, request.FILES, instance=produit)
+        if form.is_valid():
+            form.save()
+    else:
+        form = ProduitForm(instance=produit)
+
+    return render(request, "produits/modifier.html", {"form": form})
+
+def detail_produit(request, id):
+    produit = get_object_or_404(Produit, ID=id)
+    return render(request, "produits/detail_produit.html", {"produit": produit})
 
 def inscription(request):
     if request.method == 'POST':
