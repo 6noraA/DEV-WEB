@@ -12,4 +12,4 @@ class InscriptionForm(form.ModelForm):
 class PersonneForm(form.ModelForm):
     class Meta:
         model = Personne
-        fields = ['age', 'sexe', 'date_naissance', 'type_membre']
+        fields = ['age', 'sexe', 'date_naissance', 'type_membre','photo']
