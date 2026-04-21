@@ -85,6 +85,10 @@ def connexion(request):
 def deconnexion(request):
     logout(request)
     return redirect('login')
+    
+@login_required
+def profil(request):
+    return render(request, 'profil.html')
 
 
     
