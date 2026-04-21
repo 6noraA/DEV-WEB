@@ -1,133 +1,134 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Connexion</title>
-  <link rel="stylesheet" href="../../static/connexion.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - MaVille</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>Bienvenue</h1>
-      <p>Connectez-vous ou créez votre compte</p>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Bienvenue</h1>
+            <p>Connectez-vous ou créez votre compte</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showForm('login', event)">Connexion</button>
+            <button class="tab-btn" onclick="showForm('register', event)">Créer un compte</button>
+        </div>
+
+        <div class="form-box">
+            <form id="login" class="form active">
+                <div class="input-group">
+                    <label for="login-email">Adresse e-mail</label>
+                    <input type="email" id="login-email" placeholder="exemple@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="login-password">Mot de passe</label>
+                    <input type="password" id="login-password" placeholder="Votre mot de passe" required>
+                </div>
+
+                <div class="row">
+                    <label><input type="checkbox" style="width:auto; margin-right:6px;"> Se souvenir de moi</label>
+                    <a href="#">Mot de passe oublié ?</a>
+                </div>
+
+                <button type="submit" class="btn">Se connecter</button>
+
+                <div class="separator">ou</div>
+                <button type="button" class="secondary-btn">Continuer avec Google</button>
+
+                <div id="login-message" class="message"></div>
+            </form>
+
+            <form id="register" class="form">
+                <div class="input-group">
+                    <label for="register-name">Nom complet</label>
+                    <input type="text" id="register-name" placeholder="Votre nom complet" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="register-email">Adresse e-mail</label>
+                    <input type="email" id="register-email" placeholder="exemple@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="register-password">Mot de passe</label>
+                    <input type="password" id="register-password" placeholder="Choisissez un mot de passe" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="register-confirm-password">Confirmer le mot de passe</label>
+                    <input type="password" id="register-confirm-password" placeholder="Confirmez le mot de passe" required>
+                </div>
+
+                <button type="submit" class="btn">Créer un compte</button>
+
+                <div id="register-message" class="message"></div>
+            </form>
+        </div>
     </div>
 
-    <div class="tabs">
-      <button class="tab-btn active" onclick="showForm('login', event)">Connexion</button>
-      <button class="tab-btn" onclick="showForm('register', event)">Créer un compte</button>
-    </div>
+    <script>
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const forms = document.querySelectorAll('.form');
 
-    <div class="form-box">
-      <form id="login" class="form active">
-        <div class="input-group">
-          <label for="login-email">Adresse e-mail</label>
-          <input type="email" id="login-email" placeholder="exemple@email.com" required />
-        </div>
+        function showForm(formId, event) {
+            forms.forEach((form) => form.classList.remove('active'));
+            tabButtons.forEach((btn) => btn.classList.remove('active'));
 
-        <div class="input-group">
-          <label for="login-password">Mot de passe</label>
-          <input type="password" id="login-password" placeholder="Votre mot de passe" required />
-        </div>
+            document.getElementById(formId).classList.add('active');
+            event.target.classList.add('active');
+        }
 
-        <div class="row">
-          <label><input type="checkbox" style="width:auto; margin-right:6px;" /> Se souvenir de moi</label>
-          <a href="#">Mot de passe oublié ?</a>
-        </div>
+        document.getElementById('login').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            const message = document.getElementById('login-message');
 
-        <button type="submit" class="btn">Se connecter</button>
+            if (!email || !password) {
+                message.textContent = 'Veuillez remplir tous les champs.';
+                message.className = 'message error';
+                return;
+            }
 
-        <div class="separator">ou</div>
-        <button type="button" class="secondary-btn">Continuer avec Google</button>
+            message.textContent = 'Connexion réussie.';
+            message.className = 'message success';
+        });
 
-        <div id="login-message" class="message"></div>
-      </form>
+        document.getElementById('register').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value.trim();
+            const confirmPassword = document.getElementById('register-confirm-password').value.trim();
+            const message = document.getElementById('register-message');
 
-      <form id="register" class="form">
-        <div class="input-group">
-          <label for="register-name">Nom complet</label>
-          <input type="text" id="register-name" placeholder="Votre nom complet" required />
-        </div>
+            if (!name || !email || !password || !confirmPassword) {
+                message.textContent = 'Veuillez remplir tous les champs.';
+                message.className = 'message error';
+                return;
+            }
 
-        <div class="input-group">
-          <label for="register-email">Adresse e-mail</label>
-          <input type="email" id="register-email" placeholder="exemple@email.com" required />
-        </div>
+            if (password.length < 6) {
+                message.textContent = 'Le mot de passe doit contenir au moins 6 caractères.';
+                message.className = 'message error';
+                return;
+            }
 
-        <div class="input-group">
-          <label for="register-password">Mot de passe</label>
-          <input type="password" id="register-password" placeholder="Choisissez un mot de passe" required />
-        </div>
+            if (password !== confirmPassword) {
+                message.textContent = 'Les mots de passe ne correspondent pas.';
+                message.className = 'message error';
+                return;
+            }
 
-        <div class="input-group">
-          <label for="register-confirm-password">Confirmer le mot de passe</label>
-          <input type="password" id="register-confirm-password" placeholder="Confirmez le mot de passe" required />
-        </div>
-
-        <button type="submit" class="btn">Créer un compte</button>
-
-        <div id="register-message" class="message"></div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const forms = document.querySelectorAll('.form');
-
-    function showForm(formId, event) {
-      forms.forEach((form) => form.classList.remove('active'));
-      tabButtons.forEach((btn) => btn.classList.remove('active'));
-
-      document.getElementById(formId).classList.add('active');
-      event.target.classList.add('active');
-    }
-
-    document.getElementById('login').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value.trim();
-      const message = document.getElementById('login-message');
-
-      if (!email || !password) {
-        message.textContent = 'Veuillez remplir tous les champs.';
-        message.className = 'message error';
-        return;
-      }
-
-      message.textContent = 'Connexion réussie.';
-      message.className = 'message success';
-    });
-
-    document.getElementById('register').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const name = document.getElementById('register-name').value.trim();
-      const email = document.getElementById('register-email').value.trim();
-      const password = document.getElementById('register-password').value.trim();
-      const confirmPassword = document.getElementById('register-confirm-password').value.trim();
-      const message = document.getElementById('register-message');
-
-      if (!name || !email || !password || !confirmPassword) {
-        message.textContent = 'Veuillez remplir tous les champs.';
-        message.className = 'message error';
-        return;
-      }
-
-      if (password.length < 6) {
-        message.textContent = 'Le mot de passe doit contenir au moins 6 caractères.';
-        message.className = 'message error';
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        message.textContent = 'Les mots de passe ne correspondent pas.';
-        message.className = 'message error';
-        return;
-      }
-
-      message.textContent = 'Compte créé avec succès.';
-      message.className = 'message success';
-    });
-  </script>
+            message.textContent = 'Compte créé avec succès.';
+            message.className = 'message success';
+        });
+    </script>
 </body>
 </html>

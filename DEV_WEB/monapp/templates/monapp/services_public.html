@@ -1,0 +1,85 @@
+{% extends 'monapp/base.html' %}
+
+{% block title %}Services publics - MaVille{% endblock %}
+
+{% block hero %}
+<section class="hero compact">
+    <div class="hero-inner">
+        <h2>Services publics</h2>
+        <p>
+            Accédez à l'ensemble des services proposés par votre mairie :
+            démarches administratives, réservations et rendez-vous
+            en ligne en quelques clics.
+        </p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="wrap">
+    <div class="section-title">
+        <h3>Services disponibles</h3>
+        <p>Sélectionnez le service qui correspond à votre besoin.</p>
+    </div>
+
+    <ul class="styled-list">
+        <li>Prise de rendez-vous administratif</li>
+        <li>Demandes de documents (état civil, urbanisme, etc.)</li>
+        <li>Réservation d'équipements municipaux</li>
+        <li>Informations sur les démarches citoyennes</li>
+        <li>Inscription aux services périscolaires</li>
+        <li>Demande de permis de construire</li>
+    </ul>
+</div>
+
+<section class="section-alt" style="margin-top: 72px;">
+    <div class="wrap">
+        <div class="section-title">
+            <h3>Accès rapide</h3>
+            <p>Les services les plus consultés par les habitants.</p>
+        </div>
+
+        <div class="cards">
+            <article class="card">
+                <span class="badge">Administratif</span>
+                <h4>État civil</h4>
+                <p>Actes de naissance, de mariage, de décès. Demandes en ligne disponibles.</p>
+                <a href="#" class="card-link">Faire une demande →</a>
+            </article>
+
+            <article class="card">
+                <span class="badge">Urbanisme</span>
+                <h4>Demandes d'urbanisme</h4>
+                <p>Déclarations préalables, permis de construire et autorisations diverses.</p>
+                <a href="#" class="card-link">Déposer un dossier →</a>
+            </article>
+
+            <article class="card">
+                <span class="badge">Rendez-vous</span>
+                <h4>Prise de rendez-vous</h4>
+                <p>Prenez un rendez-vous en ligne avec les services de la mairie.</p>
+                <a href="#" class="card-link">Réserver →</a>
+            </article>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<div class="wrap" style="padding-top: 48px; padding-bottom: 48px;">
+    <div class="highlight-box">
+        <h3>Besoin d'aide ?</h3>
+        <p>
+            Un accueil physique est disponible en mairie du lundi au vendredi
+            de 8h30 à 17h30. Vous pouvez également nous contacter par téléphone
+            au 01 23 45 67 89.
+        </p>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}

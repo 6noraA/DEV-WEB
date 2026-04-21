@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from .form import ProduitForm, InscriptionForm, PersonneForm
 from .models import Produit
 
-
 from django.contrib.auth import login, authenticate, logout
 
 def creer_produit(request):
@@ -16,7 +15,6 @@ def creer_produit(request):
         form = ProduitForm()
 
     return render(request, 'produits/creer_produit.html', {'form': form})
-# Create your views here.
 
 def inscription(request):
     if request.method == 'POST':
@@ -43,6 +41,20 @@ def inscription(request):
 
     return render(request, 'inscription.html', {'form': form, 'personne_form': personne_form})
 
+def accueil(request):
+    return render(request, 'monapp/accueil.html', {'page_active': 'accueil'})
+
+def transport(request):
+    return render(request, 'monapp/transport.html', {'page_active': 'transport'})
+
+def incident(request):
+    return render(request, 'monapp/incident.html', {'page_active': 'incident'})
+
+def services_public(request):
+    return render(request, 'monapp/services_public.html', {'page_active': 'services-public'})
+
+def info_locale(request):
+    return render(request, 'monapp/info_locales.html', {'page_active': 'info-locale'})
 
 def connexion(request):
     if request.method == 'POST':
@@ -53,20 +65,17 @@ def connexion(request):
 
         if user:
             login(request, user)
-            return redirect('home')
+            return redirect('accueil')
 
-    return render(request, 'monapp/connexion.html')
-
+    return render(request, 'monapp/connexion.html', {'page_active': 'connexion'})
 
 def deconnexion(request):
     logout(request)
     return redirect('login')
 
-
 def liste_produits(request):
     produits = Produit.objects.all()
     return render(request, 'produits/liste_produits.html', {'produits': produits})
-
 
 def detail_produit(request, id):
     try:
@@ -74,11 +83,3 @@ def detail_produit(request, id):
     except Produit.DoesNotExist:
         prod = None
     return render(request, 'produits/detail_produit.html', {'produit': prod})
-
-
-
-
-
-
-
-

@@ -1,0 +1,87 @@
+{% extends 'monapp/base.html' %}
+
+{% block title %}Transports - MaVille{% endblock %}
+
+{% block hero %}
+<section class="hero compact">
+    <div class="hero-inner">
+        <h2>Transports</h2>
+        <p>
+            Consultez les horaires, les lignes disponibles et l'état du trafic
+            en temps réel pour faciliter vos déplacements dans la ville.
+        </p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="wrap">
+    <div class="section-title">
+        <h3>Modes de transport</h3>
+        <p>Retrouvez toutes les informations utiles sur les transports de la ville.</p>
+    </div>
+
+    <div class="cards">
+        <article class="card">
+            <span class="badge">Bus</span>
+            <h4>Réseau de bus municipal</h4>
+            <p>
+                Horaires, lignes et trajets des bus municipaux.
+                Suivez les perturbations éventuelles en temps réel.
+            </p>
+            <a href="#" class="card-link">Voir les horaires →</a>
+        </article>
+
+        <article class="card">
+            <span class="badge">Métro</span>
+            <h4>Métro et tramway</h4>
+            <p>
+                Suivi des lignes principales, fréquences de passage
+                et information sur les travaux en cours.
+            </p>
+            <a href="#" class="card-link">Voir les lignes →</a>
+        </article>
+
+        <article class="card">
+            <span class="badge">Vélo</span>
+            <h4>Vélos en libre-service</h4>
+            <p>
+                Localisez les stations de vélos disponibles et consultez
+                la disponibilité en temps réel.
+            </p>
+            <a href="#" class="card-link">Trouver un vélo →</a>
+        </article>
+
+        <article class="card">
+            <span class="badge">Auto</span>
+            <h4>Stationnement</h4>
+            <p>
+                Places disponibles dans les parkings municipaux
+                et information sur les zones de stationnement.
+            </p>
+            <a href="#" class="card-link">Voir la carte →</a>
+        </article>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<section class="section-alt">
+    <div class="wrap">
+        <div class="highlight-box">
+            <h3>Info trafic en direct</h3>
+            <p>
+                Pour toute perturbation majeure sur le réseau de transports,
+                une alerte sera affichée sur la page d'accueil.
+                En cas d'urgence, contactez le service transport au 01 23 45 67 89.
+            </p>
+        </div>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}

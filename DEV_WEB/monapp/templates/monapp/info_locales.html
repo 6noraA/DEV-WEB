@@ -1,0 +1,119 @@
+{% extends 'monapp/base.html' %}
+
+{% block title %}Informations locales - MaVille{% endblock %}
+
+{% block hero %}
+<section class="hero compact">
+    <div class="hero-inner">
+        <h2>Informations locales</h2>
+        <p>
+            Retrouvez les dernières actualités de votre ville, les événements à venir,
+            les annonces importantes et les informations utiles pour votre quotidien.
+        </p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="wrap">
+    <div class="section-title">
+        <h3>Actualités récentes</h3>
+        <p>Les dernières nouveautés et annonces de la commune.</p>
+    </div>
+
+    <div class="cards">
+        <article class="card">
+            <span class="badge">Actualité</span>
+            <h4>Travaux de voirie dans le centre-ville</h4>
+            <p>
+                Des travaux de réaménagement débuteront lundi prochain dans plusieurs rues
+                du centre-ville. La circulation pourra être temporairement perturbée.
+            </p>
+            <a href="#" class="card-link">Lire plus →</a>
+        </article>
+
+        <article class="card">
+            <span class="badge">Annonce</span>
+            <h4>Ouverture d'un nouveau service administratif</h4>
+            <p>
+                Un nouveau guichet d'accompagnement aux démarches administratives est
+                désormais disponible en mairie pour faciliter vos demandes.
+            </p>
+            <a href="#" class="card-link">Lire plus →</a>
+        </article>
+
+        <article class="card">
+            <span class="badge">Vie locale</span>
+            <h4>Collecte exceptionnelle ce week-end</h4>
+            <p>
+                Une collecte exceptionnelle d'encombrants sera organisée samedi matin
+                dans plusieurs quartiers de la ville.
+            </p>
+            <a href="#" class="card-link">Lire plus →</a>
+        </article>
+    </div>
+</div>
+
+<section class="section-alt" style="margin-top: 72px;">
+    <div class="wrap">
+        <div class="section-title">
+            <h3>Événements à venir</h3>
+            <p>Découvrez les rendez-vous importants organisés dans votre ville.</p>
+        </div>
+
+        <div class="events-list">
+            <div class="event-item">
+                <div class="event-date">
+                    <span class="day">12</span>
+                    <span class="month">Mai</span>
+                </div>
+                <div class="event-content">
+                    <h4>Forum des associations</h4>
+                    <p>Maison des associations · 10h00 à 17h00</p>
+                </div>
+            </div>
+
+            <div class="event-item">
+                <div class="event-date">
+                    <span class="day">18</span>
+                    <span class="month">Mai</span>
+                </div>
+                <div class="event-content">
+                    <h4>Marché local des producteurs</h4>
+                    <p>Place centrale · 08h30 à 13h00</p>
+                </div>
+            </div>
+
+            <div class="event-item">
+                <div class="event-date">
+                    <span class="day">24</span>
+                    <span class="month">Mai</span>
+                </div>
+                <div class="event-content">
+                    <h4>Réunion publique de quartier</h4>
+                    <p>Salle municipale · 19h00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<div class="wrap" style="padding-top: 48px; padding-bottom: 48px;">
+    <div class="highlight-box">
+        <h3>Rester informé</h3>
+        <p>
+            Consultez régulièrement cette page pour suivre les actualités municipales,
+            les changements de circulation, les événements culturels et les informations
+            importantes liées à la vie de la commune.
+        </p>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}
