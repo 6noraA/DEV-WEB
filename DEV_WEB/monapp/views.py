@@ -38,9 +38,9 @@ def modifier_produit(request, id):
 
     return render(request, "produits/modifier.html", {"form": form})
 
-def detail_produit(request, id):
-    produit = get_object_or_404(Produit, ID=id)
-    return render(request, "produits/detail_produit.html", {"produit": produit})
+def detail_produit(request, produit_id):
+    produit = Produit.objects.get(ID=produit_id)
+    return render(request, 'produits/detail_produit.html', {'produit': produit})
 
 def inscription(request):
     if request.method == 'POST':
