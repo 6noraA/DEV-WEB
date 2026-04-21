@@ -88,7 +88,22 @@ def deconnexion(request):
     
 @login_required
 def profil(request):
-    return render(request, 'profil.html')
+    personne = request.user.personne
+    return render(request, 'profil.html',{'personne':personne})
+
+@login_required
+def edit_profil(request):
+    personne = request.user.personne
+
+    if request.method == 'POST':
+        form = PersonneForm(request.POST, instance=personne)
+        if form.is_valid():
+            form.save()
+            return redirect('profil')
+    else:
+        form = PersonneForm(instance=personne)
+
+    return render(request, 'edit_profil.html', {'form': form})
 
 
     
