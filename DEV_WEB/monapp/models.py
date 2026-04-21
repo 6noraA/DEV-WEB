@@ -14,8 +14,8 @@ class Personne(models.Model) :
   user = models.OneToOneField(User, on_delete=models.CASCADE)
   
   age = models.IntegerField()
-  sexe = models.CharField(max_length=20, choices=GENRE_CHOIX)
-  type_membre = models.CharField(max_length=1, choices=TYPE_MEMBRE)
+  sexe = models.CharField(max_length=10, choices=GENRE_CHOIX)
+  type_membre = models.CharField(max_length=30, choices=TYPE_MEMBRE)
   photo = models.ImageField(upload_to='photo/personne/',null=True,blank=True)
   date_naissance = models.DateField()
 
