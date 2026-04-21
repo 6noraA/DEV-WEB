@@ -1,6 +1,7 @@
 from django import form
 from django.contrib.auth.models import User
 from .models import Personne
+from .models import Produit
 
 class InscriptionForm(form.ModelForm):
     password = form.CharField(widget=form.PasswordInput)
@@ -13,3 +14,23 @@ class PersonneForm(form.ModelForm):
     class Meta:
         model = Personne
         fields = ['age', 'sexe', 'date_naissance', 'type_membre','photo']
+
+
+class ProduitForm(forms.ModelForm):
+    class Meta:
+        model = Produit
+        fields = [
+            'ID',
+            'Nom',
+            'Connectiviter_type',
+            'etat',
+            'marque',
+            'mode',
+            'Bactterie',
+            'Adresse_IP',
+            'Temp_restante',
+            'Date_dernier_maintenance',
+            'Date_dernier_utilisation',
+            'Description',
+            'photo'
+        ]
