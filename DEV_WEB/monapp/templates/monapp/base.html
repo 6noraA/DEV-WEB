@@ -21,7 +21,24 @@
                     <li><a href="{% url 'incident' %}" class="{% if page_active == 'incident' %}active{% endif %}">Incidents</a></li>
                     <li><a href="{% url 'services-public' %}" class="{% if page_active == 'services-public' %}active{% endif %}">Services publics</a></li>
                     <li><a href="{% url 'info-locale' %}" class="{% if page_active == 'info-locale' %}active{% endif %}">Infos locales</a></li>
-                    <li><a href="{% url 'connexion' %}" class="{% if page_active == 'connexion' %}active{% endif %}">Connexion</a></li>
+
+                    {# ---------- Connexion / Profil / Déconnexion ---------- #}
+                    {% if user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'profil' %}" class="{% if page_active == 'profil' %}active{% endif %}">
+                                Mon profil
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'logout' %}">Déconnexion</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="{% url 'connexion' %}" class="{% if page_active == 'connexion' %}active{% endif %}">
+                                Connexion
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>

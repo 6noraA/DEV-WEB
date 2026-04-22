@@ -13,11 +13,11 @@ class Personne(models.Model) :
   
   user = models.OneToOneField(User, on_delete=models.CASCADE)
   
-  age = models.IntegerField()
-  sexe = models.CharField(max_length=20, choices=GENRE_CHOIX)
-  type_membre = models.CharField(max_length=20, choices=TYPE_MEMBRE)
+  age = models.IntegerField(null=True, blank=True)
+  sexe = models.CharField(max_length=20, choices=GENRE_CHOIX, null=True, blank=True)
+  type_membre = models.CharField(max_length=20, choices=TYPE_MEMBRE, null=True, blank=True)
   photo = models.ImageField(upload_to='photo/personne/',null=True,blank=True)
-  date_naissance = models.DateField()
+  date_naissance = models.DateField(null=True, blank=True)
 
   def __str__(self):
         return self.user.username
@@ -59,7 +59,3 @@ class Produit(models.Model):
     photo = models.ImageField(upload_to='photos/outils/', null=True, blank=True)
     def __str__(self):
         return self.Nom
-  
-  
-  
-  

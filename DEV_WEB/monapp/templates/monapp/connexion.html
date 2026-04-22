@@ -15,54 +15,95 @@
         </div>
 
         <div class="tabs">
-            <button class="tab-btn active" onclick="showForm('login', event)">Connexion</button>
-            <button class="tab-btn" onclick="showForm('register', event)">Créer un compte</button>
+            <button type="button" class="tab-btn active" onclick="showForm('login', event)">Connexion</button>
+            <button type="button" class="tab-btn" onclick="showForm('register', event)">Créer un compte</button>
         </div>
 
         <div class="form-box">
-            <form id="login" class="form active">
+
+            {# ---------- FORMULAIRE DE CONNEXION ---------- #}
+            <form id="login" class="form active"
+                  method="post"
+                  action="{% url 'connexion' %}">
+                {% csrf_token %}
+
+                {# Affichage d'une éventuelle erreur renvoyée par la vue Django #}
+                {% if error %}
+                    <div class="message error">{{ error }}</div>
+                {% endif %}
+
                 <div class="input-group">
-                    <label for="login-email">Adresse e-mail</label>
-                    <input type="email" id="login-email" placeholder="exemple@email.com" required>
+                    <label for="login-username">Nom d'utilisateur</label>
+                    <input type="text"
+                           id="login-username"
+                           name="username"
+                           placeholder="Votre nom d'utilisateur"
+                           required>
                 </div>
 
                 <div class="input-group">
                     <label for="login-password">Mot de passe</label>
-                    <input type="password" id="login-password" placeholder="Votre mot de passe" required>
+                    <input type="password"
+                           id="login-password"
+                           name="password"
+                           placeholder="Votre mot de passe"
+                           required>
                 </div>
 
                 <div class="row">
-                    <label><input type="checkbox" style="width:auto; margin-right:6px;"> Se souvenir de moi</label>
+                    <label>
+                        <input type="checkbox" name="remember_me" style="width:auto; margin-right:6px;">
+                        Se souvenir de moi
+                    </label>
                     <a href="#">Mot de passe oublié ?</a>
                 </div>
 
                 <button type="submit" class="btn">Se connecter</button>
 
-                <div class="separator">ou</div>
-                <button type="button" class="secondary-btn">Continuer avec Google</button>
-
                 <div id="login-message" class="message"></div>
             </form>
 
-            <form id="register" class="form">
+            {# ---------- FORMULAIRE D'INSCRIPTION ---------- #}
+            <form id="register" class="form"
+                  method="post"
+                  action="{% url 'inscription' %}">
+                {% csrf_token %}
+
                 <div class="input-group">
-                    <label for="register-name">Nom complet</label>
-                    <input type="text" id="register-name" placeholder="Votre nom complet" required>
+                    <label for="register-username">Nom d'utilisateur</label>
+                    <input type="text"
+                           id="register-username"
+                           name="username"
+                           placeholder="Choisissez un pseudonyme"
+                           required>
                 </div>
 
                 <div class="input-group">
                     <label for="register-email">Adresse e-mail</label>
-                    <input type="email" id="register-email" placeholder="exemple@email.com" required>
+                    <input type="email"
+                           id="register-email"
+                           name="email"
+                           placeholder="exemple@email.com"
+                           required>
                 </div>
 
                 <div class="input-group">
                     <label for="register-password">Mot de passe</label>
-                    <input type="password" id="register-password" placeholder="Choisissez un mot de passe" required>
+                    <input type="password"
+                           id="register-password"
+                           name="password"
+                           placeholder="Choisissez un mot de passe"
+                           minlength="6"
+                           required>
                 </div>
 
                 <div class="input-group">
                     <label for="register-confirm-password">Confirmer le mot de passe</label>
-                    <input type="password" id="register-confirm-password" placeholder="Confirmez le mot de passe" required>
+                    <input type="password"
+                           id="register-confirm-password"
+                           name="confirm_password"
+                           placeholder="Confirmez le mot de passe"
+                           required>
                 </div>
 
                 <button type="submit" class="btn">Créer un compte</button>
@@ -84,50 +125,29 @@
             event.target.classList.add('active');
         }
 
-        document.getElementById('login').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value.trim();
-            const message = document.getElementById('login-message');
-
-            if (!email || !password) {
-                message.textContent = 'Veuillez remplir tous les champs.';
-                message.className = 'message error';
-                return;
-            }
-
-            message.textContent = 'Connexion réussie.';
-            message.className = 'message success';
-        });
-
+        // ---------- VALIDATION CLIENT DU FORMULAIRE D'INSCRIPTION ----------
+        // On NE met PLUS de preventDefault() systématique :
+        // le formulaire est bien envoyé à Django si la validation passe.
         document.getElementById('register').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const name = document.getElementById('register-name').value.trim();
-            const email = document.getElementById('register-email').value.trim();
             const password = document.getElementById('register-password').value.trim();
             const confirmPassword = document.getElementById('register-confirm-password').value.trim();
             const message = document.getElementById('register-message');
 
-            if (!name || !email || !password || !confirmPassword) {
-                message.textContent = 'Veuillez remplir tous les champs.';
-                message.className = 'message error';
-                return;
-            }
-
             if (password.length < 6) {
+                e.preventDefault(); // on bloque seulement si erreur
                 message.textContent = 'Le mot de passe doit contenir au moins 6 caractères.';
                 message.className = 'message error';
                 return;
             }
 
             if (password !== confirmPassword) {
+                e.preventDefault();
                 message.textContent = 'Les mots de passe ne correspondent pas.';
                 message.className = 'message error';
                 return;
             }
 
-            message.textContent = 'Compte créé avec succès.';
-            message.className = 'message success';
+            // Si tout est OK : on laisse le formulaire partir vers Django
         });
     </script>
 </body>

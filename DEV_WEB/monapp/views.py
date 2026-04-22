@@ -22,24 +22,32 @@ def inscription(request):
         personne_form = PersonneForm(request.POST)
 
         if form.is_valid() and personne_form.is_valid():
-            user = form.save()
+           
+            user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
-
+ 
+           
             profil = user.personne
             profil.age = personne_form.cleaned_data['age']
             profil.sexe = personne_form.cleaned_data['sexe']
             profil.date_naissance = personne_form.cleaned_data['date_naissance']
             profil.type_membre = personne_form.cleaned_data['type_membre']
             profil.save()
-
-            return redirect('login')
+ 
+            
+            login(request, user)
+            return redirect('accueil')
 
     else:
         form = InscriptionForm()
         personne_form = PersonneForm()
 
-    return render(request, 'inscription.html', {'form': form, 'personne_form': personne_form})
+    return render(request, 'monapp/connexion.html', {
+        'page_active': 'connexion',
+        'form': form,
+        'personne_form': personne_form,
+    })
 
 def accueil(request):
     return render(request, 'monapp/accueil.html', {'page_active': 'accueil'})
@@ -62,7 +70,10 @@ def reservation(request):
 
 def vie_citoyenne(request):
     return render(request, 'monapp/vie_citoyenne.html', {'page_active': 'vie-citoyenne'})
+
 def connexion(request):
+    error = None
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -72,12 +83,14 @@ def connexion(request):
         if user:
             login(request, user)
             return redirect('accueil')
+        else:
+            error = "Nom d'utilisateur ou mot de passe incorrect."
 
-    return render(request, 'monapp/connexion.html', {'page_active': 'connexion'})
+    return render(request, 'monapp/connexion.html', {'page_active': 'connexion', 'error': error})
 
 def deconnexion(request):
     logout(request)
-    return redirect('login')
+    return redirect('accueil')
 
 def liste_produits(request):
     produits = Produit.objects.all()
