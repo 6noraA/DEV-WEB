@@ -1,0 +1,206 @@
+{% extends 'monapp/base.html' %}
+
+{% block title %}Mon profil - MaVille{% endblock %}
+
+{% block hero %}
+<section class="hero compact">
+    <div class="hero-inner">
+        <h2>Mon profil</h2>
+        <p>
+            Consultez et modifiez vos informations personnelles.
+            Votre pseudonyme, votre photo et vos informations de membre
+            sont visibles par les autres utilisateurs de la plateforme.
+        </p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="wrap">
+
+    {# ---------- APERÇU DU PROFIL ---------- #}
+    <div class="section-title">
+        <h3>Aperçu de mon profil</h3>
+        <p>Voici la manière dont votre profil apparaît sur la plateforme.</p>
+    </div>
+
+    <div class="form-container profil-preview">
+        <div class="profil-header">
+            <div class="profil-photo">
+                <img id="photo-preview"
+                     src="https://via.placeholder.com/140x140.png?text=Photo"
+                     alt="Photo de profil">
+            </div>
+            <div class="profil-identity">
+                <h4 id="preview-pseudo">JeanDupont92</h4>
+                <span class="badge">Membre · Père</span>
+                <p class="profil-meta">
+                    <span id="preview-age">35 ans</span> ·
+                    <span id="preview-sexe">Homme</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {# ---------- FORMULAIRE DE MODIFICATION ---------- #}
+    <div class="section-title" style="margin-top: 56px;">
+        <h3>Modifier mes informations</h3>
+        <p>Les modifications seront visibles immédiatement sur votre profil.</p>
+    </div>
+
+    <div class="form-container">
+        <form id="profil-form">
+
+            {# ----- INFOS PUBLIQUES ----- #}
+            <h4 class="form-section-title">Informations publiques</h4>
+
+            <div class="input-group">
+                <label for="photo">Photo de profil</label>
+                <input type="file" id="photo" name="photo" accept="image/*">
+            </div>
+
+            <div class="input-group">
+                <label for="pseudo">Pseudonyme <span class="required">*</span></label>
+                <input type="text" id="pseudo" name="pseudo"
+                       value="JeanDupont92" required>
+            </div>
+
+            <div class="input-group">
+                <label for="age">Âge</label>
+                <input type="number" id="age" name="age"
+                       value="35" min="0" max="120">
+            </div>
+
+            <div class="input-group">
+                <label for="sexe">Sexe / Genre</label>
+                <select id="sexe" name="sexe">
+                    <option value="homme" selected>Homme</option>
+                    <option value="femme">Femme</option>
+                    <option value="autre">Autre</option>
+                    <option value="non_precise">Ne souhaite pas préciser</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="date_naissance">Date de naissance</label>
+                <input type="date" id="date_naissance" name="date_naissance"
+                       value="1990-05-14">
+            </div>
+
+            <div class="input-group">
+                <label for="type_membre">Type de membre</label>
+                <select id="type_membre" name="type_membre">
+                    <option value="mere">Mère</option>
+                    <option value="pere" selected>Père</option>
+                    <option value="enfant">Enfant</option>
+                    <option value="autre">Autre</option>
+                </select>
+            </div>
+
+            {# ----- INFOS PRIVÉES ----- #}
+            <h4 class="form-section-title" style="margin-top: 32px;">
+                Informations privées
+            </h4>
+            <p class="form-hint">
+                Ces informations ne sont visibles que par vous et l'administrateur.
+            </p>
+
+            <div class="input-group">
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" name="nom" value="Dupont">
+            </div>
+
+            <div class="input-group">
+                <label for="prenom">Prénom</label>
+                <input type="text" id="prenom" name="prenom" value="Jean">
+            </div>
+
+            {# ----- BOUTONS ----- #}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-block">
+                    Enregistrer les modifications
+                </button>
+            </div>
+
+            <div id="profil-message" class="message"></div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<section class="section-alt">
+    <div class="wrap">
+        <div class="highlight-box">
+            <h3>Confidentialité</h3>
+            <p>
+                Votre nom, votre prénom et votre mot de passe ne sont jamais
+                communiqués aux autres membres. Seul l'administrateur de la
+                plateforme peut y accéder pour des raisons de gestion.
+            </p>
+        </div>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // ---------- Preview de la photo ----------
+    const photoInput = document.getElementById('photo');
+    const photoPreview = document.getElementById('photo-preview');
+
+    photoInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (evt) {
+                photoPreview.src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // ---------- Mise à jour en direct de l'aperçu ----------
+    const pseudoInput = document.getElementById('pseudo');
+    const ageInput = document.getElementById('age');
+    const sexeInput = document.getElementById('sexe');
+
+    const previewPseudo = document.getElementById('preview-pseudo');
+    const previewAge = document.getElementById('preview-age');
+    const previewSexe = document.getElementById('preview-sexe');
+
+    pseudoInput.addEventListener('input', () => {
+        previewPseudo.textContent = pseudoInput.value || 'Utilisateur';
+    });
+
+    ageInput.addEventListener('input', () => {
+        previewAge.textContent = ageInput.value
+            ? ageInput.value + ' ans'
+            : '— ans';
+    });
+
+    sexeInput.addEventListener('change', () => {
+        const labels = {
+            homme: 'Homme',
+            femme: 'Femme',
+            autre: 'Autre',
+            non_precise: 'Non précisé'
+        };
+        previewSexe.textContent = labels[sexeInput.value] || '';
+    });
+
+    // ---------- Soumission (frontend uniquement) ----------
+    document.getElementById('profil-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const message = document.getElementById('profil-message');
+        message.textContent = 'Vos modifications ont bien été enregistrées.';
+        message.className = 'message success';
+    });
+</script>
+{% endblock %}

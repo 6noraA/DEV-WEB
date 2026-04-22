@@ -55,6 +55,8 @@ def services_public(request):
 
 def info_locale(request):
     return render(request, 'monapp/info_locales.html', {'page_active': 'info-locale'})
+def profil(request):
+    return render(request, 'monapp/profil.html', {'page_active': 'profil'})
 
 def connexion(request):
     if request.method == 'POST':

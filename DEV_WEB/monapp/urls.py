@@ -24,4 +24,7 @@ urlpatterns = [
     path('incident/', views.incident, name='incident'),
     path('services-public/', views.services_public, name='services-public'),
     path('info-locale/', views.info_locale, name='info-locale'),
+
+     # Profil utilisateur
+    path('profil/', views.profil, name='profil'),
 ]
