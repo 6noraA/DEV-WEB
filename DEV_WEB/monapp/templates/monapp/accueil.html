@@ -18,48 +18,100 @@
 
 {% block content %}
 <div class="wrap">
+
+    {# ---------- RECHERCHE AVEC 2 FILTRES ---------- #}
     <div class="section-title">
+        <h3>Rechercher un service</h3>
+        <p>Utilisez les filtres ci-dessous pour trouver rapidement ce que vous cherchez.</p>
+    </div>
+
+    <div class="form-container search-container">
+        <form id="search-form" onsubmit="return false;">
+            <div class="search-grid">
+
+                <div class="input-group">
+                    <label for="search-keyword">Mot-clé</label>
+                    <input type="text"
+                           id="search-keyword"
+                           placeholder="Ex : transport, incident, réservation...">
+                </div>
+
+                <div class="input-group">
+                    <label for="search-category">Catégorie</label>
+                    <select id="search-category">
+                        <option value="all">Toutes les catégories</option>
+                        <option value="transport">Transports</option>
+                        <option value="incident">Incidents</option>
+                        <option value="info">Informations locales</option>
+                        <option value="service">Services publics</option>
+                        <option value="reservation">Réservations</option>
+                        <option value="citoyen">Vie citoyenne</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="search-actions">
+                <button type="button" class="btn" onclick="filtrerServices()">
+                    Rechercher
+                </button>
+                <button type="button" class="secondary-btn" onclick="reinitialiserRecherche()">
+                    Réinitialiser
+                </button>
+            </div>
+
+            <p id="search-result-info" class="search-info"></p>
+        </form>
+    </div>
+
+    {# ---------- LISTE DES SERVICES ---------- #}
+    <div class="section-title" style="margin-top: 56px;">
         <h3>Les services de la ville</h3>
         <p>Tous les services essentiels regroupés dans une seule plateforme numérique.</p>
     </div>
 
-    <div class="cards">
-        <article class="card">
+    <div class="cards" id="services-list">
+        <article class="card" data-category="transport" data-keywords="transport bus métro vélo stationnement horaires trafic">
             <h4>Transports</h4>
             <p>Consultez les horaires, les itinéraires, l'état du trafic et les informations utiles.</p>
             <a href="{% url 'transport' %}" class="card-link">En savoir plus →</a>
         </article>
 
-        <article class="card">
+        <article class="card" data-category="incident" data-keywords="incident signalement éclairage voirie encombrants problème urbain">
             <h4>Signalement d'incidents</h4>
             <p>Signalez rapidement un problème urbain : éclairage, voirie, encombrants ou autre incident.</p>
             <a href="{% url 'incident' %}" class="card-link">Signaler →</a>
         </article>
 
-        <article class="card">
+        <article class="card" data-category="info" data-keywords="informations locales actualités événements commune annonces">
             <h4>Informations locales</h4>
             <p>Retrouvez les actualités de la commune, les événements et les annonces importantes.</p>
             <a href="{% url 'info-locale' %}" class="card-link">Voir les infos →</a>
         </article>
 
-        <article class="card">
+        <article class="card" data-category="service" data-keywords="services publics mairie démarches administratives">
             <h4>Services publics</h4>
             <p>Accédez plus facilement aux démarches et services proposés par la mairie.</p>
             <a href="{% url 'services-public' %}" class="card-link">Accéder →</a>
         </article>
 
-        <article class="card">
+        <article class="card" data-category="reservation" data-keywords="réservation équipement salle sport rendez-vous administratif">
             <h4>Réservations</h4>
             <p>Réservez certains équipements ou services publics : salles, sport ou rendez-vous administratifs.</p>
-            <a href="{% url 'services-public' %}" class="card-link">Réserver →</a>
+            <a href="{% url 'reservation' %}" class="card-link">Réserver →</a>
         </article>
 
-        <article class="card">
+        <article class="card" data-category="citoyen" data-keywords="vie citoyenne ville lien habitant espace consultations associations bénévolat">
             <h4>Vie citoyenne</h4>
             <p>Renforcez votre lien avec la ville grâce à un espace centralisé et accessible.</p>
-            <a href="{% url 'info-locale' %}" class="card-link">Découvrir →</a>
+            <a href="{% url 'vie-citoyenne' %}" class="card-link">Découvrir →</a>
         </article>
     </div>
+
+    <p id="no-result" class="no-result-message" style="display:none;">
+        Aucun service ne correspond à votre recherche.
+    </p>
+
 </div>
 {% endblock %}
 
@@ -82,4 +134,67 @@
         <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
     </div>
 </footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function filtrerServices() {
+        const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
+        const category = document.getElementById('search-category').value;
+        const cards = document.querySelectorAll('#services-list .card');
+        const noResult = document.getElementById('no-result');
+        const resultInfo = document.getElementById('search-result-info');
+
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cardCategory = card.dataset.category;
+            const cardKeywords = (card.dataset.keywords || '').toLowerCase();
+            const cardText = card.textContent.toLowerCase();
+
+            // Filtre 1 : catégorie
+            const matchCategory = (category === 'all') || (cardCategory === category);
+
+            // Filtre 2 : mot-clé (titre, description ou keywords cachés)
+            const matchKeyword = (keyword === '') ||
+                                 cardKeywords.includes(keyword) ||
+                                 cardText.includes(keyword);
+
+            if (matchCategory && matchKeyword) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Affichage du message "aucun résultat"
+        if (visibleCount === 0) {
+            noResult.style.display = 'block';
+        } else {
+            noResult.style.display = 'none';
+        }
+
+        // Info sur le nombre de résultats
+        if (keyword === '' && category === 'all') {
+            resultInfo.textContent = '';
+        } else {
+            resultInfo.textContent = visibleCount + ' résultat(s) trouvé(s).';
+        }
+    }
+
+    function reinitialiserRecherche() {
+        document.getElementById('search-keyword').value = '';
+        document.getElementById('search-category').value = 'all';
+        document.querySelectorAll('#services-list .card').forEach(card => {
+            card.style.display = '';
+        });
+        document.getElementById('no-result').style.display = 'none';
+        document.getElementById('search-result-info').textContent = '';
+    }
+
+    // Recherche en temps réel quand on tape
+    document.getElementById('search-keyword').addEventListener('input', filtrerServices);
+    document.getElementById('search-category').addEventListener('change', filtrerServices);
+</script>
 {% endblock %}

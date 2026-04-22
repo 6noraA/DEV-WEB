@@ -57,7 +57,11 @@ def info_locale(request):
     return render(request, 'monapp/info_locales.html', {'page_active': 'info-locale'})
 def profil(request):
     return render(request, 'monapp/profil.html', {'page_active': 'profil'})
+def reservation(request):
+    return render(request, 'monapp/reservations.html', {'page_active': 'reservation'})
 
+def vie_citoyenne(request):
+    return render(request, 'monapp/vie_citoyenne.html', {'page_active': 'vie-citoyenne'})
 def connexion(request):
     if request.method == 'POST':
         username = request.POST['username']

@@ -27,4 +27,6 @@ urlpatterns = [
 
      # Profil utilisateur
     path('profil/', views.profil, name='profil'),
+    path('reservation/', views.reservation, name='reservation'),
+    path('vie-citoyenne/', views.vie_citoyenne, name='vie-citoyenne'),
 ]
