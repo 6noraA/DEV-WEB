@@ -1,91 +1,137 @@
 {% extends 'monapp/base.html' %}
+{% load static %}
 
 {% block title %}Incidents - MaVille{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'incident.css' %}">
+{% endblock %}
+
 {% block hero %}
-<section class="hero compact">
-    <div class="hero-inner">
-        <h2>Signalement d'incidents</h2>
-        <p>
-            Signalez un problème urbain que vous avez constaté :
-            éclairage défectueux, voirie dégradée, propreté ou autre.
-            Vos signalements aident la ville à intervenir rapidement.
-        </p>
-    </div>
-</section>
+<div class="incident-page">
+    <section class="hero-incident">
+        <div class="hero-inner">
+            <div class="alert-badge">
+                <span class="pulse"></span>
+                Signalement citoyen
+            </div>
+            <h2>Votre regard rend la ville<br>plus sûre et plus propre.</h2>
+            <p>
+                Signalez un problème urbain que vous avez constaté :
+                éclairage défectueux, voirie dégradée, propreté ou autre.
+                Vos signalements aident la ville à intervenir rapidement.
+            </p>
+        </div>
+    </section>
+</div>
 {% endblock %}
 
 {% block content %}
-<div class="wrap">
-    <div class="section-title">
-        <h3>Signaler un incident</h3>
-        <p>Remplissez le formulaire ci-dessous pour signaler un problème.</p>
-    </div>
+<div class="incident-page">
+    <section class="incident-section">
+        <div class="wrap">
+            <div class="incident-layout">
 
-    <div class="form-container">
-        <form method="post">
-            {% csrf_token %}
+                {# Étapes #}
+                <div class="incident-steps">
+                    <h3>Comment ça marche ?</h3>
+                    <p class="lead">Trois étapes simples pour signaler un problème et contribuer à l'amélioration de votre ville.</p>
 
-            <div class="input-group">
-                <label for="titre">Titre <span class="required">*</span></label>
-                <input
-                    type="text"
-                    id="titre"
-                    name="titre"
-                    placeholder="Ex : Lampadaire cassé rue de la Paix"
-                    required>
+                    <ol class="steps-list">
+                        <li class="step">
+                            <div class="step-num">1</div>
+                            <div class="step-content">
+                                <h4>Décrivez le problème</h4>
+                                <p>Indiquez le type d'incident, sa localisation et ajoutez une description claire.</p>
+                            </div>
+                        </li>
+                        <li class="step">
+                            <div class="step-num">2</div>
+                            <div class="step-content">
+                                <h4>Les services sont alertés</h4>
+                                <p>Votre signalement est transmis au service compétent de la mairie sous 2h.</p>
+                            </div>
+                        </li>
+                        <li class="step">
+                            <div class="step-num">3</div>
+                            <div class="step-content">
+                                <h4>Suivez la résolution</h4>
+                                <p>Vous recevez une notification dès que l'incident est pris en charge et résolu.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                {# Formulaire #}
+                <div class="incident-form-card">
+                    <div class="form-header-i">
+                        <h4>Signaler un incident</h4>
+                        <p>Remplissez le formulaire ci-dessous. Les champs marqués <span class="required">*</span> sont obligatoires.</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div>
+                            <label for="titre">Titre <span class="required">*</span></label>
+                            <input type="text" id="titre" name="titre"
+                                   placeholder="Ex : Lampadaire cassé rue de la Paix" required>
+                        </div>
+
+                        <div>
+                            <label for="categorie">Catégorie <span class="required">*</span></label>
+                            <select id="categorie" name="categorie" required>
+                                <option value="">-- Sélectionnez une catégorie --</option>
+                                <option value="eclairage">Éclairage public</option>
+                                <option value="voirie">Voirie (route, trottoir)</option>
+                                <option value="proprete">Propreté / Déchets</option>
+                                <option value="espaces_verts">Espaces verts</option>
+                                <option value="mobilier">Mobilier urbain</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="lieu">Localisation <span class="required">*</span></label>
+                            <input type="text" id="lieu" name="lieu"
+                                   placeholder="Adresse ou point de repère" required>
+                        </div>
+
+                        <div>
+                            <label for="description">Description <span class="required">*</span></label>
+                            <textarea id="description" name="description"
+                                      placeholder="Décrivez le problème avec le plus de précisions possible..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit-i">
+                            Envoyer le signalement
+                            <span>→</span>
+                        </button>
+                    </form>
+                </div>
+
             </div>
-
-            <div class="input-group">
-                <label for="categorie">Catégorie <span class="required">*</span></label>
-                <select id="categorie" name="categorie" required>
-                    <option value="">-- Sélectionnez une catégorie --</option>
-                    <option value="eclairage">Éclairage public</option>
-                    <option value="voirie">Voirie (route, trottoir)</option>
-                    <option value="proprete">Propreté / Déchets</option>
-                    <option value="espaces_verts">Espaces verts</option>
-                    <option value="mobilier">Mobilier urbain</option>
-                    <option value="autre">Autre</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label for="lieu">Localisation <span class="required">*</span></label>
-                <input
-                    type="text"
-                    id="lieu"
-                    name="lieu"
-                    placeholder="Adresse ou point de repère"
-                    required>
-            </div>
-
-            <div class="input-group">
-                <label for="description">Description <span class="required">*</span></label>
-                <textarea
-                    id="description"
-                    name="description"
-                    placeholder="Décrivez le problème avec le plus de précisions possible..."
-                    required></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-block">Envoyer le signalement</button>
-        </form>
-    </div>
+        </div>
+    </section>
 </div>
 {% endblock %}
 
 {% block footer %}
-<section class="section-alt">
-    <div class="wrap">
-        <div class="highlight-box">
-            <h3>Bon à savoir</h3>
-            <p>
-                Les signalements sont traités par les services de la ville
-                dans un délai de 48h ouvrées. Pour une urgence, composez le 17.
-            </p>
+<div class="incident-page">
+    <section class="info-box-incident">
+        <div class="inner">
+            <div class="icon-big">⚡</div>
+            <div>
+                <h3>Bon à savoir</h3>
+                <p>
+                    Les signalements sont traités par les services de la ville
+                    dans un délai de 48h ouvrées. Pour une urgence immédiate,
+                    composez le 17 (police) ou le 18 (pompiers).
+                </p>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+</div>
 
 <footer class="site-footer">
     <div class="wrap">

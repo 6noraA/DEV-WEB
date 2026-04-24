@@ -1,0 +1,348 @@
+/* ================================================================
+   MaVille — Page Transport
+   Thème : mouvement, flux urbain, vitesse
+   ================================================================ */
+
+.transport-page {
+  --p-primary: #2563eb;
+  --p-dark: #0f172a;
+  --p-cyan: #06b6d4;
+  --p-green: #10b981;
+}
+
+/* HERO */
+.transport-page .hero-transport {
+  position: relative;
+  min-height: 62vh;
+  overflow: hidden;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+}
+.transport-page .hero-transport::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(105deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 58, 138, 0.6) 60%, rgba(6, 182, 212, 0.3) 100%),
+    url('https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=2400&q=80');
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  animation: slowPan 30s ease-in-out infinite alternate;
+}
+@keyframes slowPan {
+  from { background-position: left center; }
+  to { background-position: right center; }
+}
+.transport-page .hero-transport::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #06b6d4 50%, transparent);
+  animation: lineFlow 3s linear infinite;
+}
+@keyframes lineFlow {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+.transport-page .hero-transport .hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 28px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.transport-page .hero-transport h2 {
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  animation: fadeInUp 0.8s ease both;
+}
+.transport-page .hero-transport h2 .accent-word {
+  background: linear-gradient(90deg, #06b6d4, #10b981);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.transport-page .hero-transport p {
+  font-size: 18px;
+  max-width: 620px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+  animation: fadeInUp 0.8s 0.15s ease both;
+}
+
+/* TICKER INFO TRAFIC */
+.transport-page .trafic-ticker {
+  background: #0f172a;
+  color: #fff;
+  padding: 14px 0;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.transport-page .trafic-ticker::before,
+.transport-page .trafic-ticker::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 80px;
+  z-index: 2;
+  pointer-events: none;
+}
+.transport-page .trafic-ticker::before {
+  left: 0;
+  background: linear-gradient(90deg, #0f172a, transparent);
+}
+.transport-page .trafic-ticker::after {
+  right: 0;
+  background: linear-gradient(-90deg, #0f172a, transparent);
+}
+.transport-page .ticker-track {
+  display: flex;
+  gap: 60px;
+  white-space: nowrap;
+  animation: tickerScroll 40s linear infinite;
+  font-size: 14px;
+  font-weight: 500;
+}
+.transport-page .ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.transport-page .ticker-track .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+.transport-page .dot.green { background: #10b981; box-shadow: 0 0 10px #10b981; }
+.transport-page .dot.orange { background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
+.transport-page .dot.red { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* GRILLE TRANSPORTS */
+.transport-page .transport-section {
+  padding: 90px 0;
+  background: #f8fafc;
+}
+.transport-page .transport-section .section-title {
+  text-align: center;
+  margin: 0 auto 56px;
+  max-width: 720px;
+}
+.transport-page .transport-section .section-title h3 {
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin-bottom: 12px;
+}
+.transport-page .transport-section .section-title p {
+  color: #64748b;
+  font-size: 17px;
+}
+.transport-page .t-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 20px;
+}
+.transport-page .t-card {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeInUp 0.7s ease forwards;
+  cursor: pointer;
+}
+.transport-page .t-card:nth-child(1) { animation-delay: 0.1s; }
+.transport-page .t-card:nth-child(2) { animation-delay: 0.2s; }
+.transport-page .t-card:nth-child(3) { animation-delay: 0.3s; }
+.transport-page .t-card:nth-child(4) { animation-delay: 0.4s; }
+.transport-page .t-card:hover {
+  transform: translateY(-10px);
+  border-color: transparent;
+  box-shadow: 0 25px 50px -12px rgba(30, 58, 138, 0.25);
+}
+.transport-page .t-visual {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.6s;
+}
+.transport-page .t-card:hover .t-visual { transform: scale(1.08); }
+.transport-page .t-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.65));
+}
+.transport-page .t-bus .t-visual {
+  background-image: url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=800&q=80');
+}
+.transport-page .t-metro .t-visual {
+  background-image: url('https://images.unsplash.com/photo-1527667391641-51beea8e7c20?auto=format&fit=crop&w=800&q=80');
+}
+.transport-page .t-velo .t-visual {
+  background-image: url('https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=800&q=80');
+}
+.transport-page .t-auto .t-visual {
+  background-image: url('https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=800&q=80');
+}
+.transport-page .t-badge {
+  position: absolute;
+  top: 16px; left: 16px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: #1e3a8a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  z-index: 2;
+}
+.transport-page .live-status {
+  position: absolute;
+  bottom: 16px; left: 16px; right: 16px;
+  z-index: 2;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.transport-page .live-status .live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse 2s infinite;
+}
+.transport-page .t-body {
+  padding: 24px 24px 26px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.transport-page .t-body h4 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 10px;
+  letter-spacing: -0.015em;
+}
+.transport-page .t-body p {
+  font-size: 14.5px;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  flex: 1;
+}
+.transport-page .t-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: gap 0.25s, color 0.25s;
+}
+.transport-page .t-card:hover .t-link {
+  gap: 14px;
+  color: #06b6d4;
+}
+
+/* INFO CARD FOOTER */
+.transport-page .info-section {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  color: #fff;
+}
+.transport-page .info-card-t {
+  max-width: 900px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+}
+.transport-page .info-card-t::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(180deg, #06b6d4, #10b981);
+}
+.transport-page .info-card-t h3 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.transport-page .live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 100px;
+}
+.transport-page .live-badge .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse 1.8s infinite;
+}
+.transport-page .info-card-t p {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .transport-page .hero-transport { min-height: 50vh; }
+  .transport-page .info-card-t { padding: 32px 24px; }
+}

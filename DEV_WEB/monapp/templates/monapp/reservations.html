@@ -1,134 +1,199 @@
 {% extends 'monapp/base.html' %}
+{% load static %}
 
 {% block title %}Réservations - MaVille{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'reservations.css' %}">
+{% endblock %}
+
 {% block hero %}
-<section class="hero compact">
-    <div class="hero-inner">
-        <h2>Réservations</h2>
-        <p>
-            Réservez en quelques clics les équipements et services proposés
-            par la ville : salles municipales, équipements sportifs,
-            rendez-vous administratifs et bien plus encore.
-        </p>
-    </div>
-</section>
+<div class="resa-page">
+    <section class="hero-resa">
+        <div class="hero-inner">
+            <div class="text">
+                <h2>Réservez en ligne,<br><span class="accent-word">en quelques clics</span>.</h2>
+                <p>
+                    Réservez les équipements et services proposés par la ville :
+                    salles municipales, équipements sportifs, rendez-vous administratifs
+                    et bien plus encore, directement depuis votre espace.
+                </p>
+            </div>
+
+            {# Mini calendrier décoratif #}
+            <div class="mini-calendar">
+                <div class="mc-header">
+                    <div class="mc-month">Avril 2026</div>
+                    <div class="mc-nav">
+                        <button type="button">‹</button>
+                        <button type="button">›</button>
+                    </div>
+                </div>
+                <div class="mc-grid">
+                    <div class="mc-day-label">L</div>
+                    <div class="mc-day-label">M</div>
+                    <div class="mc-day-label">M</div>
+                    <div class="mc-day-label">J</div>
+                    <div class="mc-day-label">V</div>
+                    <div class="mc-day-label">S</div>
+                    <div class="mc-day-label">D</div>
+
+                    <div class="mc-day dim">31</div>
+                    <div class="mc-day">1</div>
+                    <div class="mc-day">2</div>
+                    <div class="mc-day has-event">3</div>
+                    <div class="mc-day">4</div>
+                    <div class="mc-day">5</div>
+                    <div class="mc-day">6</div>
+                    <div class="mc-day">7</div>
+                    <div class="mc-day">8</div>
+                    <div class="mc-day has-event">9</div>
+                    <div class="mc-day">10</div>
+                    <div class="mc-day">11</div>
+                    <div class="mc-day">12</div>
+                    <div class="mc-day">13</div>
+                    <div class="mc-day">14</div>
+                    <div class="mc-day">15</div>
+                    <div class="mc-day has-event">16</div>
+                    <div class="mc-day">17</div>
+                    <div class="mc-day">18</div>
+                    <div class="mc-day">19</div>
+                    <div class="mc-day">20</div>
+                    <div class="mc-day">21</div>
+                    <div class="mc-day">22</div>
+                    <div class="mc-day">23</div>
+                    <div class="mc-day today">24</div>
+                    <div class="mc-day">25</div>
+                    <div class="mc-day">26</div>
+                    <div class="mc-day">27</div>
+                    <div class="mc-day has-event">28</div>
+                    <div class="mc-day">29</div>
+                    <div class="mc-day">30</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 {% endblock %}
 
 {% block content %}
-<div class="wrap">
-    <div class="section-title">
-        <h3>Que souhaitez-vous réserver ?</h3>
-        <p>Choisissez le type d'équipement ou de service qui vous intéresse.</p>
-    </div>
+<div class="resa-page">
+    <section class="resa-types">
+        <div class="wrap">
+            <div class="section-title">
+                <h3>Que souhaitez-vous réserver ?</h3>
+                <p>Choisissez le type d'équipement ou de service qui vous intéresse.</p>
+            </div>
 
-    <div class="cards">
-        <article class="card">
-            <span class="badge">Salles</span>
-            <h4>Salles municipales</h4>
-            <p>
-                Réservez une salle pour vos réunions, événements associatifs
-                ou fêtes familiales dans les espaces mis à disposition par la ville.
-            </p>
-            <a href="#" class="card-link">Réserver une salle →</a>
-        </article>
+            <div class="r-grid">
+                <article class="r-card">
+                    <div class="icon-circle">🏛️</div>
+                    <span class="r-badge">Salles</span>
+                    <h4>Salles municipales</h4>
+                    <p>Réservez une salle pour vos réunions, événements associatifs ou fêtes familiales.</p>
+                    <a href="#" class="r-link">Réserver une salle <span>→</span></a>
+                </article>
 
-        <article class="card">
-            <span class="badge">Sport</span>
-            <h4>Équipements sportifs</h4>
-            <p>
-                Terrains de tennis, gymnases, stades ou piscines :
-                consultez les créneaux disponibles et réservez en ligne.
-            </p>
-            <a href="#" class="card-link">Voir les créneaux →</a>
-        </article>
+                <article class="r-card">
+                    <div class="icon-circle">🎾</div>
+                    <span class="r-badge">Sport</span>
+                    <h4>Équipements sportifs</h4>
+                    <p>Terrains de tennis, gymnases, stades ou piscines : consultez les créneaux disponibles.</p>
+                    <a href="#" class="r-link">Voir les créneaux <span>→</span></a>
+                </article>
 
-        <article class="card">
-            <span class="badge">Rendez-vous</span>
-            <h4>Rendez-vous en mairie</h4>
-            <p>
-                Prenez rendez-vous avec un agent municipal pour vos démarches
-                administratives et évitez l'attente au guichet.
-            </p>
-            <a href="#" class="card-link">Prendre rendez-vous →</a>
-        </article>
+                <article class="r-card">
+                    <div class="icon-circle">📅</div>
+                    <span class="r-badge">Rendez-vous</span>
+                    <h4>Rendez-vous en mairie</h4>
+                    <p>Prenez rendez-vous avec un agent municipal pour vos démarches administratives.</p>
+                    <a href="#" class="r-link">Prendre rendez-vous <span>→</span></a>
+                </article>
 
-        <article class="card">
-            <span class="badge">Culture</span>
-            <h4>Espaces culturels</h4>
-            <p>
-                Bibliothèques, médiathèques ou auditoriums :
-                réservez un espace pour vos activités culturelles ou éducatives.
-            </p>
-            <a href="#" class="card-link">Découvrir →</a>
-        </article>
-    </div>
+                <article class="r-card">
+                    <div class="icon-circle">📚</div>
+                    <span class="r-badge">Culture</span>
+                    <h4>Espaces culturels</h4>
+                    <p>Bibliothèques, médiathèques ou auditoriums : réservez un espace pour vos activités.</p>
+                    <a href="#" class="r-link">Découvrir <span>→</span></a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="resa-form-section">
+        <div class="wrap">
+            <div class="resa-form-wrapper">
+                <div class="resa-form-header">
+                    <span class="eyebrow">Demande rapide</span>
+                    <h3>Formulaire de réservation</h3>
+                    <p>Remplissez les informations ci-dessous pour effectuer une demande de réservation.</p>
+                </div>
+
+                <div class="resa-form-card">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div>
+                            <label for="type_reservation">Type de réservation <span class="required">*</span></label>
+                            <select id="type_reservation" name="type_reservation" required>
+                                <option value="">-- Sélectionnez un type --</option>
+                                <option value="salle">Salle municipale</option>
+                                <option value="sport">Équipement sportif</option>
+                                <option value="rdv">Rendez-vous mairie</option>
+                                <option value="culture">Espace culturel</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div>
+                                <label for="date_reservation">Date souhaitée <span class="required">*</span></label>
+                                <input type="date" id="date_reservation" name="date_reservation" required>
+                            </div>
+
+                            <div>
+                                <label for="creneau">Créneau horaire <span class="required">*</span></label>
+                                <select id="creneau" name="creneau" required>
+                                    <option value="">-- Sélectionnez --</option>
+                                    <option value="matin">Matin (08h00 - 12h00)</option>
+                                    <option value="apres_midi">Après-midi (13h00 - 17h00)</option>
+                                    <option value="soir">Soirée (17h00 - 22h00)</option>
+                                    <option value="journee">Journée complète</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="details">Détails / remarques</label>
+                            <textarea id="details" name="details"
+                                      placeholder="Précisez le nombre de personnes attendues, l'objet de la réservation, etc."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-resa">
+                            Envoyer la demande
+                            <span>→</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
-
-<section class="section-alt" style="margin-top: 72px;">
-    <div class="wrap">
-        <div class="section-title">
-            <h3>Formulaire de réservation rapide</h3>
-            <p>Remplissez les informations ci-dessous pour effectuer une demande de réservation.</p>
-        </div>
-
-        <div class="form-container">
-            <form method="post">
-                {% csrf_token %}
-
-                <div class="input-group">
-                    <label for="type_reservation">Type de réservation <span class="required">*</span></label>
-                    <select id="type_reservation" name="type_reservation" required>
-                        <option value="">-- Sélectionnez un type --</option>
-                        <option value="salle">Salle municipale</option>
-                        <option value="sport">Équipement sportif</option>
-                        <option value="rdv">Rendez-vous mairie</option>
-                        <option value="culture">Espace culturel</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label for="date_reservation">Date souhaitée <span class="required">*</span></label>
-                    <input type="date" id="date_reservation" name="date_reservation" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="creneau">Créneau horaire <span class="required">*</span></label>
-                    <select id="creneau" name="creneau" required>
-                        <option value="">-- Sélectionnez un créneau --</option>
-                        <option value="matin">Matin (08h00 - 12h00)</option>
-                        <option value="apres_midi">Après-midi (13h00 - 17h00)</option>
-                        <option value="soir">Soirée (17h00 - 22h00)</option>
-                        <option value="journee">Journée complète</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label for="details">Détails / remarques</label>
-                    <textarea
-                        id="details"
-                        name="details"
-                        placeholder="Précisez le nombre de personnes attendues, l'objet de la réservation, etc."></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-block">Envoyer la demande</button>
-            </form>
-        </div>
-    </div>
-</section>
 {% endblock %}
 
 {% block footer %}
-<div class="wrap" style="padding-top: 48px; padding-bottom: 48px;">
-    <div class="highlight-box">
-        <h3>Bon à savoir</h3>
-        <p>
-            Toute demande de réservation est soumise à validation par les services
-            de la mairie. Vous recevrez une confirmation par e-mail dans un délai
-            de 48h ouvrées. Pour toute question, contactez le service concerné
-            au 01 23 45 67 89.
-        </p>
-    </div>
+<div class="resa-page">
+    <section class="resa-info">
+        <div class="resa-info-inner">
+            <h3>Validation sous 48h ouvrées</h3>
+            <p>
+                Toute demande de réservation est soumise à validation par les services
+                de la mairie. Vous recevrez une confirmation par e-mail dans un délai
+                de 48h ouvrées. Pour toute question, contactez le service concerné
+                au 01 23 45 67 89.
+            </p>
+        </div>
+    </section>
 </div>
 
 <footer class="site-footer">

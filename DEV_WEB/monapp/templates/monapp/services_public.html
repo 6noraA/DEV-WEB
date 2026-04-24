@@ -1,80 +1,119 @@
 {% extends 'monapp/base.html' %}
+{% load static %}
 
 {% block title %}Services publics - MaVille{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'services_public.css' %}">
+{% endblock %}
+
 {% block hero %}
-<section class="hero compact">
-    <div class="hero-inner">
-        <h2>Services publics</h2>
-        <p>
-            Accédez à l'ensemble des services proposés par votre mairie :
-            démarches administratives, réservations et rendez-vous
-            en ligne en quelques clics.
-        </p>
-    </div>
-</section>
+<div class="services-page">
+    <section class="hero-services">
+        <div class="hero-inner">
+            <div class="ornament">Services de la mairie</div>
+            <h2>Des démarches <em>simplifiées</em>,<br>un service <em>humain</em>.</h2>
+            <p>
+                Accédez à l'ensemble des services proposés par votre mairie :
+                démarches administratives, réservations et rendez-vous
+                en ligne en quelques clics.
+            </p>
+        </div>
+    </section>
+</div>
 {% endblock %}
 
 {% block content %}
-<div class="wrap">
-    <div class="section-title">
-        <h3>Services disponibles</h3>
-        <p>Sélectionnez le service qui correspond à votre besoin.</p>
-    </div>
+<div class="services-page">
+    <section class="services-list-section">
+        <div class="wrap">
+            <div class="section-title">
+                <h3>Services disponibles</h3>
+                <p>Sélectionnez le service qui correspond à votre besoin administratif.</p>
+            </div>
 
-    <ul class="styled-list">
-        <li>Prise de rendez-vous administratif</li>
-        <li>Demandes de documents (état civil, urbanisme, etc.)</li>
-        <li>Réservation d'équipements municipaux</li>
-        <li>Informations sur les démarches citoyennes</li>
-        <li>Inscription aux services périscolaires</li>
-        <li>Demande de permis de construire</li>
-    </ul>
+            <ul class="elegant-list">
+                <li>
+                    <span class="num">01</span>
+                    <span class="label">Prise de rendez-vous administratif</span>
+                </li>
+                <li>
+                    <span class="num">02</span>
+                    <span class="label">Demandes de documents (état civil, urbanisme, etc.)</span>
+                </li>
+                <li>
+                    <span class="num">03</span>
+                    <span class="label">Réservation d'équipements municipaux</span>
+                </li>
+                <li>
+                    <span class="num">04</span>
+                    <span class="label">Informations sur les démarches citoyennes</span>
+                </li>
+                <li>
+                    <span class="num">05</span>
+                    <span class="label">Inscription aux services périscolaires</span>
+                </li>
+                <li>
+                    <span class="num">06</span>
+                    <span class="label">Demande de permis de construire</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="quick-access">
+        <div class="wrap">
+            <div class="qa-heading">
+                <span class="eyebrow">Accès rapide</span>
+                <h3>Les services les plus consultés</h3>
+                <p>Une sélection des démarches les plus demandées par les habitants de la commune.</p>
+            </div>
+
+            <div class="premium-cards">
+                <article class="premium-card">
+                    <div class="card-num">I.</div>
+                    <span class="card-badge">Administratif</span>
+                    <h4>État civil</h4>
+                    <p>Actes de naissance, de mariage, de décès. Toutes les demandes peuvent se faire en ligne, avec récupération en mairie ou par courrier.</p>
+                    <a href="#" class="card-link-s">Faire une demande <span>→</span></a>
+                </article>
+
+                <article class="premium-card">
+                    <div class="card-num">II.</div>
+                    <span class="card-badge">Urbanisme</span>
+                    <h4>Demandes d'urbanisme</h4>
+                    <p>Déclarations préalables, permis de construire et autorisations diverses. Dépôt en ligne ou guichet unique en mairie.</p>
+                    <a href="#" class="card-link-s">Déposer un dossier <span>→</span></a>
+                </article>
+
+                <article class="premium-card">
+                    <div class="card-num">III.</div>
+                    <span class="card-badge">Rendez-vous</span>
+                    <h4>Prise de rendez-vous</h4>
+                    <p>Prenez un rendez-vous en ligne avec les services de la mairie et évitez l'attente au guichet d'accueil.</p>
+                    <a href="#" class="card-link-s">Réserver un créneau <span>→</span></a>
+                </article>
+            </div>
+        </div>
+    </section>
 </div>
-
-<section class="section-alt" style="margin-top: 72px;">
-    <div class="wrap">
-        <div class="section-title">
-            <h3>Accès rapide</h3>
-            <p>Les services les plus consultés par les habitants.</p>
-        </div>
-
-        <div class="cards">
-            <article class="card">
-                <span class="badge">Administratif</span>
-                <h4>État civil</h4>
-                <p>Actes de naissance, de mariage, de décès. Demandes en ligne disponibles.</p>
-                <a href="#" class="card-link">Faire une demande →</a>
-            </article>
-
-            <article class="card">
-                <span class="badge">Urbanisme</span>
-                <h4>Demandes d'urbanisme</h4>
-                <p>Déclarations préalables, permis de construire et autorisations diverses.</p>
-                <a href="#" class="card-link">Déposer un dossier →</a>
-            </article>
-
-            <article class="card">
-                <span class="badge">Rendez-vous</span>
-                <h4>Prise de rendez-vous</h4>
-                <p>Prenez un rendez-vous en ligne avec les services de la mairie.</p>
-                <a href="#" class="card-link">Réserver →</a>
-            </article>
-        </div>
-    </div>
-</section>
 {% endblock %}
 
 {% block footer %}
-<div class="wrap" style="padding-top: 48px; padding-bottom: 48px;">
-    <div class="highlight-box">
-        <h3>Besoin d'aide ?</h3>
-        <p>
-            Un accueil physique est disponible en mairie du lundi au vendredi
-            de 8h30 à 17h30. Vous pouvez également nous contacter par téléphone
-            au 01 23 45 67 89.
-        </p>
-    </div>
+<div class="services-page">
+    <section class="contact-box">
+        <div class="contact-inner">
+            <div class="ornament-small">✦</div>
+            <div>
+                <h3>Besoin d'aide ?</h3>
+                <p>
+                    Un accueil physique est disponible en mairie du lundi au vendredi,
+                    de 8h30 à 17h30. Vous pouvez également nous contacter par téléphone.
+                </p>
+            </div>
+            <div class="contact-phone">01 23 45 67 89</div>
+        </div>
+    </section>
 </div>
 
 <footer class="site-footer">
