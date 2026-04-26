@@ -251,7 +251,7 @@ def changer_niveau(request):
             messages.success(request, f"🎉 Félicitations ! Vous êtes maintenant {labels[niveau_suivant]} !")
         else:
             manque = seuil - personne.points
-            messages.error(request, f"❌ Il vous manque {manque:.2f} pts pour passer au niveau suivant.")
+            messages.error(request, f"❌ Il vous faut {manque:.2f} pts pour passer au niveau suivant.")
 
     return redirect('profil')
 
