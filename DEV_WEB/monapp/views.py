@@ -43,7 +43,7 @@ def modifier_produit(request, id):
 
 def detail_produit(request, id):
     produit = Produit.objects.get(ID=id)
-    return render(request, 'monapp/detail_produit.html', {'produit': produit})
+    return render(request, 'produits/detail_produit.html', {'produit': produit})
 
 def inscription(request):
     if request.method == 'POST':
