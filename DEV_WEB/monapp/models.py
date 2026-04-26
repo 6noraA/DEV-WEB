@@ -6,9 +6,9 @@ class Personne(models.Model) :
   GENRE_CHOIX = [('H','Homme'),
                ('F', 'Femme')]
 
-  TYPE_MEMBRE = [('citoyen','Citoyen'),
-               ('etudiant', 'Etudiant'),
-               ('technicien','Technicien'),
+  TYPE_MEMBRE = [('visiteur','visiteur'),
+               ('simple', 'simple'),
+               ('complexe','complexe'),
                ('administrateur','administrateur')]
   
   user = models.OneToOneField(User, on_delete=models.CASCADE)
