@@ -125,6 +125,15 @@ def edit_profil(request):
 
     return render(request, 'edit_profil.html', {'form': form})
 
+@login_required
+def liste_profils(request):
+    personnes = Personne.objects.all()
+    return render(request, 'liste_profils.html', {'personnes': personnes})
+
+@login_required
+def detail_profil(request, id):
+    personne = Personne.objects.get(id=id)
+    return render(request, 'detail_profil.html', {'personne': personne})
 
     
 
