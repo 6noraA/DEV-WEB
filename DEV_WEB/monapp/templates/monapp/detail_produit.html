@@ -1,0 +1,196 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}{{ produit.Nom }} - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'detail_produit.css' %}">
+{% endblock %}
+
+{% block hero %}
+<section class="detail-hero">
+    <div class="detail-hero-bg"></div>
+    <div class="detail-hero-inner">
+
+        <a href="{% url 'accueil' %}#objets" class="btn-retour">
+            ← Retour aux objets
+        </a>
+
+        <div class="detail-hero-content">
+            <div class="detail-hero-icon">
+                {% if produit.photo %}
+                    <img src="{{ produit.photo.url }}" alt="{{ produit.Nom }}">
+                {% else %}
+                    📡
+                {% endif %}
+            </div>
+
+            <div class="detail-hero-info">
+                <div class="detail-id">ID : {{ produit.ID }}</div>
+                <h2>{{ produit.Nom }}</h2>
+                <p class="detail-lead">{{ produit.Description }}</p>
+
+                <div class="detail-badges">
+                    <span class="etat-badge etat-{{ produit.etat|lower }}">
+                        {% if produit.etat == 'ACTIF' %}🟢
+                        {% elif produit.etat == 'INACTIF' %}⚫
+                        {% elif produit.etat == 'PANNE' %}🔴
+                        {% elif produit.etat == 'MAINTENANCE' %}🟡
+                        {% elif produit.etat == 'DECONNECTE' %}🔵
+                        {% endif %}
+                        {{ produit.etat }}
+                    </span>
+                    <span class="mode-badge">⚙️ {{ produit.mode }}</span>
+                    <span class="marque-badge">🏷️ {{ produit.marque }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+    <div class="wrap">
+
+        {# ── GRILLE DE STATS RAPIDES ── #}
+        <section class="detail-stats-bar">
+            <div class="detail-stat">
+                <div class="detail-stat-icon">🔋</div>
+                <div class="detail-stat-value">{{ produit.Bactterie }}%</div>
+                <div class="detail-stat-label">Batterie</div>
+                <div class="batt-bar">
+                    <div class="batt-fill" id="batt-fill"></div>
+                </div>
+            </div>
+            <div class="detail-stat">
+                <div class="detail-stat-icon">📡</div>
+                <div class="detail-stat-value">{{ produit.Connectiviter_type }}</div>
+                <div class="detail-stat-label">Connectivité</div>
+            </div>
+            <div class="detail-stat">
+                <div class="detail-stat-icon">🌐</div>
+                <div class="detail-stat-value">{{ produit.Adresse_IP }}</div>
+                <div class="detail-stat-label">Adresse IP</div>
+            </div>
+            <div class="detail-stat">
+                <div class="detail-stat-icon">🔧</div>
+                <div class="detail-stat-value">{{ produit.Date_dernier_maintenance }}</div>
+                <div class="detail-stat-label">Dernière maintenance</div>
+            </div>
+        </section>
+
+        {# ── CONTENU PRINCIPAL ── #}
+        <div class="detail-grid">
+
+            {# Carte infos principales #}
+            <section class="detail-card">
+                <div class="detail-card-header">
+                    <h3>📋 Informations générales</h3>
+                </div>
+                <div class="detail-card-body">
+                    <div class="detail-row">
+                        <span class="detail-key">Identifiant unique</span>
+                        <span class="detail-val mono">{{ produit.ID }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Nom</span>
+                        <span class="detail-val">{{ produit.Nom }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Marque</span>
+                        <span class="detail-val">{{ produit.marque }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">État actuel</span>
+                        <span class="detail-val">
+                            <span class="etat-badge etat-{{ produit.etat|lower }}">
+                                {{ produit.etat }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Mode de fonctionnement</span>
+                        <span class="detail-val">{{ produit.mode }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Description</span>
+                        <span class="detail-val">{{ produit.Description }}</span>
+                    </div>
+                </div>
+            </section>
+
+            {# Carte connectivité #}
+            <section class="detail-card">
+                <div class="detail-card-header">
+                    <h3>🔗 Connectivité & Réseau</h3>
+                </div>
+                <div class="detail-card-body">
+                    <div class="detail-row">
+                        <span class="detail-key">Type de connectivité</span>
+                        <span class="detail-val">{{ produit.Connectiviter_type }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Adresse IP</span>
+                        <span class="detail-val mono">{{ produit.Adresse_IP }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Niveau de batterie</span>
+                        <span class="detail-val">
+                            {{ produit.Bactterie }}%
+                            <div class="batt-bar inline-batt">
+                                <div class="batt-fill" style="width: {{ produit.Bactterie }}%; background: {% if produit.Bactterie > 60 %}#22c55e{% elif produit.Bactterie > 30 %}#f59e0b{% else %}#ef4444{% endif %}"></div>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            {# Carte dates #}
+            <section class="detail-card">
+                <div class="detail-card-header">
+                    <h3>📅 Historique & Dates</h3>
+                </div>
+                <div class="detail-card-body">
+                    <div class="detail-row">
+                        <span class="detail-key">Dernière utilisation</span>
+                        <span class="detail-val">{{ produit.Date_dernier_utilisation }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Dernière maintenance</span>
+                        <span class="detail-val">{{ produit.Date_dernier_maintenance }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Durée de vie restante</span>
+                        <span class="detail-val">Jusqu'au {{ produit.Temp_restante }}</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        {# ── BOUTONS D'ACTION ── #}
+        <div class="detail-actions">
+            <a href="{% url 'accueil' %}#objets" class="btn-action btn-secondary">
+                ← Retour à la liste
+            </a>
+            {% if user.is_authenticated %}
+                {% if user.personne.niveau == 'avance' or user.personne.niveau == 'expert' %}
+                    <a href="{% url 'modifier_produit' produit.ID %}" class="btn-action btn-primary">
+                        ✏️ Modifier cet objet
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}

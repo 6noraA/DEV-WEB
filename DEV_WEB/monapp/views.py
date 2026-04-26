@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .form import ProduitForm, InscriptionForm, PersonneForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q
 
 from .models import Produit, Personne
 
@@ -42,7 +43,7 @@ def modifier_produit(request, id):
 
 def detail_produit(request, id):
     produit = Produit.objects.get(ID=id)
-    return render(request, 'produits/detail_produit.html', {'produit': produit})
+    return render(request, 'monapp/detail_produit.html', {'produit': produit})
 
 def inscription(request):
     if request.method == 'POST':
@@ -76,7 +77,35 @@ def inscription(request):
     })
 
 def accueil(request):
-    return render(request, 'monapp/accueil.html', {'page_active': 'accueil'})
+    # Récupération des filtres depuis l'URL (?q=...&etat=...&marque=...)
+    q      = request.GET.get('q', '').strip()
+    etat   = request.GET.get('etat', '')
+    marque = request.GET.get('marque', '')
+
+    produits = Produit.objects.all()
+
+    if q:
+        produits = produits.filter(
+            Q(Nom__icontains=q) | Q(Description__icontains=q)
+        )
+    if etat:
+        produits = produits.filter(etat=etat)
+    if marque:
+        produits = produits.filter(marque__icontains=marque)
+
+    # Valeurs distinctes pour les filtres dropdown
+    etats   = Produit.objects.values_list('etat', flat=True).distinct()
+    marques = Produit.objects.values_list('marque', flat=True).distinct()
+
+    return render(request, 'monapp/accueil.html', {
+        'page_active': 'accueil',
+        'produits'   : produits,
+        'etats'      : etats,
+        'marques'    : marques,
+        'q'          : q,
+        'etat_selectionne'  : etat,
+        'marque_selectionnee': marque,
+    })
 
 def transport(request):
     return render(request, 'monapp/transport.html', {'page_active': 'transport'})
@@ -145,12 +174,10 @@ def edit_profil(request):
     user = request.user
 
     if request.method == 'POST':
-        # Sauvegarde des champs Personne (age, sexe, photo, date_naissance, type_membre)
         form = PersonneForm(request.POST, request.FILES, instance=personne)
         if form.is_valid():
             form.save()
 
-            # Sauvegarde des champs User (username, nom, prénom)
             nouveau_username = request.POST.get('username', '').strip()
             nouveau_nom      = request.POST.get('last_name', '').strip()
             nouveau_prenom   = request.POST.get('first_name', '').strip()
@@ -164,7 +191,6 @@ def edit_profil(request):
             messages.success(request, '✓ Votre profil a bien été mis à jour.')
             return redirect('profil')
 
-    # Si GET ou formulaire invalide, on retourne sur le profil
     return redirect('profil')
 
 @login_required

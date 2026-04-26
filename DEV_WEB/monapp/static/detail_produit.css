@@ -1,0 +1,353 @@
+/* ================================================================
+   MaVille — Page Détail Produit (detail_produit.css)
+   ================================================================ */
+
+/* ── HERO ──────────────────────────────────────────────────────── */
+.detail-hero {
+  position: relative;
+  min-height: 55vh;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.detail-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(37, 99, 235, 0.5) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(124, 58, 237, 0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%);
+  z-index: -1;
+}
+
+.detail-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.detail-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 28px 60px;
+  width: 100%;
+}
+
+.btn-retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 100px;
+  color: rgba(255,255,255,0.85);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s;
+  margin-bottom: 36px;
+}
+.btn-retour:hover {
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+}
+
+.detail-hero-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.detail-hero-icon {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+.detail-hero-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-hero-info { flex: 1; }
+
+.detail-id {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  font-family: 'Courier New', monospace;
+  margin-bottom: 10px;
+}
+
+.detail-hero-info h2 {
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.detail-lead {
+  font-size: 16px;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.65;
+  max-width: 640px;
+  margin-bottom: 24px;
+}
+
+.detail-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Badges état */
+.etat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.etat-badge.etat-actif       { background: #dcfce7; color: #166534; }
+.etat-badge.etat-inactif     { background: #f1f5f9; color: #475569; }
+.etat-badge.etat-panne       { background: #fee2e2; color: #991b1b; }
+.etat-badge.etat-maintenance { background: #fef9c3; color: #854d0e; }
+.etat-badge.etat-deconnecte  { background: #dbeafe; color: #1e40af; }
+
+.mode-badge, .marque-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* ── BARRE DE STATS ─────────────────────────────────────────────── */
+.detail-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: #0f172a;
+  border-radius: 20px;
+  margin: -30px 0 48px;
+  box-shadow: 0 20px 50px rgba(15,23,42,0.2);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+.detail-stat {
+  padding: 28px 24px;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  color: #fff;
+}
+.detail-stat:last-child { border-right: none; }
+
+.detail-stat-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+.detail-stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+  word-break: break-all;
+}
+.detail-stat-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+/* Barre batterie */
+.batt-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 100px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.batt-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 1s ease;
+  background: #22c55e;
+}
+.inline-batt {
+  display: block;
+  margin-top: 8px;
+  background: #e2e8f0;
+}
+
+/* ── PAGE PRINCIPALE ────────────────────────────────────────────── */
+.detail-page {
+  padding: 0 0 80px;
+  background: #f8fafc;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* Première carte prend toute la largeur */
+.detail-grid .detail-card:first-child {
+  grid-column: 1 / -1;
+}
+
+/* ── CARTES ─────────────────────────────────────────────────────── */
+.detail-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.05);
+  overflow: hidden;
+}
+
+.detail-card-header {
+  padding: 20px 28px;
+  border-bottom: 1.5px solid #f1f5f9;
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+}
+.detail-card-header h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.detail-card-body { padding: 8px 0; }
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 28px;
+  border-bottom: 1px solid #f8fafc;
+  transition: background 0.2s;
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-row:hover { background: #f8fafc; }
+
+.detail-key {
+  flex-shrink: 0;
+  width: 200px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-top: 2px;
+}
+.detail-val {
+  flex: 1;
+  font-size: 15px;
+  color: #0f172a;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.detail-val.mono,
+.mono {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* ── ACTIONS ────────────────────────────────────────────────────── */
+.detail-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.25s;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(37,99,235,0.35);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(37,99,235,0.45);
+}
+.btn-secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1.5px solid #e2e8f0;
+}
+.btn-secondary:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .detail-hero-content { flex-direction: column; text-align: center; }
+  .detail-hero-icon { width: 90px; height: 90px; font-size: 38px; }
+  .detail-badges { justify-content: center; }
+  .detail-stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .detail-stat { border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .detail-grid { grid-template-columns: 1fr; }
+  .detail-grid .detail-card:first-child { grid-column: 1; }
+  .detail-key { width: 140px; }
+}
+@media (max-width: 600px) {
+  .detail-stats-bar { grid-template-columns: 1fr 1fr; }
+  .detail-row { flex-direction: column; gap: 6px; }
+  .detail-key { width: 100%; }
+}

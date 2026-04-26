@@ -9,7 +9,6 @@
 
 {% block hero %}
 <section class="hero-cinema accueil">
-    {# ---------- VIDÉO DE VILLE EN BACKGROUND ---------- #}
     <video class="hero-video" autoplay muted loop playsinline
            poster="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=2400&q=80">
         <source src="https://cdn.pixabay.com/video/2020/03/29/34648-403592190_large.mp4" type="video/mp4">
@@ -51,7 +50,6 @@
     </div>
 </section>
 
-{# ---------- BARRE DE STATS LIVE ---------- #}
 <section class="city-stats accueil">
     <div class="wrap">
         <div class="stats-grid">
@@ -79,7 +77,7 @@
 {% block content %}
 <div class="accueil">
 
-    {# ---------- RECHERCHE AVEC 2 FILTRES ---------- #}
+    {# ---------- RECHERCHE SERVICES ---------- #}
     <section class="search-section" id="recherche">
         <div class="wrap">
             <div class="search-hero">
@@ -137,96 +135,72 @@
                 <article class="service-card card-transport"
                          data-category="transport"
                          data-keywords="transport bus métro vélo stationnement horaires trafic">
-                    <div class="card-image">
-                        <span class="card-badge">Transports</span>
-                    </div>
+                    <div class="card-image"><span class="card-badge">Transports</span></div>
                     <div class="card-icon-float">🚌</div>
                     <div class="card-body">
                         <h4>Transports</h4>
                         <p>Horaires, itinéraires, état du trafic et informations utiles pour vos déplacements quotidiens.</p>
-                        <a href="{% url 'transport' %}" class="card-link">
-                            En savoir plus <span>→</span>
-                        </a>
+                        <a href="{% url 'transport' %}" class="card-link">En savoir plus <span>→</span></a>
                     </div>
                 </article>
 
                 <article class="service-card card-incident"
                          data-category="incident"
                          data-keywords="incident signalement éclairage voirie encombrants problème urbain">
-                    <div class="card-image">
-                        <span class="card-badge">Signalement</span>
-                    </div>
+                    <div class="card-image"><span class="card-badge">Signalement</span></div>
                     <div class="card-icon-float">⚠️</div>
                     <div class="card-body">
                         <h4>Signaler un incident</h4>
                         <p>Déclarez rapidement un problème urbain : éclairage, voirie, encombrants ou autre situation.</p>
-                        <a href="{% url 'incident' %}" class="card-link">
-                            Signaler <span>→</span>
-                        </a>
+                        <a href="{% url 'incident' %}" class="card-link">Signaler <span>→</span></a>
                     </div>
                 </article>
 
                 <article class="service-card card-info"
                          data-category="info"
                          data-keywords="informations locales actualités événements commune annonces">
-                    <div class="card-image">
-                        <span class="card-badge">Actualités</span>
-                    </div>
+                    <div class="card-image"><span class="card-badge">Actualités</span></div>
                     <div class="card-icon-float">📰</div>
                     <div class="card-body">
                         <h4>Informations locales</h4>
                         <p>Actualités de la commune, événements à venir et annonces importantes pour les habitants.</p>
-                        <a href="{% url 'info-locale' %}" class="card-link">
-                            Voir les infos <span>→</span>
-                        </a>
+                        <a href="{% url 'info-locale' %}" class="card-link">Voir les infos <span>→</span></a>
                     </div>
                 </article>
 
                 <article class="service-card card-service"
                          data-category="service"
                          data-keywords="services publics mairie démarches administratives">
-                    <div class="card-image">
-                        <span class="card-badge">Administration</span>
-                    </div>
+                    <div class="card-image"><span class="card-badge">Administration</span></div>
                     <div class="card-icon-float">🏛️</div>
                     <div class="card-body">
                         <h4>Services publics</h4>
                         <p>Accédez facilement aux démarches et services proposés par la mairie de votre ville.</p>
-                        <a href="{% url 'services-public' %}" class="card-link">
-                            Accéder <span>→</span>
-                        </a>
+                        <a href="{% url 'services-public' %}" class="card-link">Accéder <span>→</span></a>
                     </div>
                 </article>
 
                 <article class="service-card card-reservation"
                          data-category="reservation"
                          data-keywords="réservation équipement salle sport rendez-vous administratif">
-                    <div class="card-image">
-                        <span class="card-badge">Réservation</span>
-                    </div>
+                    <div class="card-image"><span class="card-badge">Réservation</span></div>
                     <div class="card-icon-float">📅</div>
                     <div class="card-body">
                         <h4>Réservations</h4>
                         <p>Réservez des équipements ou services : salles, infrastructures sportives ou rendez-vous.</p>
-                        <a href="{% url 'reservation' %}" class="card-link">
-                            Réserver <span>→</span>
-                        </a>
+                        <a href="{% url 'reservation' %}" class="card-link">Réserver <span>→</span></a>
                     </div>
                 </article>
 
                 <article class="service-card card-citoyen"
                          data-category="citoyen"
                          data-keywords="vie citoyenne ville lien habitant espace consultations associations bénévolat">
-                    <div class="card-image">
-                        <span class="card-badge">Communauté</span>
-                    </div>
+                    <div class="card-image"><span class="card-badge">Communauté</span></div>
                     <div class="card-icon-float">🤝</div>
                     <div class="card-body">
                         <h4>Vie citoyenne</h4>
                         <p>Renforcez votre lien avec la ville grâce à un espace centralisé et accessible à tous.</p>
-                        <a href="{% url 'vie-citoyenne' %}" class="card-link">
-                            Découvrir <span>→</span>
-                        </a>
+                        <a href="{% url 'vie-citoyenne' %}" class="card-link">Découvrir <span>→</span></a>
                     </div>
                 </article>
 
@@ -238,7 +212,134 @@
         </div>
     </section>
 
-    {# ---------- CTA FINAL AVEC PARALLAX ---------- #}
+    {# ========== SECTION OBJETS CONNECTÉS (visible uniquement si connecté) ========== #}
+    {% if user.is_authenticated %}
+    <section class="objets-section" id="objets">
+        <div class="wrap">
+
+            <div class="section-heading reveal">
+                <span class="eyebrow">Objets connectés</span>
+                <h3>Les équipements de votre ville</h3>
+                <p>Consultez et suivez l'état des objets connectés enregistrés sur la plateforme.</p>
+            </div>
+
+            {# --- Formulaire de recherche avec 2 filtres (GET) --- #}
+            <form class="objets-search-form" method="GET" action="{% url 'accueil' %}#objets">
+                <div class="objets-search-box">
+
+                    <div class="field">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" name="q" placeholder="Nom ou description de l'objet..."
+                               value="{{ q }}">
+                    </div>
+
+                    <div class="field">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18M7 12h10M10 18h4"></path>
+                        </svg>
+                        <select name="etat">
+                            <option value="">Tous les états</option>
+                            {% for e in etats %}
+                                <option value="{{ e }}" {% if e == etat_selectionne %}selected{% endif %}>
+                                    {{ e }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+                            <path d="M16 3H8l-2 4h12z"></path>
+                        </svg>
+                        <select name="marque">
+                            <option value="">Toutes les marques</option>
+                            {% for m in marques %}
+                                <option value="{{ m }}" {% if m == marque_selectionnee %}selected{% endif %}>
+                                    {{ m }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-search">Filtrer</button>
+
+                    {% if q or etat_selectionne or marque_selectionnee %}
+                        <a href="{% url 'accueil' %}#objets" class="btn-reset">✕ Réinitialiser</a>
+                    {% endif %}
+                </div>
+            </form>
+
+            {# --- Grille des objets --- #}
+            {% if produits %}
+                <div class="objets-grid">
+                    {% for produit in produits %}
+                    <article class="objet-card">
+
+                        <div class="objet-card-header">
+                            {% if produit.photo %}
+                                <img src="{{ produit.photo.url }}" alt="{{ produit.Nom }}" class="objet-img">
+                            {% else %}
+                                <div class="objet-img-placeholder">📡</div>
+                            {% endif %}
+
+                            <span class="etat-badge etat-{{ produit.etat|lower }}">
+                                {% if produit.etat == 'ACTIF' %}🟢
+                                {% elif produit.etat == 'INACTIF' %}⚫
+                                {% elif produit.etat == 'PANNE' %}🔴
+                                {% elif produit.etat == 'MAINTENANCE' %}🟡
+                                {% elif produit.etat == 'DECONNECTE' %}🔵
+                                {% endif %}
+                                {{ produit.etat }}
+                            </span>
+                        </div>
+
+                        <div class="objet-card-body">
+                            <h4>{{ produit.Nom }}</h4>
+                            <p class="objet-id">ID : {{ produit.ID }}</p>
+                            <p class="objet-desc">{{ produit.Description|truncatechars:80 }}</p>
+
+                            <div class="objet-meta">
+                                <span>🏷️ {{ produit.marque }}</span>
+                                <span>🔋 {{ produit.Bactterie }}%</span>
+                                <span>⚙️ {{ produit.mode }}</span>
+                            </div>
+                        </div>
+
+                        <div class="objet-card-footer">
+                            <a href="{% url 'detail_produit' produit.ID %}" class="card-link">
+                                Voir le détail <span>→</span>
+                            </a>
+                        </div>
+
+                    </article>
+                    {% endfor %}
+                </div>
+
+                <p class="objets-count">
+                    {{ produits|length }} objet(s) trouvé(s)
+                    {% if q or etat_selectionne or marque_selectionnee %}
+                        pour votre recherche
+                    {% endif %}
+                </p>
+
+            {% else %}
+                <div class="objets-empty">
+                    <span>🔌</span>
+                    <p>Aucun objet connecté ne correspond à votre recherche.</p>
+                    <a href="{% url 'accueil' %}#objets" class="card-link">Voir tous les objets →</a>
+                </div>
+            {% endif %}
+
+        </div>
+    </section>
+    {% endif %}
+    {# ========== FIN SECTION OBJETS CONNECTÉS ========== #}
+
+    {# ---------- CTA FINAL ---------- #}
     <section class="cta-parallax accueil">
         <div class="wrap">
             <h3>Une ville plus simple, plus connectée.</h3>
@@ -274,11 +375,11 @@
 
 {% block scripts %}
 <script>
-    /* ================ FILTRAGE RECHERCHE ================ */
+    /* ================ FILTRAGE SERVICES ================ */
     function filtrerServices() {
-        const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
+        const keyword  = document.getElementById('search-keyword').value.trim().toLowerCase();
         const category = document.getElementById('search-category').value;
-        const cards = document.querySelectorAll('#services-list .service-card');
+        const cards    = document.querySelectorAll('#services-list .service-card');
         const noResult = document.getElementById('no-result');
         const resultInfo = document.getElementById('search-result-info');
 
@@ -287,12 +388,12 @@
         cards.forEach(card => {
             const cardCategory = card.dataset.category;
             const cardKeywords = (card.dataset.keywords || '').toLowerCase();
-            const cardText = card.textContent.toLowerCase();
+            const cardText     = card.textContent.toLowerCase();
 
             const matchCategory = (category === 'all') || (cardCategory === category);
-            const matchKeyword = (keyword === '') ||
-                                 cardKeywords.includes(keyword) ||
-                                 cardText.includes(keyword);
+            const matchKeyword  = (keyword === '') ||
+                                  cardKeywords.includes(keyword) ||
+                                  cardText.includes(keyword);
 
             if (matchCategory && matchKeyword) {
                 card.style.display = '';
@@ -316,15 +417,13 @@
 
     /* ================ ANIMATION COMPTEURS ================ */
     function animateCounter(el, target, duration = 2000) {
-        const start = 0;
         const startTime = performance.now();
         const format = n => n.toLocaleString('fr-FR');
 
         function update(now) {
             const progress = Math.min((now - startTime) / duration, 1);
             const ease = 1 - Math.pow(1 - progress, 3);
-            const current = Math.floor(start + (target - start) * ease);
-            el.textContent = format(current);
+            el.textContent = format(Math.floor(target * ease));
             if (progress < 1) requestAnimationFrame(update);
         }
         requestAnimationFrame(update);
@@ -335,13 +434,9 @@
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('in-view');
-
-                // Lance les compteurs quand on voit la barre de stats
                 if (entry.target.classList.contains('stat-number')) {
                     const target = parseInt(entry.target.dataset.target);
-                    if (!isNaN(target)) {
-                        animateCounter(entry.target, target);
-                    }
+                    if (!isNaN(target)) animateCounter(entry.target, target);
                     observer.unobserve(entry.target);
                 }
             }
@@ -352,7 +447,7 @@
         observer.observe(el);
     });
 
-    /* ================ PARALLAX DOUX DU HERO ================ */
+    /* ================ PARALLAX HERO ================ */
     const hero = document.querySelector('.hero-cinema .hero-inner');
     window.addEventListener('scroll', () => {
         const scrolled = window.scrollY;
