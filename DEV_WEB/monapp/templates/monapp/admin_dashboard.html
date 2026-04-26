@@ -1,0 +1,443 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Administration - MaVille{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ── HERO ── */
+.admin-hero {
+  position: relative;
+  min-height: 38vh;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+.admin-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(239,68,68,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(124,58,237,0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #0f172a 0%, #450a0a 40%, #1e3a8a 100%);
+  z-index: -1;
+}
+.admin-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.admin-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 28px;
+  width: 100%;
+}
+.admin-hero h2 {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+}
+.admin-hero p { font-size: 16px; color: rgba(255,255,255,0.72); }
+
+/* ── PAGE ── */
+.admin-page { padding: 48px 0 80px; background: #f8fafc; }
+
+/* Messages */
+.admin-messages { margin-bottom: 24px; }
+.admin-msg {
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.admin-msg.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+.admin-msg.error   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+/* Stats */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.admin-stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1.5px solid #e2e8f0;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(15,23,42,0.05);
+}
+.admin-stat-card .stat-icon { font-size: 28px; margin-bottom: 8px; }
+.admin-stat-card .stat-val  { font-size: 28px; font-weight: 900; color: #0f172a; line-height: 1; }
+.admin-stat-card .stat-lbl  { font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 4px; }
+
+/* Tableau */
+.admin-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.06);
+  overflow: hidden;
+}
+.admin-card-header {
+  padding: 20px 28px;
+  border-bottom: 1.5px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.admin-card-header h3 { font-size: 17px; font-weight: 800; color: #0f172a; }
+
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th {
+  padding: 14px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+.admin-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #0f172a;
+  vertical-align: middle;
+}
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tr:hover td { background: #fafafa; }
+
+/* Avatar inline */
+.user-cell { display: flex; align-items: center; gap: 12px; }
+.user-avatar-sm {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 15px; font-weight: 900;
+}
+.user-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+.user-name { font-weight: 700; }
+.user-email { font-size: 12px; color: #94a3b8; }
+
+/* Badges */
+.niveau-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.05em;
+}
+.niveau-pill.debutant     { background: #dcfce7; color: #166534; }
+.niveau-pill.intermediaire{ background: #fef9c3; color: #854d0e; }
+.niveau-pill.avance       { background: #ffedd5; color: #9a3412; }
+.niveau-pill.expert       { background: #fef3c7; color: #78350f; border: 1px solid #f59e0b; }
+
+.statut-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 700;
+}
+.statut-pill.actif  { background: #dcfce7; color: #166534; }
+.statut-pill.banni  { background: #fee2e2; color: #991b1b; }
+
+/* Actions */
+.actions-cell { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.btn-ban {
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  border: none; font-family: inherit; transition: all 0.2s;
+}
+.btn-ban.suspend { background: #fef9c3; color: #854d0e; }
+.btn-ban.suspend:hover { background: #fde047; }
+.btn-ban.reactive { background: #dcfce7; color: #166534; }
+.btn-ban.reactive:hover { background: #86efac; }
+.btn-ban.delete { background: #fee2e2; color: #991b1b; }
+.btn-ban.delete:hover { background: #fca5a5; }
+.btn-ban:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Modal de confirmation */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 0 25px 60px rgba(15,23,42,0.2);
+}
+.modal-box h4 { font-size: 20px; font-weight: 900; color: #0f172a; margin-bottom: 10px; }
+.modal-box p  { font-size: 14px; color: #64748b; margin-bottom: 20px; line-height: 1.55; }
+.modal-box textarea {
+  width: 100%; padding: 12px; border: 1.5px solid #e2e8f0;
+  border-radius: 10px; font-size: 14px; font-family: inherit;
+  resize: vertical; min-height: 80px; margin-bottom: 20px;
+  outline: none; box-sizing: border-box;
+}
+.modal-box textarea:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+.modal-cancel {
+  padding: 10px 20px; background: #f1f5f9; color: #475569;
+  border-radius: 10px; font-size: 14px; font-weight: 700;
+  border: none; cursor: pointer; font-family: inherit;
+}
+.modal-confirm {
+  padding: 10px 20px; border-radius: 10px; font-size: 14px;
+  font-weight: 700; border: none; cursor: pointer; font-family: inherit;
+  color: #fff;
+}
+.modal-confirm.ban    { background: #f59e0b; }
+.modal-confirm.delete { background: #ef4444; }
+
+@media (max-width: 768px) {
+  .admin-table th:nth-child(3),
+  .admin-table td:nth-child(3) { display: none; }
+}
+</style>
+{% endblock %}
+
+{% block hero %}
+<section class="admin-hero">
+    <div class="admin-hero-bg"></div>
+    <div class="admin-hero-inner">
+        <div class="hero-badge" style="margin-bottom: 20px;">
+            <span class="pulse"></span>
+            <span>Accès administrateur · Niveau Expert</span>
+        </div>
+        <h2>🛡️ Tableau de bord Admin</h2>
+        <p>Gérez les utilisateurs de la plateforme MaVille.</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+    <div class="wrap">
+
+        {# Messages #}
+        {% if messages %}
+        <div class="admin-messages">
+            {% for message in messages %}
+                <div class="admin-msg {% if 'erreur' in message.tags or 'error' in message.tags %}error{% else %}success{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {# Stats rapides #}
+        <div class="admin-stats">
+            <div class="admin-stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-val">{{ membres|length }}</div>
+                <div class="stat-lbl">Membres total</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-val">{{ membres|length }}</div>
+                <div class="stat-lbl">Comptes actifs</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-val">{% for m in membres %}{% if m.niveau == 'expert' %}{{ forloop.counter }}{% endif %}{% endfor %}</div>
+                <div class="stat-lbl">Experts</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="stat-icon">⛔</div>
+                <div class="stat-val" id="banned-count">0</div>
+                <div class="stat-lbl">Bannis</div>
+            </div>
+        </div>
+
+        {# Tableau utilisateurs #}
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3>👤 Gestion des utilisateurs</h3>
+                <span style="font-size:13px; color:#94a3b8;">{{ membres|length }} membre(s)</span>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Niveau</th>
+                        <th>Points</th>
+                        <th>Connexions</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for membre in membres %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar-sm">
+                                    {% if membre.photo %}
+                                        <img src="{{ membre.photo.url }}" alt="{{ membre.user.username }}">
+                                    {% else %}
+                                        {{ membre.user.username|first|upper }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="user-name">
+                                        {{ membre.user.username }}
+                                        {% if membre.user == request.user %}
+                                            <span style="font-size:10px; color:#2563eb; font-weight:700;">(vous)</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="user-email">{{ membre.user.email|default:"—" }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="niveau-pill {{ membre.niveau }}">
+                                {% if membre.niveau == 'debutant' %}🌱 Débutant
+                                {% elif membre.niveau == 'intermediaire' %}⚡ Intermédiaire
+                                {% elif membre.niveau == 'avance' %}🔥 Avancé
+                                {% elif membre.niveau == 'expert' %}🏆 Expert
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td><strong>{{ membre.points|floatformat:2 }}</strong></td>
+                        <td>{{ membre.nb_connexions }}</td>
+                        <td>
+                            {% if membre.user.is_active %}
+                                <span class="statut-pill actif">🟢 Actif</span>
+                            {% else %}
+                                <span class="statut-pill banni">🔴 Banni</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                {% if membre.user != request.user and membre.niveau != 'expert' %}
+                                    {% if membre.user.is_active %}
+                                        {# Bouton Bannir #}
+                                        <button class="btn-ban suspend"
+                                                onclick="openModal('ban', {{ membre.user.id }}, '{{ membre.user.username }}')">
+                                            ⛔ Bannir
+                                        </button>
+                                    {% else %}
+                                        {# Bouton Réactiver #}
+                                        <form method="POST" action="{% url 'reactiver_utilisateur' membre.user.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-ban reactive">✅ Réactiver</button>
+                                        </form>
+                                    {% endif %}
+
+                                    {# Bouton Supprimer #}
+                                    <button class="btn-ban delete"
+                                            onclick="openModal('delete', {{ membre.user.id }}, '{{ membre.user.username }}')">
+                                        🗑️ Supprimer
+                                    </button>
+                                {% else %}
+                                    <span style="font-size:12px; color:#94a3b8; font-style:italic;">—</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{# ── Modal Bannir ── #}
+<div class="modal-overlay" id="modal-ban">
+    <div class="modal-box">
+        <h4>⛔ Bannir l'utilisateur</h4>
+        <p>Vous allez suspendre le compte de <strong id="ban-username"></strong>. Un e-mail de notification lui sera envoyé.</p>
+        <form method="POST" id="form-ban">
+            {% csrf_token %}
+            <textarea name="raison" placeholder="Raison du bannissement (optionnel)..."></textarea>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" onclick="closeModal('ban')">Annuler</button>
+                <button type="submit" class="modal-confirm ban">⛔ Confirmer le bannissement</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ── Modal Supprimer ── #}
+<div class="modal-overlay" id="modal-delete">
+    <div class="modal-box">
+        <h4>🗑️ Supprimer le compte</h4>
+        <p>Vous allez <strong>supprimer définitivement</strong> le compte de <strong id="delete-username"></strong>. Cette action est irréversible. Un e-mail sera envoyé.</p>
+        <form method="POST" id="form-delete">
+            {% csrf_token %}
+            <textarea name="raison" placeholder="Raison de la suppression (optionnel)..."></textarea>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" onclick="closeModal('delete')">Annuler</button>
+                <button type="submit" class="modal-confirm delete">🗑️ Supprimer définitivement</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openModal(type, userId, username) {
+    if (type === 'ban') {
+        document.getElementById('ban-username').textContent = username;
+        document.getElementById('form-ban').action = `/admin-dashboard/bannir/${userId}/`;
+        document.getElementById('modal-ban').classList.add('open');
+    } else {
+        document.getElementById('delete-username').textContent = username;
+        document.getElementById('form-delete').action = `/admin-dashboard/supprimer/${userId}/`;
+        document.getElementById('modal-delete').classList.add('open');
+    }
+}
+
+function closeModal(type) {
+    document.getElementById(`modal-${type}`).classList.remove('open');
+}
+
+// Fermer en cliquant en dehors
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+    });
+});
+
+// Compter les bannis
+const bannedCount = document.querySelectorAll('.statut-pill.banni').length;
+document.getElementById('banned-count').textContent = bannedCount;
+</script>
+{% endblock %}

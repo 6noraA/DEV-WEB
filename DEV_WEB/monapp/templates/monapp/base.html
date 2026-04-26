@@ -22,8 +22,17 @@
                     <li><a href="{% url 'services-public' %}" class="{% if page_active == 'services-public' %}active{% endif %}">Services publics</a></li>
                     <li><a href="{% url 'info-locale' %}" class="{% if page_active == 'info-locale' %}active{% endif %}">Infos locales</a></li>
 
-                    {# ---------- Connexion / Profil / Déconnexion ---------- #}
                     {% if user.is_authenticated %}
+                        {# Lien admin uniquement pour les experts #}
+                        {% if user.personne.niveau == 'expert' %}
+                            <li>
+                                <a href="{% url 'admin_dashboard' %}"
+                                   class="{% if page_active == 'admin' %}active{% endif %}"
+                                   style="color: #f59e0b; font-weight: 800;">
+                                    🛡️ Admin
+                                </a>
+                            </li>
+                        {% endif %}
                         <li>
                             <a href="{% url 'profil' %}" class="{% if page_active == 'profil' %}active{% endif %}">
                                 Mon profil
