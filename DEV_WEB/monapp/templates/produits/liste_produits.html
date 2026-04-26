@@ -1,0 +1,383 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Objets connectés - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'detail_produit.css' %}">
+<style>
+.liste-hero {
+  position: relative;
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+.liste-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(37,99,235,0.5) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(124,58,237,0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%);
+  z-index: -1;
+}
+.liste-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.liste-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 28px;
+  width: 100%;
+}
+.liste-hero h2 {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 14px;
+}
+.liste-hero p {
+  font-size: 17px;
+  color: rgba(255,255,255,0.75);
+  max-width: 560px;
+  line-height: 1.65;
+  margin-bottom: 28px;
+}
+.liste-hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Recherche */
+.liste-search {
+  background: #f8fafc;
+  padding: 32px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.liste-search-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 8px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.08);
+}
+.liste-search-box .field {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-right: 1px solid #e2e8f0;
+}
+.liste-search-box .field:last-of-type { border-right: none; }
+.liste-search-box .field svg {
+  width: 18px; height: 18px;
+  color: #94a3b8;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+.liste-search-box input,
+.liste-search-box select {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  font-size: 14px !important;
+  color: #0f172a !important;
+  width: 100%;
+}
+
+/* Grille */
+.liste-section {
+  padding: 48px 0 80px;
+  background: #f8fafc;
+}
+.liste-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.liste-header h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.liste-count {
+  font-size: 14px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+.produits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+.produit-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.produit-card:hover {
+  transform: translateY(-6px);
+  border-color: #bfdbfe;
+  box-shadow: 0 16px 40px rgba(37,99,235,0.12);
+}
+.produit-card-header {
+  position: relative;
+  height: 150px;
+  background: linear-gradient(135deg, #1e3a8a, #312e81);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
+.produit-card-header img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.produit-etat {
+  position: absolute;
+  top: 10px; right: 10px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+.produit-etat.etat-actif       { background: rgba(220,252,231,0.95); color: #166534; }
+.produit-etat.etat-inactif     { background: rgba(241,245,249,0.95); color: #475569; }
+.produit-etat.etat-panne       { background: rgba(254,226,226,0.95); color: #991b1b; }
+.produit-etat.etat-maintenance { background: rgba(254,249,195,0.95); color: #854d0e; }
+.produit-etat.etat-deconnecte  { background: rgba(219,234,254,0.95); color: #1e40af; }
+
+.produit-card-body { padding: 20px; flex: 1; }
+.produit-card-body h4 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+.produit-card-body .pid {
+  font-size: 11px;
+  color: #94a3b8;
+  font-family: monospace;
+  margin-bottom: 10px;
+}
+.produit-card-body p {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+.produit-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.produit-meta span {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: #475569;
+  font-weight: 600;
+}
+.produit-card-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 10px;
+}
+.btn-voir {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-voir:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-modifier {
+  padding: 10px 14px;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1.5px solid #e2e8f0;
+}
+.btn-modifier:hover { background: #e2e8f0; color: #0f172a; }
+
+.liste-empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: #fff;
+  border-radius: 20px;
+  border: 2px dashed #e2e8f0;
+  color: #94a3b8;
+}
+.liste-empty span { font-size: 52px; display: block; margin-bottom: 16px; }
+
+@media (max-width: 768px) {
+  .liste-search-box { grid-template-columns: 1fr; }
+  .produits-grid { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block hero %}
+<section class="liste-hero">
+    <div class="liste-hero-bg"></div>
+    <div class="liste-hero-inner">
+        <div class="hero-badge" style="margin-bottom: 20px;">
+            <span class="pulse"></span>
+            <span>{{ produits|length }} objet(s) connecté(s)</span>
+        </div>
+        <h2>Objets connectés</h2>
+        <p>Consultez et gérez l'ensemble des équipements intelligents de la ville.</p>
+        <div class="liste-hero-actions">
+            {% if user.is_authenticated %}
+                {% if user.personne.niveau == 'avance' or user.personne.niveau == 'expert' %}
+                    <a href="{% url 'creer_produit' %}" class="btn-cinema">
+                        <span>➕ Ajouter un objet</span>
+                        <span class="arrow">→</span>
+                    </a>
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'accueil' %}" class="btn-ghost">← Retour à l'accueil</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div>
+    {# Recherche #}
+    <section class="liste-search">
+        <div class="wrap">
+            <form method="GET" action="{% url 'liste_produits' %}">
+                <div class="liste-search-box">
+                    <div class="field">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" name="q" placeholder="Nom ou description..."
+                               value="{{ q|default:'' }}">
+                    </div>
+                    <div class="field">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18M7 12h10M10 18h4"></path>
+                        </svg>
+                        <select name="etat">
+                            <option value="">Tous les états</option>
+                            {% for e in etats %}
+                                <option value="{{ e }}" {% if e == etat_selectionne %}selected{% endif %}>{{ e }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+                            <path d="M16 3H8l-2 4h12z"></path>
+                        </svg>
+                        <select name="marque">
+                            <option value="">Toutes les marques</option>
+                            {% for m in marques %}
+                                <option value="{{ m }}" {% if m == marque_selectionnee %}selected{% endif %}>{{ m }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-search-objets" style="border-radius:10px; padding: 0 24px; background: linear-gradient(135deg,#2563eb,#1e3a8a); color:#fff; border:none; font-weight:700; cursor:pointer; font-size:14px;">
+                        Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    {# Liste #}
+    <section class="liste-section">
+        <div class="wrap">
+            <div class="liste-header">
+                <h3>Tous les équipements</h3>
+                <span class="liste-count">{{ produits|length }} résultat(s)</span>
+            </div>
+
+            {% if produits %}
+                <div class="produits-grid">
+                    {% for produit in produits %}
+                    <article class="produit-card">
+                        <div class="produit-card-header">
+                            {% if produit.photo %}
+                                <img src="{{ produit.photo.url }}" alt="{{ produit.Nom }}">
+                            {% else %}
+                                📡
+                            {% endif %}
+                            <span class="produit-etat etat-{{ produit.etat|lower }}">{{ produit.etat }}</span>
+                        </div>
+                        <div class="produit-card-body">
+                            <h4>{{ produit.Nom }}</h4>
+                            <p class="pid">{{ produit.ID }}</p>
+                            <p>{{ produit.Description|truncatechars:90 }}</p>
+                            <div class="produit-meta">
+                                <span>🏷️ {{ produit.marque }}</span>
+                                <span>🔋 {{ produit.Bactterie }}%</span>
+                                <span>📡 {{ produit.Connectiviter_type }}</span>
+                            </div>
+                        </div>
+                        <div class="produit-card-footer">
+                            <a href="{% url 'detail_produit' produit.ID %}" class="btn-voir">Voir le détail</a>
+                            {% if user.is_authenticated %}
+                                {% if user.personne.niveau == 'avance' or user.personne.niveau == 'expert' %}
+                                    <a href="{% url 'modifier_produit' produit.ID %}" class="btn-modifier">✏️</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="liste-empty">
+                    <span>🔌</span>
+                    <p>Aucun objet ne correspond à votre recherche.</p>
+                    <a href="{% url 'liste_produits' %}" style="color:#2563eb; font-weight:700;">Voir tous les objets →</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}

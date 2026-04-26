@@ -31,4 +31,6 @@ urlpatterns = [
     path('profil/modifier/', views.edit_profil, name='edit_profil'),  # AJOUTÉ
     path('reservation/', views.reservation, name='reservation'),
     path('vie-citoyenne/', views.vie_citoyenne, name='vie-citoyenne'),
+    path('produit/<str:id>/modifier/', views.modifier_produit, name='modifier_produit'),
+
 ]

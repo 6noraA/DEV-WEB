@@ -1,0 +1,303 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Modifier {{ form.instance.Nom }} - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'detail_produit.css' %}">
+<style>
+.form-hero {
+  position: relative;
+  min-height: 35vh;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+.form-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(245,158,11,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(37,99,235,0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #0f172a 0%, #78350f 40%, #1e3a8a 100%);
+  z-index: -1;
+}
+.form-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.form-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 28px;
+  width: 100%;
+}
+.form-hero h2 {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+}
+.form-hero p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.75);
+}
+
+.form-section {
+  padding: 60px 0 80px;
+  background: #f8fafc;
+}
+.form-wrapper { max-width: 800px; margin: 0 auto; }
+
+.form-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.06);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.form-card-header {
+  padding: 20px 28px;
+  border-bottom: 1.5px solid #f1f5f9;
+  background: linear-gradient(135deg, #f8fafc, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.form-card-header h3 { font-size: 16px; font-weight: 800; color: #0f172a; }
+.form-card-body {
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-group.full { grid-column: 1 / -1; }
+.input-group label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.input-group input,
+.input-group select,
+.input-group textarea {
+  padding: 12px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.2s;
+  outline: none;
+}
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+  background: #fff;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245,158,11,0.1);
+}
+.input-group textarea { resize: vertical; min-height: 100px; }
+.input-group input[type="file"] {
+  padding: 10px;
+  border-style: dashed;
+  cursor: pointer;
+}
+
+/* Badge ID non modifiable */
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #eff6ff;
+  color: #1e40af;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: monospace;
+  letter-spacing: 0.05em;
+}
+
+.form-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.form-actions-right { display: flex; gap: 14px; }
+
+.btn-submit-modifier {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s;
+  box-shadow: 0 8px 25px rgba(245,158,11,0.35);
+}
+.btn-submit-modifier:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(245,158,11,0.45);
+}
+.btn-cancel {
+  padding: 14px 24px;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1.5px solid #e2e8f0;
+  transition: all 0.2s;
+}
+.btn-cancel:hover { background: #e2e8f0; color: #0f172a; }
+
+@media (max-width: 600px) {
+  .form-card-body { grid-template-columns: 1fr; }
+  .input-group.full { grid-column: 1; }
+  .form-actions { flex-direction: column; }
+  .form-actions-right { width: 100%; }
+}
+</style>
+{% endblock %}
+
+{% block hero %}
+<section class="form-hero">
+    <div class="form-hero-bg"></div>
+    <div class="form-hero-inner">
+        <a href="{% url 'detail_produit' form.instance.ID %}" class="btn-retour">← Retour au détail</a>
+        <h2 style="margin-top: 20px;">✏️ Modifier l'objet</h2>
+        <p>{{ form.instance.Nom }} — Modifiez les informations ci-dessous.</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<section class="form-section">
+    <div class="wrap">
+        <div class="form-wrapper">
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {# Identité #}
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <h3>🔖 Identité de l'objet</h3>
+                        <span class="id-badge">{{ form.instance.ID }}</span>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="input-group">
+                            <label for="id_Nom">Nom</label>
+                            {{ form.Nom }}
+                        </div>
+                        <div class="input-group">
+                            <label for="id_marque">Marque</label>
+                            {{ form.marque }}
+                        </div>
+                        <div class="input-group">
+                            <label for="id_Connectiviter_type">Type de connectivité</label>
+                            {{ form.Connectiviter_type }}
+                        </div>
+                        <div class="input-group">
+                            <label for="id_Adresse_IP">Adresse IP</label>
+                            {{ form.Adresse_IP }}
+                        </div>
+                        <div class="input-group full">
+                            <label for="id_Description">Description</label>
+                            {{ form.Description }}
+                        </div>
+                        <div class="input-group full">
+                            <label for="id_photo">Photo</label>
+                            {% if form.instance.photo %}
+                                <img src="{{ form.instance.photo.url }}" alt="Photo actuelle"
+                                     style="width:80px; height:80px; object-fit:cover; border-radius:10px; margin-bottom:8px;">
+                            {% endif %}
+                            {{ form.photo }}
+                        </div>
+                    </div>
+                </div>
+
+                {# État & config #}
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <h3>⚙️ Configuration & État</h3>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="input-group">
+                            <label for="id_etat">État</label>
+                            {{ form.etat }}
+                        </div>
+                        <div class="input-group">
+                            <label for="id_mode">Mode</label>
+                            {{ form.mode }}
+                        </div>
+                        <div class="input-group">
+                            <label for="id_Bactterie">Batterie (%)</label>
+                            {{ form.Bactterie }}
+                        </div>
+                    </div>
+                </div>
+
+                {# Dates #}
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <h3>📅 Dates</h3>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="input-group">
+                            <label for="id_Temp_restante">Durée de vie (date fin)</label>
+                            {{ form.Temp_restante }}
+                        </div>
+                        <div class="input-group">
+                            <label for="id_Date_dernier_maintenance">Dernière maintenance</label>
+                            {{ form.Date_dernier_maintenance }}
+                        </div>
+                        <div class="input-group">
+                            <label for="id_Date_dernier_utilisation">Dernière utilisation</label>
+                            {{ form.Date_dernier_utilisation }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'liste_produits' %}" class="btn-cancel">Annuler</a>
+                    <div class="form-actions-right">
+                        <a href="{% url 'detail_produit' form.instance.ID %}" class="btn-cancel">
+                            👁️ Voir le détail
+                        </a>
+                        <button type="submit" class="btn-submit-modifier">💾 Sauvegarder</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}
