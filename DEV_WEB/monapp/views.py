@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from .form import ProduitForm, InscriptionForm, PersonneForm
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
-from .models import Produit, Personne  # CORRIGÉ : ajout de Personne
+from .models import Produit, Personne
 
 from django.contrib.auth import login, authenticate, logout
 
@@ -39,7 +40,7 @@ def modifier_produit(request, id):
 
     return render(request, "produits/modifier.html", {"form": form})
 
-def detail_produit(request, id):  # CORRIGÉ : paramètre renommé id (cohérent avec l'URL)
+def detail_produit(request, id):
     produit = Produit.objects.get(ID=id)
     return render(request, 'produits/detail_produit.html', {'produit': produit})
 
@@ -54,10 +55,10 @@ def inscription(request):
             user.save()
 
             profil = user.personne
-            profil.age = personne_form.cleaned_data['age']               # CORRIGÉ : personne_form
-            profil.sexe = personne_form.cleaned_data['sexe']             # CORRIGÉ : personne_form
-            profil.date_naissance = personne_form.cleaned_data['date_naissance']  # CORRIGÉ
-            profil.type_membre = personne_form.cleaned_data['type_membre']        # CORRIGÉ
+            profil.age = personne_form.cleaned_data['age']
+            profil.sexe = personne_form.cleaned_data['sexe']
+            profil.date_naissance = personne_form.cleaned_data['date_naissance']
+            profil.type_membre = personne_form.cleaned_data['type_membre']
             send_mail('Bienvenue', 'Votre compte a été créé', 'admin@ville.com', [user.email])
             profil.save()
 
@@ -141,16 +142,30 @@ def profil(request):
 @login_required
 def edit_profil(request):
     personne = request.user.personne
+    user = request.user
 
     if request.method == 'POST':
-        form = PersonneForm(request.POST, instance=personne)
+        # Sauvegarde des champs Personne (age, sexe, photo, date_naissance, type_membre)
+        form = PersonneForm(request.POST, request.FILES, instance=personne)
         if form.is_valid():
             form.save()
-            return redirect('profil')
-    else:
-        form = PersonneForm(instance=personne)
 
-    return render(request, 'edit_profil.html', {'form': form})
+            # Sauvegarde des champs User (username, nom, prénom)
+            nouveau_username = request.POST.get('username', '').strip()
+            nouveau_nom      = request.POST.get('last_name', '').strip()
+            nouveau_prenom   = request.POST.get('first_name', '').strip()
+
+            if nouveau_username:
+                user.username = nouveau_username
+            user.last_name  = nouveau_nom
+            user.first_name = nouveau_prenom
+            user.save()
+
+            messages.success(request, '✓ Votre profil a bien été mis à jour.')
+            return redirect('profil')
+
+    # Si GET ou formulaire invalide, on retourne sur le profil
+    return redirect('profil')
 
 @login_required
 def liste_profils(request):

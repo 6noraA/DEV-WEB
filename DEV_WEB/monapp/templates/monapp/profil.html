@@ -36,34 +36,114 @@
             <div class="profil-card">
                 <div class="profil-header">
                     <div class="profil-photo">
-                        <img id="photo-preview"
-                             src="https://via.placeholder.com/140x140.png?text=Photo"
-                             alt="Photo de profil">
+                        {% if personne.photo %}
+                            <img id="photo-preview" src="{{ personne.photo.url }}" alt="Photo de profil">
+                        {% else %}
+                            <img id="photo-preview"
+                                 src="https://via.placeholder.com/140x140.png?text=Photo"
+                                 alt="Photo de profil">
+                        {% endif %}
                     </div>
                     <div class="profil-identity">
-                        <h4 id="preview-pseudo">JeanDupont92</h4>
-                        <span class="badge">Membre · Père</span>
+                        <h4 id="preview-pseudo">{{ personne.user.username }}</h4>
+                        <span class="badge">{{ personne.type_membre|capfirst }}</span>
                         <p class="profil-meta">
-                            <span id="preview-age">35 ans</span> ·
-                            <span id="preview-sexe">Homme</span>
+                            <span id="preview-age">{{ personne.age }} ans</span> ·
+                            <span id="preview-sexe">{{ personne.get_sexe_display }}</span>
                         </p>
+
+                        {# ===== BLOC NIVEAU ===== #}
+                        <div class="niveau-bloc">
+                            <span class="niveau-badge niveau-{{ personne.niveau }}">
+                                {% if personne.niveau == 'debutant' %}🌱 Débutant
+                                {% elif personne.niveau == 'intermediaire' %}⚡ Intermédiaire
+                                {% elif personne.niveau == 'avance' %}🔥 Avancé
+                                {% elif personne.niveau == 'expert' %}🏆 Expert
+                                {% else %}{{ personne.niveau }}
+                                {% endif %}
+                            </span>
+
+                            <div class="niveau-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value">{{ personne.points|floatformat:2 }}</span>
+                                    <span class="stat-label">points</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">{{ personne.nb_connexions }}</span>
+                                    <span class="stat-label">connexions</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">{{ personne.nb_actions }}</span>
+                                    <span class="stat-label">actions</span>
+                                </div>
+                            </div>
+
+                            {% if personne.niveau == 'debutant' %}
+                                <div class="progression">
+                                    <div class="progression-label">
+                                        Progression vers Intermédiaire
+                                        <span>{{ personne.points|floatformat:2 }} / 3 pts</span>
+                                    </div>
+                                    <div class="progression-bar">
+                                        <div class="progression-fill" id="barre-progression"></div>
+                                    </div>
+                                </div>
+                            {% elif personne.niveau == 'intermediaire' %}
+                                <div class="progression">
+                                    <div class="progression-label">
+                                        Progression vers Avancé
+                                        <span>{{ personne.points|floatformat:2 }} / 5 pts</span>
+                                    </div>
+                                    <div class="progression-bar">
+                                        <div class="progression-fill" id="barre-progression"></div>
+                                    </div>
+                                </div>
+                            {% elif personne.niveau == 'avance' %}
+                                <div class="progression">
+                                    <div class="progression-label">
+                                        Progression vers Expert
+                                        <span>{{ personne.points|floatformat:2 }} / 7 pts</span>
+                                    </div>
+                                    <div class="progression-bar">
+                                        <div class="progression-fill" id="barre-progression"></div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="niveau-max">🎉 Vous avez atteint le niveau maximum !</p>
+                            {% endif %}
+                        </div>
+                        {# ===== FIN BLOC NIVEAU ===== #}
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    {# FORMULAIRE #}
+    {# MESSAGE DE SUCCÈS après redirection #}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="wrap">
+                <div class="message success">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {# FORMULAIRE — soumis à edit_profil via POST #}
     <section class="profil-form-section">
         <div class="wrap">
             <div class="profil-form-wrapper">
                 <div class="profil-section-title">
                     <h3>Modifier mes informations</h3>
-                    <p>Les modifications seront visibles immédiatement sur votre profil.</p>
+                    <p>Les modifications seront sauvegardées en base de données.</p>
                 </div>
 
                 <div class="form-container-p">
-                    <form id="profil-form">
+                    <form id="profil-form"
+                          method="POST"
+                          action="{% url 'edit_profil' %}"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
 
                         <h4 class="form-section-title">Informations publiques</h4>
 
@@ -73,40 +153,38 @@
                         </div>
 
                         <div class="input-group">
-                            <label for="pseudo">Pseudonyme <span class="required">*</span></label>
-                            <input type="text" id="pseudo" name="pseudo"
-                                   value="JeanDupont92" required>
+                            <label for="username">Pseudonyme <span class="required">*</span></label>
+                            <input type="text" id="username" name="username"
+                                   value="{{ personne.user.username }}" required>
                         </div>
 
                         <div class="input-group">
                             <label for="age">Âge</label>
                             <input type="number" id="age" name="age"
-                                   value="35" min="0" max="120">
+                                   value="{{ personne.age }}" min="0" max="120">
                         </div>
 
                         <div class="input-group">
                             <label for="sexe">Sexe / Genre</label>
                             <select id="sexe" name="sexe">
-                                <option value="homme" selected>Homme</option>
-                                <option value="femme">Femme</option>
-                                <option value="autre">Autre</option>
-                                <option value="non_precise">Ne souhaite pas préciser</option>
+                                <option value="H" {% if personne.sexe == 'H' %}selected{% endif %}>Homme</option>
+                                <option value="F" {% if personne.sexe == 'F' %}selected{% endif %}>Femme</option>
                             </select>
                         </div>
 
                         <div class="input-group">
                             <label for="date_naissance">Date de naissance</label>
                             <input type="date" id="date_naissance" name="date_naissance"
-                                   value="1990-05-14">
+                                   value="{{ personne.date_naissance|date:'Y-m-d' }}">
                         </div>
 
                         <div class="input-group">
                             <label for="type_membre">Type de membre</label>
                             <select id="type_membre" name="type_membre">
-                                <option value="mere">Mère</option>
-                                <option value="pere" selected>Père</option>
-                                <option value="enfant">Enfant</option>
-                                <option value="autre">Autre</option>
+                                <option value="visiteur" {% if personne.type_membre == 'visiteur' %}selected{% endif %}>Visiteur</option>
+                                <option value="simple" {% if personne.type_membre == 'simple' %}selected{% endif %}>Simple</option>
+                                <option value="complexe" {% if personne.type_membre == 'complexe' %}selected{% endif %}>Complexe</option>
+                                <option value="administrateur" {% if personne.type_membre == 'administrateur' %}selected{% endif %}>Administrateur</option>
                             </select>
                         </div>
 
@@ -118,13 +196,15 @@
                         </p>
 
                         <div class="input-group">
-                            <label for="nom">Nom</label>
-                            <input type="text" id="nom" name="nom" value="Dupont">
+                            <label for="last_name">Nom</label>
+                            <input type="text" id="last_name" name="last_name"
+                                   value="{{ personne.user.last_name }}">
                         </div>
 
                         <div class="input-group">
-                            <label for="prenom">Prénom</label>
-                            <input type="text" id="prenom" name="prenom" value="Jean">
+                            <label for="first_name">Prénom</label>
+                            <input type="text" id="first_name" name="first_name"
+                                   value="{{ personne.user.first_name }}">
                         </div>
 
                         <div class="form-actions">
@@ -134,7 +214,6 @@
                             </button>
                         </div>
 
-                        <div id="profil-message" class="message"></div>
                     </form>
                 </div>
             </div>
@@ -169,6 +248,18 @@
 
 {% block scripts %}
 <script>
+    // ── Barre de progression ──────────────────────────────────────
+    const points = {{ personne.points }};
+    const niveau = "{{ personne.niveau }}";
+    const seuils = { debutant: 3, intermediaire: 5, avance: 7 };
+    const barre = document.getElementById('barre-progression');
+
+    if (barre && seuils[niveau]) {
+        const pct = Math.min((points / seuils[niveau]) * 100, 100);
+        barre.style.width = pct + '%';
+    }
+
+    // ── Aperçu photo ─────────────────────────────────────────────
     const photoInput = document.getElementById('photo');
     const photoPreview = document.getElementById('photo-preview');
 
@@ -183,39 +274,26 @@
         }
     });
 
-    const pseudoInput = document.getElementById('pseudo');
-    const ageInput = document.getElementById('age');
-    const sexeInput = document.getElementById('sexe');
+    // ── Aperçu en temps réel ──────────────────────────────────────
+    const pseudoInput = document.getElementById('username');
+    const ageInput    = document.getElementById('age');
+    const sexeInput   = document.getElementById('sexe');
 
     const previewPseudo = document.getElementById('preview-pseudo');
-    const previewAge = document.getElementById('preview-age');
-    const previewSexe = document.getElementById('preview-sexe');
+    const previewAge    = document.getElementById('preview-age');
+    const previewSexe   = document.getElementById('preview-sexe');
 
     pseudoInput.addEventListener('input', () => {
         previewPseudo.textContent = pseudoInput.value || 'Utilisateur';
     });
 
     ageInput.addEventListener('input', () => {
-        previewAge.textContent = ageInput.value
-            ? ageInput.value + ' ans'
-            : '— ans';
+        previewAge.textContent = ageInput.value ? ageInput.value + ' ans' : '— ans';
     });
 
     sexeInput.addEventListener('change', () => {
-        const labels = {
-            homme: 'Homme',
-            femme: 'Femme',
-            autre: 'Autre',
-            non_precise: 'Non précisé'
-        };
+        const labels = { H: 'Homme', F: 'Femme' };
         previewSexe.textContent = labels[sexeInput.value] || '';
-    });
-
-    document.getElementById('profil-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const message = document.getElementById('profil-message');
-        message.textContent = '✓ Vos modifications ont bien été enregistrées.';
-        message.className = 'message success';
     });
 </script>
 {% endblock %}
