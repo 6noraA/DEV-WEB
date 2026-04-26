@@ -7,6 +7,8 @@ from .models import Produit
 from django.contrib.auth import login, authenticate, logout
 from .forms import InscriptionForm, PersonneForm
 
+from django.core.mail import send_mail
+
 @login_required
 def creer_produit(request):
     if request.method == 'POST' :
@@ -57,6 +59,7 @@ def inscription(request):
             profil.sexe = profil_form.cleaned_data['sexe']
             profil.date_naissance = profil_form.cleaned_data['date_naissance']
             profil.type_membre = profil_form.cleaned_data['type_membre']
+            send_mail( 'Bienvenue', 'Votre compte a été créé','admin@ville.com',[user.email],)
             profil.save()
 
             return redirect('login')
