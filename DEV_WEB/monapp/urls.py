@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.accueil, name='home'),
 
     # Produits
-    path('creer/', creer_produit, name='creer_produit'),
+    path('creer/', views.creer_produit, name='creer_produit'),  # CORRIGÉ : views.creer_produit
     path('produits/', views.liste_produits, name='liste_produits'),
     path('produit/<str:id>/', views.detail_produit, name='detail_produit'),
 
@@ -26,7 +26,7 @@ urlpatterns = [
     path('services-public/', views.services_public, name='services-public'),
     path('info-locale/', views.info_locale, name='info-locale'),
 
-     # Profil utilisateur
+    # Profil utilisateur
     path('profil/', views.profil, name='profil'),
     path('reservation/', views.reservation, name='reservation'),
     path('vie-citoyenne/', views.vie_citoyenne, name='vie-citoyenne'),
