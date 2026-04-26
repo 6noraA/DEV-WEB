@@ -537,3 +537,19 @@
 @media (max-width: 600px) {
   .profil-page .membres-grid { grid-template-columns: 1fr; }
 }
+/* ── Carte membre cliquable ── */
+.profil-page .membre-card-link {
+  text-decoration: none;
+  display: block;
+}
+.profil-page .membre-card-link .membre-card {
+  cursor: pointer;
+}
+.profil-page .membre-card-link:hover .membre-card {
+  transform: translateY(-4px);
+  border-color: #bfdbfe;
+  box-shadow: 0 12px 30px rgba(37,99,235,0.12);
+}
+.profil-page .membre-card-link:hover .membre-info h4 {
+  color: #2563eb;
+}

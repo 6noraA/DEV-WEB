@@ -52,7 +52,6 @@ def liste_produits(request):
     q      = request.GET.get('q', '').strip()
     etat   = request.GET.get('etat', '')
     marque = request.GET.get('marque', '')
-
     produits = Produit.objects.all()
     if q:
         produits = produits.filter(Q(Nom__icontains=q) | Q(Description__icontains=q))
@@ -60,10 +59,8 @@ def liste_produits(request):
         produits = produits.filter(etat=etat)
     if marque:
         produits = produits.filter(marque__icontains=marque)
-
     etats   = Produit.objects.values_list('etat', flat=True).distinct()
     marques = Produit.objects.values_list('marque', flat=True).distinct()
-
     return render(request, 'produits/liste_produits.html', {
         'produits': produits, 'etats': etats, 'marques': marques,
         'q': q, 'etat_selectionne': etat, 'marque_selectionnee': marque,
@@ -104,7 +101,6 @@ def inscription(request):
     if request.method == 'POST':
         form = InscriptionForm(request.POST)
         personne_form = PersonneForm(request.POST)
-
         if form.is_valid() and personne_form.is_valid():
             user = form.save()
             profil = user.personne
@@ -113,24 +109,15 @@ def inscription(request):
             profil.date_naissance = personne_form.cleaned_data['date_naissance']
             profil.type_membre = personne_form.cleaned_data['type_membre']
             profil.save()
-
-            send_mail(
-                'Bienvenue sur MaVille',
-                'Votre compte a été créé avec succès.',
-                'admin@ville.com',
-                [user.email],
-                fail_silently=True,
-            )
+            send_mail('Bienvenue sur MaVille', 'Votre compte a été créé avec succès.',
+                      'admin@ville.com', [user.email], fail_silently=True)
             login(request, user)
             return redirect('accueil')
     else:
         form = InscriptionForm()
         personne_form = PersonneForm()
-
     return render(request, 'monapp/connexion.html', {
-        'page_active': 'connexion',
-        'form': form,
-        'personne_form': personne_form,
+        'page_active': 'connexion', 'form': form, 'personne_form': personne_form,
     })
 
 
@@ -140,7 +127,6 @@ def accueil(request):
     q      = request.GET.get('q', '').strip()
     etat   = request.GET.get('etat', '')
     marque = request.GET.get('marque', '')
-
     produits = Produit.objects.all()
     if q:
         produits = produits.filter(Q(Nom__icontains=q) | Q(Description__icontains=q))
@@ -148,10 +134,8 @@ def accueil(request):
         produits = produits.filter(etat=etat)
     if marque:
         produits = produits.filter(marque__icontains=marque)
-
     etats   = Produit.objects.values_list('etat', flat=True).distinct()
     marques = Produit.objects.values_list('marque', flat=True).distinct()
-
     return render(request, 'monapp/accueil.html', {
         'page_active': 'accueil', 'produits': produits,
         'etats': etats, 'marques': marques,
@@ -231,6 +215,17 @@ def profil(request):
 
 
 @login_required
+def voir_profil(request, user_id):
+    """Consulter le profil public d'un autre membre."""
+    user_cible = get_object_or_404(User, id=user_id)
+    # On ne peut pas consulter son propre profil via cette vue
+    if user_cible == request.user:
+        return redirect('profil')
+    membre = get_object_or_404(Personne, user=user_cible)
+    return render(request, 'monapp/profil_public.html', {'membre': membre})
+
+
+@login_required
 def edit_profil(request):
     personne = request.user.personne
     user = request.user
@@ -257,138 +252,86 @@ def liste_profils(request):
     return render(request, 'liste_profils.html', {'personnes': personnes})
 
 
-@login_required
-def detail_profil(request, id):
-    personne = get_object_or_404(Personne, id=id)
-    return render(request, 'detail_profil.html', {'personne': personne})
-
-
 # ── Administration ────────────────────────────────────────────────
 
 @niveau_requis('expert')
 def admin_dashboard(request):
-    """Tableau de bord admin : liste tous les utilisateurs."""
     membres = Personne.objects.select_related('user').order_by('-points')
     return render(request, 'monapp/admin_dashboard.html', {
-        'membres'    : membres,
-        'page_active': 'admin',
+        'membres': membres, 'page_active': 'admin',
     })
 
 
 @niveau_requis('expert')
 def bannir_utilisateur(request, user_id):
-    """Désactive le compte (bannissement) et envoie un mail."""
     if request.method == 'POST':
         cible = get_object_or_404(User, id=user_id)
-
-        # On ne peut pas se bannir soi-même ni bannir un autre expert
         if cible == request.user:
             messages.error(request, "Vous ne pouvez pas vous bannir vous-même.")
             return redirect('admin_dashboard')
-
         try:
             if cible.personne.niveau == 'expert':
                 messages.error(request, "Impossible de bannir un autre expert.")
                 return redirect('admin_dashboard')
         except Exception:
             pass
-
         raison = request.POST.get('raison', 'Violation des règles de la plateforme.')
-
-        # Désactiver le compte
         cible.is_active = False
         cible.save()
-
-        # Envoyer le mail de notification
         if cible.email:
             send_mail(
                 subject='⛔ Votre compte MaVille a été suspendu',
-                message=f"""Bonjour {cible.username},
-
-Votre compte sur la plateforme MaVille a été suspendu par un administrateur.
-
-Raison : {raison}
-
-Si vous pensez qu'il s'agit d'une erreur, contactez l'administration.
-
-— L'équipe MaVille""",
+                message=f"Bonjour {cible.username},\n\nVotre compte a été suspendu.\nRaison : {raison}\n\n— L'équipe MaVille",
                 from_email='admin@ville.com',
                 recipient_list=[cible.email],
                 fail_silently=True,
             )
-
         messages.success(request, f"✅ Le compte de {cible.username} a été suspendu.")
     return redirect('admin_dashboard')
 
 
 @niveau_requis('expert')
 def reactiver_utilisateur(request, user_id):
-    """Réactive un compte banni."""
     if request.method == 'POST':
         cible = get_object_or_404(User, id=user_id)
         cible.is_active = True
         cible.save()
-
         if cible.email:
             send_mail(
                 subject='✅ Votre compte MaVille a été réactivé',
-                message=f"""Bonjour {cible.username},
-
-Bonne nouvelle ! Votre compte sur la plateforme MaVille a été réactivé.
-
-Vous pouvez vous reconnecter dès maintenant.
-
-— L'équipe MaVille""",
+                message=f"Bonjour {cible.username},\n\nVotre compte a été réactivé.\n\n— L'équipe MaVille",
                 from_email='admin@ville.com',
                 recipient_list=[cible.email],
                 fail_silently=True,
             )
-
         messages.success(request, f"✅ Le compte de {cible.username} a été réactivé.")
     return redirect('admin_dashboard')
 
 
 @niveau_requis('expert')
 def supprimer_utilisateur(request, user_id):
-    """Supprime définitivement un compte et envoie un mail."""
     if request.method == 'POST':
         cible = get_object_or_404(User, id=user_id)
-
         if cible == request.user:
             messages.error(request, "Vous ne pouvez pas supprimer votre propre compte.")
             return redirect('admin_dashboard')
-
         try:
             if cible.personne.niveau == 'expert':
                 messages.error(request, "Impossible de supprimer un compte expert.")
                 return redirect('admin_dashboard')
         except Exception:
             pass
-
-        raison  = request.POST.get('raison', 'Décision administrative.')
-        email   = cible.email
+        raison   = request.POST.get('raison', 'Décision administrative.')
+        email    = cible.email
         username = cible.username
-
-        # Supprimer le compte
         cible.delete()
-
-        # Envoyer le mail
         if email:
             send_mail(
                 subject='🗑️ Votre compte MaVille a été supprimé',
-                message=f"""Bonjour {username},
-
-Votre compte sur la plateforme MaVille a été définitivement supprimé par un administrateur.
-
-Raison : {raison}
-
-Pour toute question, contactez l'administration.
-
-— L'équipe MaVille""",
+                message=f"Bonjour {username},\n\nVotre compte a été définitivement supprimé.\nRaison : {raison}\n\n— L'équipe MaVille",
                 from_email='admin@ville.com',
                 recipient_list=[email],
                 fail_silently=True,
             )
-
         messages.success(request, f"✅ Le compte de {username} a été supprimé définitivement.")
     return redirect('admin_dashboard')

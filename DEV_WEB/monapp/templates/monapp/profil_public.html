@@ -1,0 +1,311 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Profil de {{ membre.user.username }} - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'profil.css' %}">
+<style>
+.profil-public-hero {
+  position: relative;
+  min-height: 45vh;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%);
+}
+.profil-public-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(139,92,246,0.35) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(236,72,153,0.25) 0%, transparent 50%);
+  z-index: -1;
+}
+.profil-public-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 28px;
+  width: 100%;
+}
+.profil-public-content {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+.profil-public-avatar {
+  flex-shrink: 0;
+  position: relative;
+  width: 130px;
+  height: 130px;
+}
+.profil-public-avatar::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #8b5cf6, #ec4899, #2563eb, #8b5cf6);
+  animation: rotate 8s linear infinite;
+  z-index: 0;
+}
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.profil-public-avatar img,
+.profil-public-avatar .avatar-placeholder {
+  position: relative;
+  z-index: 1;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #fff;
+  object-fit: cover;
+}
+.profil-public-info h2 {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+}
+.profil-public-info .badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  margin-bottom: 12px;
+}
+.profil-public-info .meta {
+  font-size: 15px;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 16px;
+}
+.niveau-badge-public {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 800;
+}
+.niveau-badge-public.niveau-debutant     { background: #dcfce7; color: #166534; }
+.niveau-badge-public.niveau-intermediaire{ background: #fef9c3; color: #854d0e; }
+.niveau-badge-public.niveau-avance       { background: #ffedd5; color: #9a3412; }
+.niveau-badge-public.niveau-expert       { background: #fef3c7; color: #78350f; border: 2px solid #f59e0b; }
+
+/* Section infos publiques */
+.profil-public-section {
+  padding: 60px 0 80px;
+  background: #f8fafc;
+}
+.profil-public-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.06);
+  overflow: hidden;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.profil-public-card-header {
+  padding: 20px 28px;
+  border-bottom: 1.5px solid #f1f5f9;
+  background: linear-gradient(135deg, #f8fafc, #fff);
+}
+.profil-public-card-header h3 { font-size: 16px; font-weight: 800; color: #0f172a; }
+
+.info-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 28px;
+  border-bottom: 1px solid #f8fafc;
+  gap: 16px;
+  transition: background 0.2s;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row:hover { background: #f8fafc; }
+.info-key {
+  flex-shrink: 0;
+  width: 180px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.info-val {
+  flex: 1;
+  font-size: 15px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Stats */
+.stats-publiques {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 700px;
+  margin: 24px auto 0;
+}
+.stat-pub-card {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(15,23,42,0.05);
+}
+.stat-pub-val { font-size: 26px; font-weight: 900; color: #0f172a; line-height: 1; }
+.stat-pub-lbl { font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 6px; }
+
+/* Bouton retour */
+.btn-retour-profil {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 28px;
+  transition: all 0.2s;
+}
+.btn-retour-profil:hover { background: rgba(255,255,255,0.2); color: #fff; }
+
+@media (max-width: 700px) {
+  .profil-public-content { flex-direction: column; text-align: center; }
+  .stats-publiques { grid-template-columns: 1fr; }
+  .info-key { width: 120px; }
+}
+</style>
+{% endblock %}
+
+{% block hero %}
+<section class="profil-public-hero">
+    <div class="profil-public-inner">
+        <a href="{% url 'profil' %}" class="btn-retour-profil">← Retour aux membres</a>
+
+        <div class="profil-public-content">
+            <div class="profil-public-avatar">
+                {% if membre.photo %}
+                    <img src="{{ membre.photo.url }}" alt="{{ membre.user.username }}">
+                {% else %}
+                    <div class="avatar-placeholder">
+                        {{ membre.user.username|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="profil-public-info">
+                <div class="badge">{{ membre.type_membre|capfirst }}</div>
+                <h2>{{ membre.user.username }}</h2>
+                <p class="meta">{{ membre.age }} ans · {{ membre.get_sexe_display }}</p>
+                <span class="niveau-badge-public niveau-{{ membre.niveau }}">
+                    {% if membre.niveau == 'debutant' %}🌱 Débutant
+                    {% elif membre.niveau == 'intermediaire' %}⚡ Intermédiaire
+                    {% elif membre.niveau == 'avance' %}🔥 Avancé
+                    {% elif membre.niveau == 'expert' %}🏆 Expert
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<section class="profil-public-section">
+    <div class="wrap">
+
+        {# Stats #}
+        <div class="stats-publiques">
+            <div class="stat-pub-card">
+                <div class="stat-pub-val">{{ membre.points|floatformat:2 }}</div>
+                <div class="stat-pub-lbl">Points</div>
+            </div>
+            <div class="stat-pub-card">
+                <div class="stat-pub-val">{{ membre.nb_connexions }}</div>
+                <div class="stat-pub-lbl">Connexions</div>
+            </div>
+            <div class="stat-pub-card">
+                <div class="stat-pub-val">{{ membre.nb_actions }}</div>
+                <div class="stat-pub-lbl">Actions</div>
+            </div>
+        </div>
+
+        {# Infos publiques #}
+        <div class="profil-public-card" style="margin-top: 28px;">
+            <div class="profil-public-card-header">
+                <h3>📋 Informations publiques</h3>
+            </div>
+
+            <div class="info-row">
+                <span class="info-key">Pseudonyme</span>
+                <span class="info-val">{{ membre.user.username }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-key">Âge</span>
+                <span class="info-val">{{ membre.age }} ans</span>
+            </div>
+            <div class="info-row">
+                <span class="info-key">Sexe</span>
+                <span class="info-val">{{ membre.get_sexe_display }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-key">Date de naissance</span>
+                <span class="info-val">{{ membre.date_naissance|default:"Non renseignée" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-key">Type de membre</span>
+                <span class="info-val">{{ membre.type_membre|capfirst }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-key">Niveau</span>
+                <span class="info-val">
+                    <span class="niveau-badge-public niveau-{{ membre.niveau }}">
+                        {% if membre.niveau == 'debutant' %}🌱 Débutant
+                        {% elif membre.niveau == 'intermediaire' %}⚡ Intermédiaire
+                        {% elif membre.niveau == 'avance' %}🔥 Avancé
+                        {% elif membre.niveau == 'expert' %}🏆 Expert
+                        {% endif %}
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        {# Note confidentialité #}
+        <p style="text-align:center; font-size:13px; color:#94a3b8; margin-top:24px; font-style:italic;">
+            🔒 Le nom, prénom et mot de passe de cet utilisateur sont confidentiels.
+        </p>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}

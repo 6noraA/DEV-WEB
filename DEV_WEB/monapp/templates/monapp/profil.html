@@ -52,7 +52,6 @@
                             <span id="preview-sexe">{{ personne.get_sexe_display }}</span>
                         </p>
 
-                        {# ===== BLOC NIVEAU ===== #}
                         <div class="niveau-bloc">
                             <span class="niveau-badge niveau-{{ personne.niveau }}">
                                 {% if personne.niveau == 'debutant' %}🌱 Débutant
@@ -112,14 +111,13 @@
                                 <p class="niveau-max">🎉 Vous avez atteint le niveau maximum !</p>
                             {% endif %}
                         </div>
-                        {# ===== FIN BLOC NIVEAU ===== #}
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    {# MESSAGE DE SUCCÈS #}
+    {# MESSAGES #}
     {% if messages %}
         {% for message in messages %}
             <div class="wrap" style="margin: 12px auto;">
@@ -138,10 +136,7 @@
                 </div>
 
                 <div class="form-container-p">
-                    <form id="profil-form"
-                          method="POST"
-                          action="{% url 'edit_profil' %}"
-                          enctype="multipart/form-data">
+                    <form id="profil-form" method="POST" action="{% url 'edit_profil' %}" enctype="multipart/form-data">
                         {% csrf_token %}
 
                         <h4 class="form-section-title">Informations publiques</h4>
@@ -152,13 +147,11 @@
                         </div>
                         <div class="input-group">
                             <label for="username">Pseudonyme <span class="required">*</span></label>
-                            <input type="text" id="username" name="username"
-                                   value="{{ personne.user.username }}" required>
+                            <input type="text" id="username" name="username" value="{{ personne.user.username }}" required>
                         </div>
                         <div class="input-group">
                             <label for="age">Âge</label>
-                            <input type="number" id="age" name="age"
-                                   value="{{ personne.age }}" min="0" max="120">
+                            <input type="number" id="age" name="age" value="{{ personne.age }}" min="0" max="120">
                         </div>
                         <div class="input-group">
                             <label for="sexe">Sexe / Genre</label>
@@ -169,8 +162,7 @@
                         </div>
                         <div class="input-group">
                             <label for="date_naissance">Date de naissance</label>
-                            <input type="date" id="date_naissance" name="date_naissance"
-                                   value="{{ personne.date_naissance|date:'Y-m-d' }}">
+                            <input type="date" id="date_naissance" name="date_naissance" value="{{ personne.date_naissance|date:'Y-m-d' }}">
                         </div>
                         <div class="input-group">
                             <label for="type_membre">Type de membre</label>
@@ -187,19 +179,15 @@
 
                         <div class="input-group">
                             <label for="last_name">Nom</label>
-                            <input type="text" id="last_name" name="last_name"
-                                   value="{{ personne.user.last_name }}">
+                            <input type="text" id="last_name" name="last_name" value="{{ personne.user.last_name }}">
                         </div>
                         <div class="input-group">
                             <label for="first_name">Prénom</label>
-                            <input type="text" id="first_name" name="first_name"
-                                   value="{{ personne.user.first_name }}">
+                            <input type="text" id="first_name" name="first_name" value="{{ personne.user.first_name }}">
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn-profil">
-                                Enregistrer les modifications <span>✓</span>
-                            </button>
+                            <button type="submit" class="btn-profil">Enregistrer les modifications <span>✓</span></button>
                         </div>
                     </form>
                 </div>
@@ -212,39 +200,42 @@
         <div class="wrap">
             <div class="profil-section-title">
                 <h3>👥 Membres de la communauté</h3>
-                <p>{{ autres_membres|length }} autre(s) membre(s) inscrit(s) sur la plateforme.</p>
+                <p>{{ autres_membres|length }} autre(s) membre(s) inscrit(s) — cliquez sur un profil pour le consulter.</p>
             </div>
 
             {% if autres_membres %}
                 <div class="membres-grid">
                     {% for membre in autres_membres %}
-                    <div class="membre-card">
-                        <div class="membre-avatar">
-                            {% if membre.photo %}
-                                <img src="{{ membre.photo.url }}" alt="{{ membre.user.username }}">
-                            {% else %}
-                                <div class="membre-avatar-placeholder">
-                                    {{ membre.user.username|first|upper }}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="membre-info">
-                            <h4>{{ membre.user.username }}</h4>
-                            <span class="membre-type">{{ membre.type_membre|capfirst }}</span>
-                            <p class="membre-meta">{{ membre.age }} ans · {{ membre.get_sexe_display }}</p>
-                            <span class="membre-niveau niveau-{{ membre.niveau }}">
-                                {% if membre.niveau == 'debutant' %}🌱 Débutant
-                                {% elif membre.niveau == 'intermediaire' %}⚡ Intermédiaire
-                                {% elif membre.niveau == 'avance' %}🔥 Avancé
-                                {% elif membre.niveau == 'expert' %}🏆 Expert
+                    {# Toute la carte est cliquable #}
+                    <a href="{% url 'voir_profil' membre.user.id %}" class="membre-card-link">
+                        <div class="membre-card">
+                            <div class="membre-avatar">
+                                {% if membre.photo %}
+                                    <img src="{{ membre.photo.url }}" alt="{{ membre.user.username }}">
+                                {% else %}
+                                    <div class="membre-avatar-placeholder">
+                                        {{ membre.user.username|first|upper }}
+                                    </div>
                                 {% endif %}
-                            </span>
+                            </div>
+                            <div class="membre-info">
+                                <h4>{{ membre.user.username }}</h4>
+                                <span class="membre-type">{{ membre.type_membre|capfirst }}</span>
+                                <p class="membre-meta">{{ membre.age }} ans · {{ membre.get_sexe_display }}</p>
+                                <span class="membre-niveau niveau-{{ membre.niveau }}">
+                                    {% if membre.niveau == 'debutant' %}🌱 Débutant
+                                    {% elif membre.niveau == 'intermediaire' %}⚡ Intermédiaire
+                                    {% elif membre.niveau == 'avance' %}🔥 Avancé
+                                    {% elif membre.niveau == 'expert' %}🏆 Expert
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="membre-points">
+                                <span class="points-val">{{ membre.points|floatformat:1 }}</span>
+                                <span class="points-label">pts</span>
+                            </div>
                         </div>
-                        <div class="membre-points">
-                            <span class="points-val">{{ membre.points|floatformat:1 }}</span>
-                            <span class="points-label">pts</span>
-                        </div>
-                    </div>
+                    </a>
                     {% endfor %}
                 </div>
             {% else %}
@@ -254,7 +245,6 @@
             {% endif %}
         </div>
     </section>
-    {# ===== FIN SECTION AUTRES MEMBRES ===== #}
 
 </div>
 {% endblock %}
@@ -266,16 +256,11 @@
             <div class="lock-icon">🔒</div>
             <div>
                 <h3>Confidentialité</h3>
-                <p>
-                    Votre nom, votre prénom et votre mot de passe ne sont jamais
-                    communiqués aux autres membres. Seul l'administrateur de la
-                    plateforme peut y accéder pour des raisons de gestion.
-                </p>
+                <p>Votre nom, votre prénom et votre mot de passe ne sont jamais communiqués aux autres membres.</p>
             </div>
         </div>
     </section>
 </div>
-
 <footer class="site-footer">
     <div class="wrap">
         <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
@@ -285,22 +270,17 @@
 
 {% block scripts %}
 <script>
-    // ── Barre de progression ──────────────────────────────────────
     const points = {{ personne.points }};
     const niveau = "{{ personne.niveau }}";
     const seuils = { debutant: 3, intermediaire: 5, avance: 7 };
-    const barre = document.getElementById('barre-progression');
-
+    const barre  = document.getElementById('barre-progression');
     if (barre && seuils[niveau]) {
-        const pct = Math.min((points / seuils[niveau]) * 100, 100);
-        barre.style.width = pct + '%';
+        barre.style.width = Math.min((points / seuils[niveau]) * 100, 100) + '%';
     }
 
-    // ── Aperçu photo ─────────────────────────────────────────────
-    const photoInput  = document.getElementById('photo');
+    const photoInput   = document.getElementById('photo');
     const photoPreview = document.getElementById('photo-preview');
-
-    photoInput.addEventListener('change', function (e) {
+    photoInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -309,21 +289,14 @@
         }
     });
 
-    // ── Aperçu en temps réel ──────────────────────────────────────
-    const pseudoInput = document.getElementById('username');
-    const ageInput    = document.getElementById('age');
-    const sexeInput   = document.getElementById('sexe');
-
-    document.getElementById('preview-pseudo').textContent = pseudoInput.value;
-    pseudoInput.addEventListener('input', () => {
-        document.getElementById('preview-pseudo').textContent = pseudoInput.value || 'Utilisateur';
+    document.getElementById('username').addEventListener('input', e => {
+        document.getElementById('preview-pseudo').textContent = e.target.value || 'Utilisateur';
     });
-    ageInput.addEventListener('input', () => {
-        document.getElementById('preview-age').textContent = ageInput.value ? ageInput.value + ' ans' : '— ans';
+    document.getElementById('age').addEventListener('input', e => {
+        document.getElementById('preview-age').textContent = e.target.value ? e.target.value + ' ans' : '— ans';
     });
-    sexeInput.addEventListener('change', () => {
-        const labels = { H: 'Homme', F: 'Femme' };
-        document.getElementById('preview-sexe').textContent = labels[sexeInput.value] || '';
+    document.getElementById('sexe').addEventListener('change', e => {
+        document.getElementById('preview-sexe').textContent = { H: 'Homme', F: 'Femme' }[e.target.value] || '';
     });
 </script>
 {% endblock %}

@@ -30,8 +30,9 @@ urlpatterns = [
     # Profil
     path('profil/', views.profil, name='profil'),
     path('profil/modifier/', views.edit_profil, name='edit_profil'),
+    path('profil/<int:user_id>/', views.voir_profil, name='voir_profil'),  # AJOUTÉ
 
-    # Administration (niveau expert uniquement)
+    # Administration
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-dashboard/bannir/<int:user_id>/', views.bannir_utilisateur, name='bannir_utilisateur'),
     path('admin-dashboard/reactiver/<int:user_id>/', views.reactiver_utilisateur, name='reactiver_utilisateur'),
