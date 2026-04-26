@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .form import ProduitForm, InscriptionForm, PersonneForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count, Avg
 
 from .models import Produit, Personne
 
@@ -10,6 +10,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 
 from django.core.mail import send_mail
+
+import json
 
 
 # ── Décorateur niveau requis ──────────────────────────────────────
@@ -88,11 +90,90 @@ def detail_produit(request, id):
             personne = request.user.personne
             personne.nb_actions += 1
             personne.points += 0.50
-            # PAS de update_niveau ici — le changement est manuel
             personne.save()
         except Exception:
             pass
     return render(request, 'produits/detail_produit.html', {'produit': produit})
+
+
+# ── Statistiques ──────────────────────────────────────────────────
+
+@niveau_requis('avance', 'expert')
+def statistiques(request):
+    """Dashboard statistiques des objets connectés — Module 3."""
+    produits = Produit.objects.all()
+    total    = produits.count()
+
+    # ── Répartition par état ──
+    etats_qs = produits.values('etat').annotate(count=Count('etat')).order_by('etat')
+    etats_labels = [e['etat'] for e in etats_qs]
+    etats_data   = [e['count'] for e in etats_qs]
+    etats_colors = []
+    color_map = {
+        'ACTIF'       : '#22c55e',
+        'INACTIF'     : '#94a3b8',
+        'PANNE'       : '#ef4444',
+        'MAINTENANCE' : '#f59e0b',
+        'DECONNECTE'  : '#3b82f6',
+    }
+    for e in etats_labels:
+        etats_colors.append(color_map.get(e, '#8b5cf6'))
+
+    # ── Batterie par objet ──
+    batterie_noms  = [p.Nom[:20] for p in produits]
+    batterie_vals  = [p.Bactterie for p in produits]
+    batterie_colors = []
+    for b in batterie_vals:
+        if b > 60:
+            batterie_colors.append('#22c55e')
+        elif b > 30:
+            batterie_colors.append('#f59e0b')
+        else:
+            batterie_colors.append('#ef4444')
+
+    # ── Répartition par marque ──
+    marques_qs     = produits.values('marque').annotate(count=Count('marque')).order_by('-count')
+    marques_labels = [m['marque'] for m in marques_qs]
+    marques_data   = [m['count'] for m in marques_qs]
+
+    # ── Répartition par mode ──
+    modes_qs     = produits.values('mode').annotate(count=Count('mode'))
+    modes_labels = [m['mode'] for m in modes_qs]
+    modes_data   = [m['count'] for m in modes_qs]
+
+    # ── Objets nécessitant attention ──
+    objets_attention = produits.filter(etat__in=['PANNE', 'MAINTENANCE']).order_by('etat')
+
+    # ── Objets batterie faible (< 30%) ──
+    batterie_faible = produits.filter(Bactterie__lt=30).order_by('Bactterie')
+
+    # ── Stats rapides ──
+    nb_actifs      = produits.filter(etat='ACTIF').count()
+    nb_pannes      = produits.filter(etat='PANNE').count()
+    nb_maintenance = produits.filter(etat='MAINTENANCE').count()
+    batt_moyenne   = produits.aggregate(avg=Avg('Bactterie'))['avg'] or 0
+
+    return render(request, 'produits/statistiques.html', {
+        'total'           : total,
+        'nb_actifs'       : nb_actifs,
+        'nb_pannes'       : nb_pannes,
+        'nb_maintenance'  : nb_maintenance,
+        'batt_moyenne'    : round(batt_moyenne, 1),
+        # Graphiques (JSON)
+        'etats_labels'    : json.dumps(etats_labels),
+        'etats_data'      : json.dumps(etats_data),
+        'etats_colors'    : json.dumps(etats_colors),
+        'batterie_noms'   : json.dumps(batterie_noms),
+        'batterie_vals'   : json.dumps(batterie_vals),
+        'batterie_colors' : json.dumps(batterie_colors),
+        'marques_labels'  : json.dumps(marques_labels),
+        'marques_data'    : json.dumps(marques_data),
+        'modes_labels'    : json.dumps(modes_labels),
+        'modes_data'      : json.dumps(modes_data),
+        # Listes
+        'objets_attention': objets_attention,
+        'batterie_faible' : batterie_faible,
+    })
 
 
 # ── Inscription ───────────────────────────────────────────────────
@@ -161,7 +242,7 @@ def vie_citoyenne(request):
     return render(request, 'monapp/vie_citoyenne.html', {'page_active': 'vie-citoyenne'})
 
 
-# ── Connexion / déconnexion ───────────────────────────────────────
+# ── Niveau ────────────────────────────────────────────────────────
 
 def connexion(request):
     error = None
@@ -172,10 +253,9 @@ def connexion(request):
         if user is not None:
             login(request, user)
             personne = user.personne
-            # On incrémente les points et connexions SANS changer le niveau automatiquement
             personne.nb_connexions += 1
             personne.points += 0.25
-            personne.save()  # le niveau ne change pas ici
+            personne.save()
             return redirect('accueil')
         else:
             error = "Nom d'utilisateur ou mot de passe incorrect."
@@ -196,20 +276,19 @@ def profil(request):
         user=request.user
     ).select_related('user').order_by('-points')
 
-    # Calcul du niveau suivant et du seuil
     progression = {
         'debutant'     : ('intermediaire', 3),
         'intermediaire': ('avance', 5),
         'avance'       : ('expert', 7),
     }
-    niveau_suivant = None
-    seuil_suivant  = None
-    peut_monter    = False
+    niveau_suivant   = None
+    seuil_suivant    = None
+    peut_monter      = False
     points_manquants = 0
 
     if personne.niveau in progression:
         niveau_suivant, seuil_suivant = progression[personne.niveau]
-        peut_monter = personne.points >= seuil_suivant
+        peut_monter      = personne.points >= seuil_suivant
         points_manquants = max(0, seuil_suivant - personne.points)
 
     return render(request, 'monapp/profil.html', {
@@ -224,22 +303,17 @@ def profil(request):
 
 @login_required
 def changer_niveau(request):
-    """Changement de niveau MANUEL — uniquement si l'utilisateur a assez de points."""
     if request.method == 'POST':
         personne = request.user.personne
-
         progression = {
             'debutant'     : ('intermediaire', 3),
             'intermediaire': ('avance', 5),
             'avance'       : ('expert', 7),
         }
-
         if personne.niveau == 'expert':
             messages.info(request, "🏆 Vous êtes déjà au niveau maximum !")
             return redirect('profil')
-
         niveau_suivant, seuil = progression[personne.niveau]
-
         if personne.points >= seuil:
             personne.niveau = niveau_suivant
             personne.save()
@@ -251,8 +325,7 @@ def changer_niveau(request):
             messages.success(request, f"🎉 Félicitations ! Vous êtes maintenant {labels[niveau_suivant]} !")
         else:
             manque = seuil - personne.points
-            messages.error(request, f"❌ Il vous faut {manque:.2f} pts pour passer au niveau suivant.")
-
+            messages.error(request, f"❌ Il vous manque {manque:.2f} pts pour passer au niveau suivant.")
     return redirect('profil')
 
 

@@ -1,0 +1,494 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Statistiques - MaVille{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ── HERO ── */
+.stats-hero {
+  position: relative;
+  min-height: 38vh;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+.stats-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(16,185,129,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(37,99,235,0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #0f172a 0%, #064e3b 40%, #1e3a8a 100%);
+  z-index: -1;
+}
+.stats-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.stats-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 28px;
+  width: 100%;
+}
+.stats-hero h2 {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+}
+.stats-hero p { font-size: 16px; color: rgba(255,255,255,0.72); }
+
+/* ── PAGE ── */
+.stats-page { padding: 48px 0 80px; background: #f8fafc; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+
+/* ── CARTES STATS RAPIDES ── */
+.stats-rapides {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.stat-rapide {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(15,23,42,0.05);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.stat-rapide-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.stat-rapide-icon.green  { background: #dcfce7; }
+.stat-rapide-icon.red    { background: #fee2e2; }
+.stat-rapide-icon.yellow { background: #fef9c3; }
+.stat-rapide-icon.blue   { background: #dbeafe; }
+.stat-rapide-icon.purple { background: #ede9fe; }
+.stat-rapide-val  { font-size: 28px; font-weight: 900; color: #0f172a; line-height: 1; }
+.stat-rapide-lbl  { font-size: 13px; color: #64748b; font-weight: 600; margin-top: 4px; }
+
+/* ── GRILLE GRAPHIQUES ── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+.chart-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.06);
+  overflow: hidden;
+}
+.chart-card.full { grid-column: 1 / -1; }
+.chart-card-header {
+  padding: 20px 24px;
+  border-bottom: 1.5px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.chart-card-header h3 { font-size: 16px; font-weight: 800; color: #0f172a; }
+.chart-card-header span { font-size: 12px; color: #94a3b8; }
+.chart-card-body { padding: 24px; position: relative; height: 280px; }
+.chart-card.full .chart-card-body { height: 320px; }
+
+/* ── TABLEAUX ALERTES ── */
+.alertes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.alerte-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.06);
+  overflow: hidden;
+}
+.alerte-card-header {
+  padding: 18px 24px;
+  border-bottom: 1.5px solid #f1f5f9;
+}
+.alerte-card-header h3 { font-size: 15px; font-weight: 800; color: #0f172a; }
+
+.alerte-table { width: 100%; border-collapse: collapse; }
+.alerte-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  background: #f8fafc;
+}
+.alerte-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #0f172a;
+}
+.alerte-table tr:last-child td { border-bottom: none; }
+.alerte-table tr:hover td { background: #fafafa; }
+
+.etat-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 700;
+}
+.etat-pill.panne       { background: #fee2e2; color: #991b1b; }
+.etat-pill.maintenance { background: #fef9c3; color: #854d0e; }
+
+.batt-mini {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700;
+}
+.batt-bar-mini {
+  flex: 1; height: 8px; background: #e2e8f0;
+  border-radius: 100px; overflow: hidden; max-width: 80px;
+}
+.batt-fill-mini { height: 100%; border-radius: 100px; }
+
+.empty-alerte {
+  padding: 32px; text-align: center;
+  color: #94a3b8; font-size: 14px;
+}
+
+/* Lien retour */
+.btn-retour-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+}
+.btn-retour-stats:hover { background: rgba(255,255,255,0.2); color: #fff; }
+
+@media (max-width: 768px) {
+  .charts-grid  { grid-template-columns: 1fr; }
+  .alertes-grid { grid-template-columns: 1fr; }
+  .chart-card.full { grid-column: 1; }
+}
+</style>
+{% endblock %}
+
+{% block hero %}
+<section class="stats-hero">
+    <div class="stats-hero-bg"></div>
+    <div class="stats-hero-inner">
+        <a href="{% url 'liste_produits' %}" class="btn-retour-stats">← Retour aux objets</a>
+        <h2>📊 Statistiques & Rapports</h2>
+        <p>Tableau de bord des objets connectés — {{ total }} objet(s) enregistré(s).</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="stats-page">
+    <div class="wrap">
+
+        {# ── STATS RAPIDES ── #}
+        <div class="stats-rapides">
+            <div class="stat-rapide">
+                <div class="stat-rapide-icon purple">📡</div>
+                <div>
+                    <div class="stat-rapide-val">{{ total }}</div>
+                    <div class="stat-rapide-lbl">Objets total</div>
+                </div>
+            </div>
+            <div class="stat-rapide">
+                <div class="stat-rapide-icon green">✅</div>
+                <div>
+                    <div class="stat-rapide-val">{{ nb_actifs }}</div>
+                    <div class="stat-rapide-lbl">Actifs</div>
+                </div>
+            </div>
+            <div class="stat-rapide">
+                <div class="stat-rapide-icon red">🔴</div>
+                <div>
+                    <div class="stat-rapide-val">{{ nb_pannes }}</div>
+                    <div class="stat-rapide-lbl">En panne</div>
+                </div>
+            </div>
+            <div class="stat-rapide">
+                <div class="stat-rapide-icon yellow">🔧</div>
+                <div>
+                    <div class="stat-rapide-val">{{ nb_maintenance }}</div>
+                    <div class="stat-rapide-lbl">En maintenance</div>
+                </div>
+            </div>
+            <div class="stat-rapide">
+                <div class="stat-rapide-icon blue">🔋</div>
+                <div>
+                    <div class="stat-rapide-val">{{ batt_moyenne }}%</div>
+                    <div class="stat-rapide-lbl">Batterie moyenne</div>
+                </div>
+            </div>
+        </div>
+
+        {# ── GRAPHIQUES ── #}
+        <div class="charts-grid">
+
+            {# Camembert états #}
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h3>🟢 Répartition par état</h3>
+                    <span>{{ total }} objets</span>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="chartEtats"></canvas>
+                </div>
+            </div>
+
+            {# Barres marques #}
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h3>🏷️ Objets par marque</h3>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="chartMarques"></canvas>
+                </div>
+            </div>
+
+            {# Barres batterie — pleine largeur #}
+            <div class="chart-card full">
+                <div class="chart-card-header">
+                    <h3>🔋 Niveau de batterie par objet</h3>
+                    <span>🟢 &gt;60% · 🟡 30–60% · 🔴 &lt;30%</span>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="chartBatterie"></canvas>
+                </div>
+            </div>
+
+            {# Donut mode #}
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h3>⚙️ Répartition par mode</h3>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="chartModes"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        {# ── ALERTES ── #}
+        <div class="alertes-grid">
+
+            {# Objets en panne / maintenance #}
+            <div class="alerte-card">
+                <div class="alerte-card-header">
+                    <h3>⚠️ Objets nécessitant attention</h3>
+                </div>
+                {% if objets_attention %}
+                    <table class="alerte-table">
+                        <thead>
+                            <tr>
+                                <th>Objet</th>
+                                <th>État</th>
+                                <th>Marque</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for obj in objets_attention %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'detail_produit' obj.ID %}"
+                                       style="color:#2563eb; font-weight:700; text-decoration:none;">
+                                        {{ obj.Nom }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="etat-pill {% if obj.etat == 'PANNE' %}panne{% else %}maintenance{% endif %}">
+                                        {% if obj.etat == 'PANNE' %}🔴{% else %}🟡{% endif %}
+                                        {{ obj.etat }}
+                                    </span>
+                                </td>
+                                <td>{{ obj.marque }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty-alerte">✅ Aucun objet en panne ou maintenance.</div>
+                {% endif %}
+            </div>
+
+            {# Batterie faible #}
+            <div class="alerte-card">
+                <div class="alerte-card-header">
+                    <h3>🔋 Batterie faible (&lt; 30%)</h3>
+                </div>
+                {% if batterie_faible %}
+                    <table class="alerte-table">
+                        <thead>
+                            <tr>
+                                <th>Objet</th>
+                                <th>Batterie</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for obj in batterie_faible %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'detail_produit' obj.ID %}"
+                                       style="color:#2563eb; font-weight:700; text-decoration:none;">
+                                        {{ obj.Nom }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="batt-mini">
+                                        <span style="color:#ef4444;">{{ obj.Bactterie }}%</span>
+                                        <div class="batt-bar-mini">
+                                            <div class="batt-fill-mini"
+                                                 style="width:{{ obj.Bactterie }}%; background:#ef4444;"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty-alerte">✅ Toutes les batteries sont suffisantes.</div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+    Chart.defaults.font.family = 'inherit';
+    Chart.defaults.color = '#64748b';
+
+    const etatsLabels  = {{ etats_labels|safe }};
+    const etatsData    = {{ etats_data|safe }};
+    const etatsColors  = {{ etats_colors|safe }};
+
+    const batNoms      = {{ batterie_noms|safe }};
+    const batVals      = {{ batterie_vals|safe }};
+    const batColors    = {{ batterie_colors|safe }};
+
+    const marquesLabels = {{ marques_labels|safe }};
+    const marquesData   = {{ marques_data|safe }};
+
+    const modesLabels  = {{ modes_labels|safe }};
+    const modesData    = {{ modes_data|safe }};
+
+    // ── Camembert états ──
+    new Chart(document.getElementById('chartEtats'), {
+        type: 'doughnut',
+        data: {
+            labels: etatsLabels,
+            datasets: [{ data: etatsData, backgroundColor: etatsColors, borderWidth: 2, borderColor: '#fff' }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'right' } }
+        }
+    });
+
+    // ── Barres batterie ──
+    new Chart(document.getElementById('chartBatterie'), {
+        type: 'bar',
+        data: {
+            labels: batNoms,
+            datasets: [{
+                label: 'Batterie (%)',
+                data: batVals,
+                backgroundColor: batColors,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+                y: { min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#f1f5f9' } },
+                x: { grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // ── Barres marques ──
+    new Chart(document.getElementById('chartMarques'), {
+        type: 'bar',
+        data: {
+            labels: marquesLabels,
+            datasets: [{
+                label: 'Nombre d\'objets',
+                data: marquesData,
+                backgroundColor: '#6366f1',
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+                y: { ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+                x: { grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // ── Donut modes ──
+    new Chart(document.getElementById('chartModes'), {
+        type: 'doughnut',
+        data: {
+            labels: modesLabels,
+            datasets: [{
+                data: modesData,
+                backgroundColor: ['#2563eb', '#10b981'],
+                borderWidth: 2, borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'right' } }
+        }
+    });
+</script>
+{% endblock %}
