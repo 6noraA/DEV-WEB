@@ -18,6 +18,10 @@ class Personne(models.Model) :
   type_membre = models.CharField(max_length=30, choices=TYPE_MEMBRE)
   photo = models.ImageField(upload_to='photo/personne/',null=True,blank=True)
   date_naissance = models.DateField()
+  points = models.FloatField(default=0)
+  nb_connexions = models.IntegerField(default=0)
+  nb_actions = models.IntegerField(default=0)
+  niveau = models.CharField(max_length=20, default='debutant')
 
   def __str__(self):
         return self.user.username
