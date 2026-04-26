@@ -88,7 +88,7 @@ def detail_produit(request, id):
             personne = request.user.personne
             personne.nb_actions += 1
             personne.points += 0.50
-            update_niveau(personne)
+            # PAS de update_niveau ici — le changement est manuel
             personne.save()
         except Exception:
             pass
@@ -161,19 +161,6 @@ def vie_citoyenne(request):
     return render(request, 'monapp/vie_citoyenne.html', {'page_active': 'vie-citoyenne'})
 
 
-# ── Niveau ────────────────────────────────────────────────────────
-
-def update_niveau(personne):
-    if personne.points >= 7:
-        personne.niveau = 'expert'
-    elif personne.points >= 5:
-        personne.niveau = 'avance'
-    elif personne.points >= 3:
-        personne.niveau = 'intermediaire'
-    else:
-        personne.niveau = 'debutant'
-
-
 # ── Connexion / déconnexion ───────────────────────────────────────
 
 def connexion(request):
@@ -185,10 +172,10 @@ def connexion(request):
         if user is not None:
             login(request, user)
             personne = user.personne
+            # On incrémente les points et connexions SANS changer le niveau automatiquement
             personne.nb_connexions += 1
             personne.points += 0.25
-            update_niveau(personne)
-            personne.save()
+            personne.save()  # le niveau ne change pas ici
             return redirect('accueil')
         else:
             error = "Nom d'utilisateur ou mot de passe incorrect."
@@ -208,17 +195,70 @@ def profil(request):
     autres_membres = Personne.objects.exclude(
         user=request.user
     ).select_related('user').order_by('-points')
+
+    # Calcul du niveau suivant et du seuil
+    progression = {
+        'debutant'     : ('intermediaire', 3),
+        'intermediaire': ('avance', 5),
+        'avance'       : ('expert', 7),
+    }
+    niveau_suivant = None
+    seuil_suivant  = None
+    peut_monter    = False
+    points_manquants = 0
+
+    if personne.niveau in progression:
+        niveau_suivant, seuil_suivant = progression[personne.niveau]
+        peut_monter = personne.points >= seuil_suivant
+        points_manquants = max(0, seuil_suivant - personne.points)
+
     return render(request, 'monapp/profil.html', {
-        'personne': personne,
-        'autres_membres': autres_membres,
+        'personne'        : personne,
+        'autres_membres'  : autres_membres,
+        'niveau_suivant'  : niveau_suivant,
+        'seuil_suivant'   : seuil_suivant,
+        'peut_monter'     : peut_monter,
+        'points_manquants': points_manquants,
     })
 
 
 @login_required
+def changer_niveau(request):
+    """Changement de niveau MANUEL — uniquement si l'utilisateur a assez de points."""
+    if request.method == 'POST':
+        personne = request.user.personne
+
+        progression = {
+            'debutant'     : ('intermediaire', 3),
+            'intermediaire': ('avance', 5),
+            'avance'       : ('expert', 7),
+        }
+
+        if personne.niveau == 'expert':
+            messages.info(request, "🏆 Vous êtes déjà au niveau maximum !")
+            return redirect('profil')
+
+        niveau_suivant, seuil = progression[personne.niveau]
+
+        if personne.points >= seuil:
+            personne.niveau = niveau_suivant
+            personne.save()
+            labels = {
+                'intermediaire': '⚡ Intermédiaire',
+                'avance'       : '🔥 Avancé',
+                'expert'       : '🏆 Expert',
+            }
+            messages.success(request, f"🎉 Félicitations ! Vous êtes maintenant {labels[niveau_suivant]} !")
+        else:
+            manque = seuil - personne.points
+            messages.error(request, f"❌ Il vous manque {manque:.2f} pts pour passer au niveau suivant.")
+
+    return redirect('profil')
+
+
+@login_required
 def voir_profil(request, user_id):
-    """Consulter le profil public d'un autre membre."""
     user_cible = get_object_or_404(User, id=user_id)
-    # On ne peut pas consulter son propre profil via cette vue
     if user_cible == request.user:
         return redirect('profil')
     membre = get_object_or_404(Personne, user=user_cible)
@@ -244,12 +284,6 @@ def edit_profil(request):
             messages.success(request, '✓ Votre profil a bien été mis à jour.')
             return redirect('profil')
     return redirect('profil')
-
-
-@login_required
-def liste_profils(request):
-    personnes = Personne.objects.all()
-    return render(request, 'liste_profils.html', {'personnes': personnes})
 
 
 # ── Administration ────────────────────────────────────────────────

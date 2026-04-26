@@ -542,14 +542,54 @@
   text-decoration: none;
   display: block;
 }
-.profil-page .membre-card-link .membre-card {
-  cursor: pointer;
-}
 .profil-page .membre-card-link:hover .membre-card {
   transform: translateY(-4px);
   border-color: #bfdbfe;
   box-shadow: 0 12px 30px rgba(37,99,235,0.12);
 }
-.profil-page .membre-card-link:hover .membre-info h4 {
-  color: #2563eb;
+.profil-page .membre-card-link:hover .membre-info h4 { color: #2563eb; }
+
+/* ── Bouton monter de niveau ── */
+.profil-page .btn-monter-niveau {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s;
+  box-shadow: 0 8px 20px rgba(16,185,129,0.35);
+  margin-top: 4px;
 }
+.profil-page .btn-monter-niveau:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(16,185,129,0.45);
+}
+.profil-page .btn-monter-niveau .niveau-next {
+  background: rgba(255,255,255,0.2);
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+}
+
+/* ── Niveau verrouillé ── */
+.profil-page .niveau-locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 4px;
+}
+.profil-page .niveau-locked strong { color: #ef4444; font-weight: 800; }

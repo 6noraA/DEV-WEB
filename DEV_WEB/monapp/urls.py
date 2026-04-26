@@ -30,7 +30,8 @@ urlpatterns = [
     # Profil
     path('profil/', views.profil, name='profil'),
     path('profil/modifier/', views.edit_profil, name='edit_profil'),
-    path('profil/<int:user_id>/', views.voir_profil, name='voir_profil'),  # AJOUTÉ
+    path('profil/<int:user_id>/', views.voir_profil, name='voir_profil'),
+    path('profil/niveau/', views.changer_niveau, name='changer_niveau'),  # AJOUTÉ
 
     # Administration
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),

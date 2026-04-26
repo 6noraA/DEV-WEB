@@ -52,6 +52,7 @@
                             <span id="preview-sexe">{{ personne.get_sexe_display }}</span>
                         </p>
 
+                        {# ===== BLOC NIVEAU ===== #}
                         <div class="niveau-bloc">
                             <span class="niveau-badge niveau-{{ personne.niveau }}">
                                 {% if personne.niveau == 'debutant' %}🌱 Débutant
@@ -77,40 +78,50 @@
                                 </div>
                             </div>
 
-                            {% if personne.niveau == 'debutant' %}
-                                <div class="progression">
-                                    <div class="progression-label">
-                                        Progression vers Intermédiaire
-                                        <span>{{ personne.points|floatformat:2 }} / 3 pts</span>
-                                    </div>
-                                    <div class="progression-bar">
-                                        <div class="progression-fill" id="barre-progression"></div>
-                                    </div>
-                                </div>
-                            {% elif personne.niveau == 'intermediaire' %}
-                                <div class="progression">
-                                    <div class="progression-label">
-                                        Progression vers Avancé
-                                        <span>{{ personne.points|floatformat:2 }} / 5 pts</span>
-                                    </div>
-                                    <div class="progression-bar">
-                                        <div class="progression-fill" id="barre-progression"></div>
-                                    </div>
-                                </div>
-                            {% elif personne.niveau == 'avance' %}
-                                <div class="progression">
-                                    <div class="progression-label">
-                                        Progression vers Expert
-                                        <span>{{ personne.points|floatformat:2 }} / 7 pts</span>
-                                    </div>
-                                    <div class="progression-bar">
-                                        <div class="progression-fill" id="barre-progression"></div>
-                                    </div>
-                                </div>
-                            {% else %}
+                            {% if personne.niveau == 'expert' %}
                                 <p class="niveau-max">🎉 Vous avez atteint le niveau maximum !</p>
+                            {% else %}
+                                {# Barre de progression #}
+                                <div class="progression">
+                                    <div class="progression-label">
+                                        Progression vers
+                                        {% if personne.niveau == 'debutant' %}Intermédiaire
+                                        {% elif personne.niveau == 'intermediaire' %}Avancé
+                                        {% elif personne.niveau == 'avance' %}Expert
+                                        {% endif %}
+                                        <span>{{ personne.points|floatformat:2 }} / {{ seuil_suivant }} pts</span>
+                                    </div>
+                                    <div class="progression-bar">
+                                        <div class="progression-fill" id="barre-progression"></div>
+                                    </div>
+                                </div>
+
+                                {# Bouton changer de niveau #}
+                                <form method="POST" action="{% url 'changer_niveau' %}">
+                                    {% csrf_token %}
+                                    {% if peut_monter %}
+                                        <button type="submit" class="btn-monter-niveau">
+                                            🚀 Passer au niveau suivant
+                                            <span class="niveau-next">
+                                                {% if niveau_suivant == 'intermediaire' %}⚡ Intermédiaire
+                                                {% elif niveau_suivant == 'avance' %}🔥 Avancé
+                                                {% elif niveau_suivant == 'expert' %}🏆 Expert
+                                                {% endif %}
+                                            </span>
+                                        </button>
+                                    {% else %}
+                                        <div class="niveau-locked">
+                                            🔒 Il vous manque
+                                            <strong>{{ seuil_suivant|floatformat:0|add:"0" }}
+                                            {# calcul du manque en JS #}
+                                            </strong>
+                                            pts pour débloquer le niveau suivant.
+                                        </div>
+                                    {% endif %}
+                                </form>
                             {% endif %}
                         </div>
+                        {# ===== FIN BLOC NIVEAU ===== #}
                     </div>
                 </div>
             </div>
@@ -121,7 +132,9 @@
     {% if messages %}
         {% for message in messages %}
             <div class="wrap" style="margin: 12px auto;">
-                <div class="message success">{{ message }}</div>
+                <div class="message {% if 'error' in message.tags %}error{% else %}success{% endif %}">
+                    {{ message }}
+                </div>
             </div>
         {% endfor %}
     {% endif %}
@@ -162,7 +175,8 @@
                         </div>
                         <div class="input-group">
                             <label for="date_naissance">Date de naissance</label>
-                            <input type="date" id="date_naissance" name="date_naissance" value="{{ personne.date_naissance|date:'Y-m-d' }}">
+                            <input type="date" id="date_naissance" name="date_naissance"
+                                   value="{{ personne.date_naissance|date:'Y-m-d' }}">
                         </div>
                         <div class="input-group">
                             <label for="type_membre">Type de membre</label>
@@ -200,13 +214,12 @@
         <div class="wrap">
             <div class="profil-section-title">
                 <h3>👥 Membres de la communauté</h3>
-                <p>{{ autres_membres|length }} autre(s) membre(s) inscrit(s) — cliquez sur un profil pour le consulter.</p>
+                <p>{{ autres_membres|length }} autre(s) membre(s) — cliquez sur un profil pour le consulter.</p>
             </div>
 
             {% if autres_membres %}
                 <div class="membres-grid">
                     {% for membre in autres_membres %}
-                    {# Toute la carte est cliquable #}
                     <a href="{% url 'voir_profil' membre.user.id %}" class="membre-card-link">
                         <div class="membre-card">
                             <div class="membre-avatar">
@@ -276,6 +289,13 @@
     const barre  = document.getElementById('barre-progression');
     if (barre && seuils[niveau]) {
         barre.style.width = Math.min((points / seuils[niveau]) * 100, 100) + '%';
+    }
+
+    // Afficher le vrai manque de points
+    const locked = document.querySelector('.niveau-locked strong');
+    if (locked && seuils[niveau]) {
+        const manque = Math.max(0, seuils[niveau] - points).toFixed(2);
+        locked.textContent = manque;
     }
 
     const photoInput   = document.getElementById('photo');
