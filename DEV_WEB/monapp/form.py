@@ -12,7 +12,8 @@ class InscriptionForm(forms.ModelForm):
 class PersonneForm(forms.ModelForm):
     class Meta:
         model = Personne
-        fields = ['age', 'sexe', 'date_naissance', 'type_membre']
+        fields = ['age', 'sexe', 'date_naissance', 'type_membre','photo']
+
 
 class ProduitForm(forms.ModelForm):
     class Meta:

@@ -6,18 +6,22 @@ class Personne(models.Model) :
   GENRE_CHOIX = [('H','Homme'),
                ('F', 'Femme')]
 
-  TYPE_MEMBRE = [('citoyen','Citoyen'),
-               ('etudiant', 'Etudiant'),
-               ('technicien','Technicien'),
+  TYPE_MEMBRE = [('visiteur','visiteur'),
+               ('simple', 'simple'),
+               ('complexe','complexe'),
                ('administrateur','administrateur')]
   
   user = models.OneToOneField(User, on_delete=models.CASCADE)
   
-  age = models.IntegerField(null=True, blank=True)
-  sexe = models.CharField(max_length=20, choices=GENRE_CHOIX, null=True, blank=True)
-  type_membre = models.CharField(max_length=20, choices=TYPE_MEMBRE, null=True, blank=True)
+  age = models.IntegerField()
+  sexe = models.CharField(max_length=10, choices=GENRE_CHOIX)
+  type_membre = models.CharField(max_length=30, choices=TYPE_MEMBRE)
   photo = models.ImageField(upload_to='photo/personne/',null=True,blank=True)
-  date_naissance = models.DateField(null=True, blank=True)
+  date_naissance = models.DateField()
+  points = models.FloatField(default=0)
+  nb_connexions = models.IntegerField(default=0)
+  nb_actions = models.IntegerField(default=0)
+  niveau = models.CharField(max_length=20, default='debutant')
 
   def __str__(self):
         return self.user.username
