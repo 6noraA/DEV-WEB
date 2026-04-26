@@ -11,9 +11,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.core.mail import send_mail
 
 
-# ── Décorateur personnalisé : niveau avancé ou expert requis ──────
+# ── Décorateur niveau requis ──────────────────────────────────────
 def niveau_requis(*niveaux):
-    """Redirige vers l'accueil si l'utilisateur n'a pas le bon niveau."""
     def decorator(view_func):
         def wrapper(request, *args, **kwargs):
             if not request.user.is_authenticated:
@@ -96,7 +95,6 @@ def modifier_produit(request, id):
 
 def detail_produit(request, id):
     produit = Produit.objects.get(ID=id)
-    # Comptabilise l'action si l'utilisateur est connecté
     if request.user.is_authenticated:
         try:
             personne = request.user.personne
@@ -117,18 +115,26 @@ def inscription(request):
         personne_form = PersonneForm(request.POST)
 
         if form.is_valid() and personne_form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            user.save()
+            # form.save() gère maintenant le hashage du mot de passe
+            user = form.save()
 
+            # Mise à jour du profil Personne créé automatiquement
             profil = user.personne
             profil.age = personne_form.cleaned_data['age']
             profil.sexe = personne_form.cleaned_data['sexe']
             profil.date_naissance = personne_form.cleaned_data['date_naissance']
             profil.type_membre = personne_form.cleaned_data['type_membre']
-            send_mail('Bienvenue', 'Votre compte a été créé', 'admin@ville.com', [user.email])
             profil.save()
 
+            send_mail(
+                'Bienvenue sur MaVille',
+                'Votre compte a été créé avec succès.',
+                'admin@ville.com',
+                [user.email],
+                fail_silently=True,  # évite un crash si le mail échoue
+            )
+
+            # Connexion automatique après inscription
             login(request, user)
             return redirect('accueil')
 
@@ -137,8 +143,8 @@ def inscription(request):
         personne_form = PersonneForm()
 
     return render(request, 'monapp/connexion.html', {
-        'page_active': 'connexion',
-        'form': form,
+        'page_active'  : 'connexion',
+        'form'         : form,
         'personne_form': personne_form,
     })
 
@@ -220,10 +226,8 @@ def connexion(request):
         if user is not None:
             login(request, user)
             personne = user.personne
-
             personne.nb_connexions += 1
             personne.points += 0.25
-
             update_niveau(personne)
             personne.save()
             return redirect('accueil')
@@ -243,7 +247,14 @@ def deconnexion(request):
 @login_required
 def profil(request):
     personne = request.user.personne
-    return render(request, 'monapp/profil.html', {'personne': personne})
+    autres_membres = Personne.objects.exclude(
+        user=request.user
+    ).select_related('user').order_by('-points')
+
+    return render(request, 'monapp/profil.html', {
+        'personne'      : personne,
+        'autres_membres': autres_membres,
+    })
 
 
 @login_required
