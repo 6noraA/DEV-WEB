@@ -68,6 +68,16 @@ def inscription(request):
     return render(request, 'inscription.html', {'form': form, 'personne_form': personne_form})
 
 
+def update_niveau(personne):
+    if personne.points >= 7:
+        personne.niveau = 'expert'
+    elif personne.points >= 5:
+        personne.niveau = 'avance'
+    elif personne.points >= 3:
+        personne.niveau = 'intermediaire'
+    else:
+        personne.niveau = 'debutant'
+        
 def connexion(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -75,8 +85,15 @@ def connexion(request):
 
         user = authenticate(request, username=username, password=password)
 
-        if user:
+        if user is not None:
             login(request, user)
+            personne = user.personne
+
+            personne.nb_connexions += 1
+            personne.points += 0.25
+
+            update_niveau(personne)
+            personne.save()
             return redirect('home')
 
     return render(request, 'connexion.html')
