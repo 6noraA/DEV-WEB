@@ -1,0 +1,428 @@
+/* ================================================================
+   MaVille — Page Vie citoyenne
+   Thème : chaleureux, humain, communauté, engagement
+   ================================================================ */
+
+/* HERO */
+.citoyen-page .hero-citoyen {
+  position: relative;
+  min-height: 70vh;
+  overflow: hidden;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+}
+.citoyen-page .hero-citoyen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(249, 115, 22, 0.4) 0%, rgba(15, 23, 42, 0.85) 60%),
+    url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=2400&q=80');
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  animation: kenburnsC 28s ease-in-out infinite alternate;
+}
+@keyframes kenburnsC {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+.citoyen-page .hero-citoyen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 80% 30%, rgba(249, 115, 22, 0.25) 0%, transparent 50%),
+    radial-gradient(circle at 20% 70%, rgba(16, 185, 129, 0.2) 0%, transparent 50%);
+  z-index: -1;
+}
+.citoyen-page .hero-citoyen .hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 28px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.citoyen-page .heart-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: rgba(249, 115, 22, 0.2);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(249, 115, 22, 0.4);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fdba74;
+  margin-bottom: 26px;
+  animation: fadeInDownC 0.8s ease both;
+}
+.citoyen-page .heart-badge .heart {
+  animation: heartBeat 1.5s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+.citoyen-page .hero-citoyen h2 {
+  font-size: clamp(40px, 5.5vw, 68px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.03;
+  margin-bottom: 22px;
+  max-width: 900px;
+  animation: fadeInUpC 0.9s 0.1s ease both;
+}
+.citoyen-page .hero-citoyen h2 .gradient-word {
+  background: linear-gradient(120deg, #fdba74 0%, #f97316 50%, #fb923c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.citoyen-page .hero-citoyen p {
+  font-size: 18px;
+  max-width: 640px;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.7;
+  animation: fadeInUpC 0.9s 0.25s ease both;
+}
+
+/* GRILLE ENGAGEMENT */
+.citoyen-page .engagement-section {
+  padding: 100px 0;
+  background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+}
+.citoyen-page .engagement-section .section-title {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 64px;
+}
+.citoyen-page .engagement-section .section-title .eyebrow {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(249, 115, 22, 0.12);
+  color: #c2410c;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  margin-bottom: 18px;
+}
+.citoyen-page .engagement-section .section-title h3 {
+  font-size: clamp(30px, 3.4vw, 46px);
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin-bottom: 14px;
+  line-height: 1.1;
+}
+.citoyen-page .engagement-section .section-title p {
+  color: #64748b;
+  font-size: 17px;
+  line-height: 1.6;
+}
+.citoyen-page .e-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+}
+.citoyen-page .e-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 28px;
+  border: 1px solid #fce7d4;
+  transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUpC 0.7s ease forwards;
+}
+.citoyen-page .e-card:nth-child(1) { animation-delay: 0.05s; }
+.citoyen-page .e-card:nth-child(2) { animation-delay: 0.15s; }
+.citoyen-page .e-card:nth-child(3) { animation-delay: 0.25s; }
+.citoyen-page .e-card:nth-child(4) { animation-delay: 0.35s; }
+.citoyen-page .e-card:nth-child(5) { animation-delay: 0.45s; }
+.citoyen-page .e-card:nth-child(6) { animation-delay: 0.55s; }
+.citoyen-page .e-card::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fdba74, #f97316);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.citoyen-page .e-card:hover {
+  transform: translateY(-10px);
+  border-color: transparent;
+  box-shadow: 0 25px 50px -15px rgba(249, 115, 22, 0.3);
+}
+.citoyen-page .e-card:hover::before { opacity: 0.12; }
+.citoyen-page .e-card .emoji-big {
+  font-size: 40px;
+  margin-bottom: 18px;
+  display: inline-block;
+  transition: transform 0.4s;
+}
+.citoyen-page .e-card:hover .emoji-big {
+  transform: scale(1.15) rotate(-6deg);
+}
+.citoyen-page .e-card .e-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  background: rgba(249, 115, 22, 0.1);
+  color: #c2410c;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+.citoyen-page .e-card:nth-child(2) .e-badge { background: rgba(16, 185, 129, 0.1); color: #047857; }
+.citoyen-page .e-card:nth-child(3) .e-badge { background: rgba(239, 68, 68, 0.1); color: #b91c1c; }
+.citoyen-page .e-card:nth-child(4) .e-badge { background: rgba(37, 99, 235, 0.1); color: #1e3a8a; }
+.citoyen-page .e-card:nth-child(5) .e-badge { background: rgba(139, 92, 246, 0.1); color: #6d28d9; }
+.citoyen-page .e-card:nth-child(6) .e-badge { background: rgba(236, 72, 153, 0.1); color: #be185d; }
+.citoyen-page .e-card h4 {
+  font-size: 21px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 10px;
+  letter-spacing: -0.015em;
+}
+.citoyen-page .e-card p {
+  font-size: 14.5px;
+  color: #64748b;
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+.citoyen-page .e-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #f97316;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: gap 0.25s, color 0.25s;
+}
+.citoyen-page .e-card:hover .e-link {
+  gap: 14px;
+  color: #0f172a;
+}
+
+/* CONSULTATIONS TIMELINE */
+.citoyen-page .consultations-section {
+  padding: 100px 0;
+  background: linear-gradient(135deg, #0f172a 0%, #431407 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.citoyen-page .consultations-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.2) 0%, transparent 50%);
+}
+.citoyen-page .consultations-section .inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 28px;
+  position: relative;
+  z-index: 1;
+}
+.citoyen-page .consultations-section .section-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.citoyen-page .consultations-section .eyebrow {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(249, 115, 22, 0.15);
+  color: #fdba74;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+.citoyen-page .consultations-section h3 {
+  font-size: clamp(28px, 3.2vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.citoyen-page .consultations-section .subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 17px;
+}
+.citoyen-page .timeline {
+  position: relative;
+  padding-left: 48px;
+}
+.citoyen-page .timeline::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: linear-gradient(180deg, #f97316, #fdba74, #10b981);
+  border-radius: 2px;
+}
+.citoyen-page .timeline-item {
+  position: relative;
+  padding: 22px 32px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  margin-bottom: 18px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  transition: all 0.35s;
+  cursor: pointer;
+}
+.citoyen-page .timeline-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(249, 115, 22, 0.35);
+  transform: translateX(6px);
+}
+.citoyen-page .timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -38px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #f97316;
+  border: 3px solid #0f172a;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.25);
+}
+.citoyen-page .tl-date {
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  padding-right: 24px;
+}
+.citoyen-page .tl-date .day {
+  display: block;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  color: #fdba74;
+}
+.citoyen-page .tl-date .month {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+  font-weight: 600;
+}
+.citoyen-page .timeline-item h4 {
+  font-size: 19px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: -0.015em;
+}
+.citoyen-page .timeline-item p {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+}
+.citoyen-page .status-pill {
+  padding: 6px 14px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+/* VOICE SECTION */
+.citoyen-page .voice-section {
+  padding: 90px 0;
+  background: #fff7ed;
+  text-align: center;
+}
+.citoyen-page .voice-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+.citoyen-page .big-quote {
+  font-size: 72px;
+  color: #f97316;
+  font-family: Georgia, serif;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.citoyen-page .voice-inner h3 {
+  font-size: clamp(28px, 3.2vw, 40px);
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+.citoyen-page .voice-inner p {
+  color: #64748b;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+@keyframes fadeInUpC {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDownC {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .citoyen-page .timeline { padding-left: 40px; }
+  .citoyen-page .timeline-item {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 20px;
+  }
+  .citoyen-page .tl-date {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-right: 0;
+    padding-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+  .citoyen-page .tl-date .day { font-size: 24px; }
+  .citoyen-page .tl-date .month { margin-top: 0; }
+  .citoyen-page .status-pill { justify-self: flex-start; }
+}

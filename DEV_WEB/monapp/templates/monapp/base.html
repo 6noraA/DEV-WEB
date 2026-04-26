@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MaVille{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="brand">
+                <h1>MaVille</h1>
+            </div>
+            <nav>
+                <ul class="site-nav">
+                    <li><a href="{% url 'accueil' %}" class="{% if page_active == 'accueil' %}active{% endif %}">Accueil</a></li>
+                    <li><a href="{% url 'transport' %}" class="{% if page_active == 'transport' %}active{% endif %}">Transports</a></li>
+                    <li><a href="{% url 'incident' %}" class="{% if page_active == 'incident' %}active{% endif %}">Incidents</a></li>
+                    <li><a href="{% url 'services-public' %}" class="{% if page_active == 'services-public' %}active{% endif %}">Services publics</a></li>
+                    <li><a href="{% url 'info-locale' %}" class="{% if page_active == 'info-locale' %}active{% endif %}">Infos locales</a></li>
+
+                    {# ---------- Connexion / Profil / Déconnexion ---------- #}
+                    {% if user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'profil' %}" class="{% if page_active == 'profil' %}active{% endif %}">
+                                Mon profil
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'logout' %}">Déconnexion</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="{% url 'connexion' %}" class="{% if page_active == 'connexion' %}active{% endif %}">
+                                Connexion
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    {% block hero %}{% endblock %}
+
+    <main class="site-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    <footer class="site-footer">
+        <div class="wrap">
+            <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+        </div>
+    </footer>
+    {% endblock %}
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

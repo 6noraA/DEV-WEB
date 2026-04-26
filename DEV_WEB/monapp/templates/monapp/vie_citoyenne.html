@@ -1,0 +1,163 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Vie citoyenne - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'vie_citoyenne.css' %}">
+{% endblock %}
+
+{% block hero %}
+<div class="citoyen-page">
+    <section class="hero-citoyen">
+        <div class="hero-inner">
+            <div class="heart-badge">
+                <span class="heart">♥</span>
+                <span>Notre ville, notre lien</span>
+            </div>
+            <h2>Participez à construire<br>une ville <span class="gradient-word">à votre image</span>.</h2>
+            <p>
+                Impliquez-vous dans la vie de votre commune : consultations citoyennes,
+                associations locales, initiatives participatives et engagement bénévole.
+                Votre voix compte, et chaque action en entraîne d'autres.
+            </p>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="citoyen-page">
+
+    <section class="engagement-section">
+        <div class="wrap">
+            <div class="section-title">
+                <span class="eyebrow">S'engager</span>
+                <h3>Toutes les façons de participer</h3>
+                <p>Six espaces pour contribuer activement à la vie de votre ville selon vos envies et votre disponibilité.</p>
+            </div>
+
+            <div class="e-grid">
+                <article class="e-card">
+                    <div class="emoji-big">🗳️</div>
+                    <span class="e-badge">Consultation</span>
+                    <h4>Consultations citoyennes</h4>
+                    <p>Donnez votre avis sur les projets en cours et participez aux décisions qui façonnent l'avenir de la ville.</p>
+                    <a href="#" class="e-link">Participer <span>→</span></a>
+                </article>
+
+                <article class="e-card">
+                    <div class="emoji-big">🤝</div>
+                    <span class="e-badge">Associations</span>
+                    <h4>Associations locales</h4>
+                    <p>Retrouvez l'annuaire des associations de la commune et trouvez celle qui correspond à vos centres d'intérêt.</p>
+                    <a href="#" class="e-link">Voir l'annuaire <span>→</span></a>
+                </article>
+
+                <article class="e-card">
+                    <div class="emoji-big">💪</div>
+                    <span class="e-badge">Bénévolat</span>
+                    <h4>Engagement bénévole</h4>
+                    <p>Proposez votre aide pour les événements municipaux ou rejoignez des actions de solidarité près de chez vous.</p>
+                    <a href="#" class="e-link">S'engager <span>→</span></a>
+                </article>
+
+                <article class="e-card">
+                    <div class="emoji-big">💡</div>
+                    <span class="e-badge">Budget</span>
+                    <h4>Budget participatif</h4>
+                    <p>Proposez et votez des projets financés par la ville. Chaque année, une enveloppe est dédiée à vos idées.</p>
+                    <a href="#" class="e-link">Découvrir <span>→</span></a>
+                </article>
+
+                <article class="e-card">
+                    <div class="emoji-big">💬</div>
+                    <span class="e-badge">Conseils</span>
+                    <h4>Conseils de quartier</h4>
+                    <p>Participez aux conseils de votre quartier pour échanger avec les élus sur les sujets qui vous concernent.</p>
+                    <a href="#" class="e-link">Plus d'infos <span>→</span></a>
+                </article>
+
+                <article class="e-card">
+                    <div class="emoji-big">🎨</div>
+                    <span class="e-badge">Jeunesse</span>
+                    <h4>Espace jeunesse</h4>
+                    <p>Activités, stages, conseil municipal des jeunes : découvrez tout ce que la ville propose aux plus jeunes.</p>
+                    <a href="#" class="e-link">Explorer <span>→</span></a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="consultations-section">
+        <div class="inner">
+            <div class="section-header">
+                <span class="eyebrow">Agenda participatif</span>
+                <h3>Consultations en cours</h3>
+                <p class="subtitle">Participez aux consultations actuellement ouvertes au public.</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="tl-date">
+                        <span class="day">30</span>
+                        <span class="month">Mai</span>
+                    </div>
+                    <div>
+                        <h4>Aménagement du parc central</h4>
+                        <p>Consultation publique · ouverte jusqu'au 30 mai</p>
+                    </div>
+                    <span class="status-pill">● Ouverte</span>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="tl-date">
+                        <span class="day">15</span>
+                        <span class="month">Juin</span>
+                    </div>
+                    <div>
+                        <h4>Plan de circulation du centre-ville</h4>
+                        <p>Enquête citoyenne · ouverte jusqu'au 15 juin</p>
+                    </div>
+                    <span class="status-pill">● Ouverte</span>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="tl-date">
+                        <span class="day">01</span>
+                        <span class="month">Juil</span>
+                    </div>
+                    <div>
+                        <h4>Budget participatif 2026</h4>
+                        <p>Dépôt des projets · ouvert jusqu'au 1er juillet</p>
+                    </div>
+                    <span class="status-pill">● Ouverte</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+<div class="citoyen-page">
+    <section class="voice-section">
+        <div class="voice-inner">
+            <div class="big-quote">"</div>
+            <h3>Votre voix compte</h3>
+            <p>
+                La démocratie locale s'enrichit de la participation de chacun.
+                Que ce soit à travers les consultations, le bénévolat ou les
+                associations, chaque action contribue à construire une ville
+                plus inclusive et plus dynamique.
+            </p>
+        </div>
+    </section>
+</div>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}

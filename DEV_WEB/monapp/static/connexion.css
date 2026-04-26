@@ -1,0 +1,345 @@
+/* ================================================================
+   MaVille — Page Connexion
+   Thème : immersif, focus, premium avec fond animé
+   ================================================================ */
+
+.login-page-v2 {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color: #0f172a;
+  isolation: isolate;
+}
+
+/* Fond gradient animé */
+.login-page-v2::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1e3a8a 0%, #312e81 35%, #4c1d95 70%, #1e3a8a 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 15s ease infinite;
+  z-index: -2;
+}
+.login-page-v2::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.5) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(37, 99, 235, 0.5) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.3) 0%, transparent 60%);
+  animation: mesh 18s ease-in-out infinite alternate;
+  z-index: -1;
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes mesh {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.15) translate(-3%, 2%); }
+}
+
+/* Particules flottantes */
+.bg-particles {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-particles span {
+  position: absolute;
+  display: block;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  animation: floatUp 12s linear infinite;
+}
+.bg-particles span:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 10s; }
+.bg-particles span:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 14s; }
+.bg-particles span:nth-child(3) { left: 35%; animation-delay: 4s; animation-duration: 9s; width: 6px; height: 6px; }
+.bg-particles span:nth-child(4) { left: 50%; animation-delay: 1s; animation-duration: 13s; }
+.bg-particles span:nth-child(5) { left: 65%; animation-delay: 3s; animation-duration: 11s; width: 5px; height: 5px; }
+.bg-particles span:nth-child(6) { left: 75%; animation-delay: 5s; animation-duration: 15s; }
+.bg-particles span:nth-child(7) { left: 85%; animation-delay: 2.5s; animation-duration: 10s; }
+.bg-particles span:nth-child(8) { left: 92%; animation-delay: 4.5s; animation-duration: 12s; width: 6px; height: 6px; }
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; transform: translateY(90vh) scale(1); }
+  90% { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+}
+
+/* Container glass */
+.login-container-v2 {
+  width: 100%;
+  max-width: 460px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow:
+    0 40px 80px -20px rgba(15, 23, 42, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-header-v2 {
+  padding: 40px 36px 20px;
+  text-align: center;
+}
+.login-header-v2 .brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.login-header-v2 .brand-mark .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b5cf6, #2563eb);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+  animation: pulseBrand 2s infinite;
+}
+@keyframes pulseBrand {
+  0%, 100% { box-shadow: 0 0 12px rgba(139, 92, 246, 0.5); }
+  50% { box-shadow: 0 0 24px rgba(139, 92, 246, 0.9); }
+}
+.login-header-v2 .brand-mark span {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e3a8a;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.login-header-v2 h1 {
+  font-size: 30px;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin-bottom: 8px;
+  line-height: 1.15;
+}
+.login-header-v2 h1 .gradient {
+  background: linear-gradient(135deg, #8b5cf6, #2563eb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.login-header-v2 .subtitle {
+  color: #64748b;
+  font-size: 14.5px;
+}
+
+/* Tabs */
+.tabs-v2 {
+  display: flex;
+  padding: 0 36px;
+  gap: 0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-top: 8px;
+}
+.tab-btn-v2 {
+  flex: 1;
+  padding: 14px 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s;
+  margin-bottom: -1px;
+  letter-spacing: 0.02em;
+}
+.tab-btn-v2:hover { color: #2563eb; }
+.tab-btn-v2.active {
+  color: #8b5cf6;
+  border-bottom-color: #8b5cf6;
+}
+
+/* Form */
+.form-box-v2 {
+  padding: 28px 36px 36px;
+}
+.form-v2 {
+  display: none;
+  flex-direction: column;
+  gap: 18px;
+}
+.form-v2.active {
+  display: flex;
+  animation: fadeIn 0.4s ease both;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.input-group-v2 {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.input-group-v2 label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.input-wrap {
+  position: relative;
+}
+.input-wrap .input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  transition: color 0.2s;
+}
+.input-wrap input {
+  width: 100%;
+  padding: 13px 16px 13px 44px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+.input-wrap input:focus {
+  outline: none;
+  background: #fff;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12);
+}
+.input-wrap input:focus ~ .input-icon {
+  color: #8b5cf6;
+}
+
+.row-v2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #64748b;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.row-v2 label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.row-v2 input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #8b5cf6;
+  cursor: pointer;
+}
+.row-v2 a {
+  color: #8b5cf6;
+  text-decoration: none;
+  font-weight: 700;
+}
+.row-v2 a:hover {
+  text-decoration: underline;
+}
+
+.btn-login {
+  margin-top: 6px;
+  padding: 14px 22px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #2563eb 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(37, 99, 235, 0.45);
+}
+.btn-login:active {
+  transform: translateY(0);
+}
+
+.message-v2 {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  display: none;
+}
+.message-v2.error,
+.message-v2.success {
+  display: block;
+}
+.message-v2.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+.message-v2.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+/* Footer */
+.login-footer {
+  padding: 18px 36px 28px;
+  text-align: center;
+  border-top: 1px solid #f1f5f9;
+}
+.login-footer a {
+  color: #64748b;
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.login-footer a:hover {
+  color: #8b5cf6;
+}
+
+@media (max-width: 500px) {
+  .login-header-v2, .tabs-v2, .form-box-v2, .login-footer {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .login-container-v2 { border-radius: 20px; }
+}

@@ -1,0 +1,365 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Accueil - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'accueil.css' %}">
+{% endblock %}
+
+{% block hero %}
+<section class="hero-cinema accueil">
+    {# ---------- VIDÉO DE VILLE EN BACKGROUND ---------- #}
+    <video class="hero-video" autoplay muted loop playsinline
+           poster="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=2400&q=80">
+        <source src="https://cdn.pixabay.com/video/2020/03/29/34648-403592190_large.mp4" type="video/mp4">
+        <source src="https://cdn.pixabay.com/video/2019/06/28/25075-346272442_large.mp4" type="video/mp4">
+    </video>
+    <div class="hero-fallback"></div>
+
+    <div class="hero-inner">
+        <div class="hero-badge">
+            <span class="pulse"></span>
+            <span>Plateforme en direct · Votre ville connectée</span>
+        </div>
+
+        <h2>
+            Votre ville,<br>
+            <span class="highlight">plus intelligente</span> au quotidien.
+        </h2>
+
+        <p class="lead">
+            Transports, signalements, démarches, informations locales :
+            retrouvez tous les services essentiels de votre commune
+            dans un espace numérique unique, accessible à tous.
+        </p>
+
+        <div class="hero-cta">
+            <a href="{% url 'services-public' %}" class="btn-cinema">
+                <span>Explorer les services</span>
+                <span class="arrow">→</span>
+            </a>
+            <a href="#recherche" class="btn-ghost">
+                <span>🔍 Rechercher</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="scroll-indicator">
+        <div class="mouse"></div>
+        <span>Scroll</span>
+    </div>
+</section>
+
+{# ---------- BARRE DE STATS LIVE ---------- #}
+<section class="city-stats accueil">
+    <div class="wrap">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number" data-target="24">0</div>
+                <div class="stat-label">Services en ligne</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="12450">0</div>
+                <div class="stat-label">Citoyens connectés</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="847">0</div>
+                <div class="stat-label">Incidents résolus</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Accessibilité</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="accueil">
+
+    {# ---------- RECHERCHE AVEC 2 FILTRES ---------- #}
+    <section class="search-section" id="recherche">
+        <div class="wrap">
+            <div class="search-hero">
+                <h3>Que cherchez-vous <span class="underline">aujourd'hui</span> ?</h3>
+                <p>Trouvez en quelques secondes le service dont vous avez besoin.</p>
+
+                <form id="search-form" onsubmit="return false;">
+                    <div class="search-box">
+                        <div class="field">
+                            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <input type="text" id="search-keyword"
+                                   placeholder="Mot-clé : transport, incident, réservation...">
+                        </div>
+
+                        <div class="field">
+                            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M7 12h10M10 18h4"></path>
+                            </svg>
+                            <select id="search-category">
+                                <option value="all">Toutes les catégories</option>
+                                <option value="transport">Transports</option>
+                                <option value="incident">Incidents</option>
+                                <option value="info">Informations locales</option>
+                                <option value="service">Services publics</option>
+                                <option value="reservation">Réservations</option>
+                                <option value="citoyen">Vie citoyenne</option>
+                            </select>
+                        </div>
+
+                        <button type="button" class="btn-search" onclick="filtrerServices()">
+                            Rechercher
+                        </button>
+                    </div>
+
+                    <p id="search-result-info" class="search-info"></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    {# ---------- GRILLE DES SERVICES ---------- #}
+    <section class="services-section">
+        <div class="wrap">
+            <div class="section-heading reveal">
+                <span class="eyebrow">Nos services</span>
+                <h3>Tout ce dont vous avez besoin,<br>à portée de clic</h3>
+                <p>Six espaces pensés pour simplifier votre quotidien dans la ville.</p>
+            </div>
+
+            <div class="services-grid" id="services-list">
+
+                <article class="service-card card-transport"
+                         data-category="transport"
+                         data-keywords="transport bus métro vélo stationnement horaires trafic">
+                    <div class="card-image">
+                        <span class="card-badge">Transports</span>
+                    </div>
+                    <div class="card-icon-float">🚌</div>
+                    <div class="card-body">
+                        <h4>Transports</h4>
+                        <p>Horaires, itinéraires, état du trafic et informations utiles pour vos déplacements quotidiens.</p>
+                        <a href="{% url 'transport' %}" class="card-link">
+                            En savoir plus <span>→</span>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="service-card card-incident"
+                         data-category="incident"
+                         data-keywords="incident signalement éclairage voirie encombrants problème urbain">
+                    <div class="card-image">
+                        <span class="card-badge">Signalement</span>
+                    </div>
+                    <div class="card-icon-float">⚠️</div>
+                    <div class="card-body">
+                        <h4>Signaler un incident</h4>
+                        <p>Déclarez rapidement un problème urbain : éclairage, voirie, encombrants ou autre situation.</p>
+                        <a href="{% url 'incident' %}" class="card-link">
+                            Signaler <span>→</span>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="service-card card-info"
+                         data-category="info"
+                         data-keywords="informations locales actualités événements commune annonces">
+                    <div class="card-image">
+                        <span class="card-badge">Actualités</span>
+                    </div>
+                    <div class="card-icon-float">📰</div>
+                    <div class="card-body">
+                        <h4>Informations locales</h4>
+                        <p>Actualités de la commune, événements à venir et annonces importantes pour les habitants.</p>
+                        <a href="{% url 'info-locale' %}" class="card-link">
+                            Voir les infos <span>→</span>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="service-card card-service"
+                         data-category="service"
+                         data-keywords="services publics mairie démarches administratives">
+                    <div class="card-image">
+                        <span class="card-badge">Administration</span>
+                    </div>
+                    <div class="card-icon-float">🏛️</div>
+                    <div class="card-body">
+                        <h4>Services publics</h4>
+                        <p>Accédez facilement aux démarches et services proposés par la mairie de votre ville.</p>
+                        <a href="{% url 'services-public' %}" class="card-link">
+                            Accéder <span>→</span>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="service-card card-reservation"
+                         data-category="reservation"
+                         data-keywords="réservation équipement salle sport rendez-vous administratif">
+                    <div class="card-image">
+                        <span class="card-badge">Réservation</span>
+                    </div>
+                    <div class="card-icon-float">📅</div>
+                    <div class="card-body">
+                        <h4>Réservations</h4>
+                        <p>Réservez des équipements ou services : salles, infrastructures sportives ou rendez-vous.</p>
+                        <a href="{% url 'reservation' %}" class="card-link">
+                            Réserver <span>→</span>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="service-card card-citoyen"
+                         data-category="citoyen"
+                         data-keywords="vie citoyenne ville lien habitant espace consultations associations bénévolat">
+                    <div class="card-image">
+                        <span class="card-badge">Communauté</span>
+                    </div>
+                    <div class="card-icon-float">🤝</div>
+                    <div class="card-body">
+                        <h4>Vie citoyenne</h4>
+                        <p>Renforcez votre lien avec la ville grâce à un espace centralisé et accessible à tous.</p>
+                        <a href="{% url 'vie-citoyenne' %}" class="card-link">
+                            Découvrir <span>→</span>
+                        </a>
+                    </div>
+                </article>
+
+            </div>
+
+            <p id="no-result" class="no-result-message" style="display:none;">
+                Aucun service ne correspond à votre recherche.
+            </p>
+        </div>
+    </section>
+
+    {# ---------- CTA FINAL AVEC PARALLAX ---------- #}
+    <section class="cta-parallax accueil">
+        <div class="wrap">
+            <h3>Une ville plus simple, plus connectée.</h3>
+            <p>
+                Cette plateforme regroupe les principaux services urbains dans un
+                seul espace numérique accessible à tous. Rejoignez la communauté
+                des habitants connectés.
+            </p>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'inscription' %}" class="btn-cinema">
+                    <span>Créer mon compte</span>
+                    <span class="arrow">→</span>
+                </a>
+            {% else %}
+                <a href="{% url 'profil' %}" class="btn-cinema">
+                    <span>Mon espace citoyen</span>
+                    <span class="arrow">→</span>
+                </a>
+            {% endif %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    /* ================ FILTRAGE RECHERCHE ================ */
+    function filtrerServices() {
+        const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
+        const category = document.getElementById('search-category').value;
+        const cards = document.querySelectorAll('#services-list .service-card');
+        const noResult = document.getElementById('no-result');
+        const resultInfo = document.getElementById('search-result-info');
+
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cardCategory = card.dataset.category;
+            const cardKeywords = (card.dataset.keywords || '').toLowerCase();
+            const cardText = card.textContent.toLowerCase();
+
+            const matchCategory = (category === 'all') || (cardCategory === category);
+            const matchKeyword = (keyword === '') ||
+                                 cardKeywords.includes(keyword) ||
+                                 cardText.includes(keyword);
+
+            if (matchCategory && matchKeyword) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        noResult.style.display = (visibleCount === 0) ? 'block' : 'none';
+
+        if (keyword === '' && category === 'all') {
+            resultInfo.textContent = '';
+        } else {
+            resultInfo.textContent = visibleCount + ' résultat(s) trouvé(s).';
+        }
+    }
+
+    document.getElementById('search-keyword').addEventListener('input', filtrerServices);
+    document.getElementById('search-category').addEventListener('change', filtrerServices);
+
+    /* ================ ANIMATION COMPTEURS ================ */
+    function animateCounter(el, target, duration = 2000) {
+        const start = 0;
+        const startTime = performance.now();
+        const format = n => n.toLocaleString('fr-FR');
+
+        function update(now) {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(start + (target - start) * ease);
+            el.textContent = format(current);
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+
+    /* ================ INTERSECTION OBSERVER ================ */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+
+                // Lance les compteurs quand on voit la barre de stats
+                if (entry.target.classList.contains('stat-number')) {
+                    const target = parseInt(entry.target.dataset.target);
+                    if (!isNaN(target)) {
+                        animateCounter(entry.target, target);
+                    }
+                    observer.unobserve(entry.target);
+                }
+            }
+        });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.reveal, .stat-number[data-target]').forEach(el => {
+        observer.observe(el);
+    });
+
+    /* ================ PARALLAX DOUX DU HERO ================ */
+    const hero = document.querySelector('.hero-cinema .hero-inner');
+    window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        if (hero && scrolled < window.innerHeight) {
+            hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+            hero.style.opacity = 1 - (scrolled / window.innerHeight) * 1.2;
+        }
+    }, { passive: true });
+</script>
+{% endblock %}

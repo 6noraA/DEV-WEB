@@ -63,7 +63,3 @@ class Produit(models.Model):
     photo = models.ImageField(upload_to='photos/outils/', null=True, blank=True)
     def __str__(self):
         return self.Nom
-  
-  
-  
-  

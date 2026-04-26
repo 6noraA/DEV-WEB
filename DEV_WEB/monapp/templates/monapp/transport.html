@@ -1,0 +1,140 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Transports - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'transport.css' %}">
+{% endblock %}
+
+{% block hero %}
+<div class="transport-page">
+    <section class="hero-transport">
+        <div class="hero-inner">
+            <h2>Bougez dans la ville,<br><span class="accent-word">sans friction</span>.</h2>
+            <p>
+                Consultez les horaires, les lignes disponibles et l'état du trafic
+                en temps réel pour faciliter vos déplacements dans la ville.
+            </p>
+        </div>
+    </section>
+
+    <div class="trafic-ticker">
+        <div class="ticker-track">
+            <span class="ticker-item"><span class="dot green"></span> Ligne 1 — Trafic fluide</span>
+            <span class="ticker-item"><span class="dot orange"></span> Ligne 3 — Ralentissements</span>
+            <span class="ticker-item"><span class="dot green"></span> Tramway T2 — Normal</span>
+            <span class="ticker-item"><span class="dot red"></span> Bus 42 — Déviation jusqu'à 18h</span>
+            <span class="ticker-item"><span class="dot green"></span> Vélib' — 92% de stations disponibles</span>
+            <span class="ticker-item"><span class="dot green"></span> Parking centre-ville — 237 places libres</span>
+            <span class="ticker-item"><span class="dot green"></span> Ligne 1 — Trafic fluide</span>
+            <span class="ticker-item"><span class="dot orange"></span> Ligne 3 — Ralentissements</span>
+            <span class="ticker-item"><span class="dot green"></span> Tramway T2 — Normal</span>
+            <span class="ticker-item"><span class="dot red"></span> Bus 42 — Déviation jusqu'à 18h</span>
+            <span class="ticker-item"><span class="dot green"></span> Vélib' — 92% de stations disponibles</span>
+            <span class="ticker-item"><span class="dot green"></span> Parking centre-ville — 237 places libres</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="transport-page">
+    <section class="transport-section">
+        <div class="wrap">
+            <div class="section-title">
+                <h3>Modes de transport disponibles</h3>
+                <p>Retrouvez toutes les informations utiles sur les transports de la ville.</p>
+            </div>
+
+            <div class="t-grid">
+                <article class="t-card t-bus">
+                    <div class="t-visual">
+                        <span class="t-badge">Bus</span>
+                        <div class="live-status">
+                            <span class="live-dot"></span>
+                            En service
+                        </div>
+                    </div>
+                    <div class="t-body">
+                        <h4>Réseau de bus municipal</h4>
+                        <p>Horaires, lignes et trajets des bus municipaux. Suivez les perturbations éventuelles en temps réel.</p>
+                        <a href="#" class="t-link">Voir les horaires <span>→</span></a>
+                    </div>
+                </article>
+
+                <article class="t-card t-metro">
+                    <div class="t-visual">
+                        <span class="t-badge">Métro · Tram</span>
+                        <div class="live-status">
+                            <span class="live-dot"></span>
+                            Trafic normal
+                        </div>
+                    </div>
+                    <div class="t-body">
+                        <h4>Métro et tramway</h4>
+                        <p>Suivi des lignes principales, fréquences de passage et informations sur les travaux en cours.</p>
+                        <a href="#" class="t-link">Voir les lignes <span>→</span></a>
+                    </div>
+                </article>
+
+                <article class="t-card t-velo">
+                    <div class="t-visual">
+                        <span class="t-badge">Vélo</span>
+                        <div class="live-status">
+                            <span class="live-dot"></span>
+                            312 vélos disponibles
+                        </div>
+                    </div>
+                    <div class="t-body">
+                        <h4>Vélos en libre-service</h4>
+                        <p>Localisez les stations de vélos disponibles et consultez la disponibilité en temps réel.</p>
+                        <a href="#" class="t-link">Trouver un vélo <span>→</span></a>
+                    </div>
+                </article>
+
+                <article class="t-card t-auto">
+                    <div class="t-visual">
+                        <span class="t-badge">Auto</span>
+                        <div class="live-status">
+                            <span class="live-dot"></span>
+                            237 places libres
+                        </div>
+                    </div>
+                    <div class="t-body">
+                        <h4>Stationnement</h4>
+                        <p>Places disponibles dans les parkings municipaux et information sur les zones de stationnement.</p>
+                        <a href="#" class="t-link">Voir la carte <span>→</span></a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+<div class="transport-page">
+    <section class="info-section">
+        <div class="wrap">
+            <div class="info-card-t">
+                <h3>
+                    Info trafic en direct
+                    <span class="live-badge"><span class="dot"></span> Live</span>
+                </h3>
+                <p>
+                    Pour toute perturbation majeure sur le réseau de transports,
+                    une alerte sera affichée sur la page d'accueil.
+                    En cas d'urgence, contactez le service transport au 01 23 45 67 89.
+                </p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}

@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
+from .form import ProduitForm, InscriptionForm, PersonneForm
 from django.contrib.auth.decorators import login_required
-from .form import ProduitForm
+
 from .models import Produit
 
-
 from django.contrib.auth import login, authenticate, logout
-from .forms import InscriptionForm, PersonneForm
 
 from django.core.mail import send_mail
 
@@ -50,10 +49,12 @@ def inscription(request):
         personne_form = PersonneForm(request.POST)
 
         if form.is_valid() and personne_form.is_valid():
-            user = form.save()
+           
+            user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
-
+ 
+           
             profil = user.personne
             profil.age = profil_form.cleaned_data['age']
             profil.sexe = profil_form.cleaned_data['sexe']
@@ -61,15 +62,42 @@ def inscription(request):
             profil.type_membre = profil_form.cleaned_data['type_membre']
             send_mail( 'Bienvenue', 'Votre compte a été créé','admin@ville.com',[user.email],)
             profil.save()
-
-            return redirect('login')
+ 
+            
+            login(request, user)
+            return redirect('accueil')
 
     else:
         form = InscriptionForm()
         personne_form = PersonneForm()
 
-    return render(request, 'inscription.html', {'form': form, 'personne_form': personne_form})
+    return render(request, 'monapp/connexion.html', {
+        'page_active': 'connexion',
+        'form': form,
+        'personne_form': personne_form,
+    })
 
+def accueil(request):
+    return render(request, 'monapp/accueil.html', {'page_active': 'accueil'})
+
+def transport(request):
+    return render(request, 'monapp/transport.html', {'page_active': 'transport'})
+
+def incident(request):
+    return render(request, 'monapp/incident.html', {'page_active': 'incident'})
+
+def services_public(request):
+    return render(request, 'monapp/services_public.html', {'page_active': 'services-public'})
+
+def info_locale(request):
+    return render(request, 'monapp/info_locales.html', {'page_active': 'info-locale'})
+def profil(request):
+    return render(request, 'monapp/profil.html', {'page_active': 'profil'})
+def reservation(request):
+    return render(request, 'monapp/reservations.html', {'page_active': 'reservation'})
+
+def vie_citoyenne(request):
+    return render(request, 'monapp/vie_citoyenne.html', {'page_active': 'vie-citoyenne'})
 
 def update_niveau(personne):
     if personne.points >= 7:
@@ -82,6 +110,8 @@ def update_niveau(personne):
         personne.niveau = 'debutant'
         
 def connexion(request):
+    error = None
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -97,14 +127,15 @@ def connexion(request):
 
             update_niveau(personne)
             personne.save()
-            return redirect('home')
+            return redirect('accueil')
+        else:
+            error = "Nom d'utilisateur ou mot de passe incorrect.
 
-    return render(request, 'connexion.html')
-
+    return render(request, 'monapp/connexion.html', {'page_active': 'connexion', 'error': error})
 
 def deconnexion(request):
     logout(request)
-    return redirect('login')
+    return redirect('connexion')
     
 @login_required
 def profil(request):

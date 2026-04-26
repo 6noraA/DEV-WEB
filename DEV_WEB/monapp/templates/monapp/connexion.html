@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - MaVille</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'connexion.css' %}">
+</head>
+<body class="login-page-v2">
+
+    {# Particules flottantes décoratives #}
+    <div class="bg-particles">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="login-container-v2">
+        <div class="login-header-v2">
+            <div class="brand-mark">
+                <span class="dot"></span>
+                <span>MaVille</span>
+            </div>
+            <h1>Bienvenue dans <span class="gradient">votre ville</span></h1>
+            <p class="subtitle">Connectez-vous ou créez votre compte pour accéder à tous les services.</p>
+        </div>
+
+        <div class="tabs-v2">
+            <button type="button" class="tab-btn-v2 active" onclick="showForm('login', event)">Connexion</button>
+            <button type="button" class="tab-btn-v2" onclick="showForm('register', event)">Créer un compte</button>
+        </div>
+
+        <div class="form-box-v2">
+
+            {# ---------- FORMULAIRE DE CONNEXION ---------- #}
+            <form id="login" class="form-v2 active"
+                  method="post"
+                  action="{% url 'connexion' %}">
+                {% csrf_token %}
+
+                {% if error %}
+                    <div class="message-v2 error">{{ error }}</div>
+                {% endif %}
+
+                <div class="input-group-v2">
+                    <label for="login-username">Nom d'utilisateur</label>
+                    <div class="input-wrap">
+                        <input type="text"
+                               id="login-username"
+                               name="username"
+                               placeholder="Votre nom d'utilisateur"
+                               required>
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group-v2">
+                    <label for="login-password">Mot de passe</label>
+                    <div class="input-wrap">
+                        <input type="password"
+                               id="login-password"
+                               name="password"
+                               placeholder="Votre mot de passe"
+                               required>
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="row-v2">
+                    <label>
+                        <input type="checkbox" name="remember_me">
+                        Se souvenir de moi
+                    </label>
+                    <a href="#">Mot de passe oublié ?</a>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Se connecter
+                    <span>→</span>
+                </button>
+
+                <div id="login-message" class="message-v2"></div>
+            </form>
+
+            {# ---------- FORMULAIRE D'INSCRIPTION ---------- #}
+            <form id="register" class="form-v2"
+                  method="post"
+                  action="{% url 'inscription' %}">
+                {% csrf_token %}
+
+                <div class="input-group-v2">
+                    <label for="register-username">Nom d'utilisateur</label>
+                    <div class="input-wrap">
+                        <input type="text"
+                               id="register-username"
+                               name="username"
+                               placeholder="Choisissez un pseudonyme"
+                               required>
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group-v2">
+                    <label for="register-email">Adresse e-mail</label>
+                    <div class="input-wrap">
+                        <input type="email"
+                               id="register-email"
+                               name="email"
+                               placeholder="exemple@email.com"
+                               required>
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group-v2">
+                    <label for="register-password">Mot de passe</label>
+                    <div class="input-wrap">
+                        <input type="password"
+                               id="register-password"
+                               name="password"
+                               placeholder="Choisissez un mot de passe"
+                               minlength="6"
+                               required>
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group-v2">
+                    <label for="register-confirm-password">Confirmer le mot de passe</label>
+                    <div class="input-wrap">
+                        <input type="password"
+                               id="register-confirm-password"
+                               name="confirm_password"
+                               placeholder="Confirmez le mot de passe"
+                               required>
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 12l2 2 4-4"></path>
+                            <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Créer un compte
+                    <span>→</span>
+                </button>
+
+                <div id="register-message" class="message-v2"></div>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <a href="{% url 'accueil' %}">← Retour à l'accueil</a>
+        </div>
+    </div>
+
+    <script>
+        const tabButtons = document.querySelectorAll('.tab-btn-v2');
+        const forms = document.querySelectorAll('.form-v2');
+
+        function showForm(formId, event) {
+            forms.forEach((form) => form.classList.remove('active'));
+            tabButtons.forEach((btn) => btn.classList.remove('active'));
+
+            document.getElementById(formId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ---------- VALIDATION CLIENT DU FORMULAIRE D'INSCRIPTION ----------
+        document.getElementById('register').addEventListener('submit', function (e) {
+            const password = document.getElementById('register-password').value.trim();
+            const confirmPassword = document.getElementById('register-confirm-password').value.trim();
+            const message = document.getElementById('register-message');
+
+            if (password.length < 6) {
+                e.preventDefault();
+                message.textContent = 'Le mot de passe doit contenir au moins 6 caractères.';
+                message.className = 'message-v2 error';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                message.textContent = 'Les mots de passe ne correspondent pas.';
+                message.className = 'message-v2 error';
+                return;
+            }
+
+            // Si tout est OK : on laisse le formulaire partir vers Django
+        });
+    </script>
+</body>
+</html>

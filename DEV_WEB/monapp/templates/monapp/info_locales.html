@@ -1,0 +1,147 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Informations locales - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'info_locales.css' %}">
+{% endblock %}
+
+{% block hero %}
+<div class="infos-page">
+    <section class="hero-infos">
+        <div class="hero-inner">
+            <div class="meta-bar">
+                <span class="category-tag">Actualités</span>
+                <span class="date">Édition du jour</span>
+                <span class="separator">·</span>
+                <span>Mise à jour en continu</span>
+            </div>
+            <h2>L'actualité de votre ville,<br>tout ce qui compte vraiment.</h2>
+            <p>
+                Retrouvez les dernières actualités de votre ville, les événements à venir,
+                les annonces importantes et les informations utiles pour votre quotidien.
+            </p>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="infos-page">
+
+    <section class="news-section">
+        <div class="wrap">
+            <div class="news-header">
+                <div class="left">
+                    <span class="divider"></span>
+                    <h3>Actualités récentes</h3>
+                    <p>Les dernières nouveautés et annonces de la commune.</p>
+                </div>
+                <div class="date-pill">Semaine du 24 avril 2026</div>
+            </div>
+
+            <div class="news-grid">
+                <article class="news-card nc-travaux">
+                    <div class="news-image"></div>
+                    <div class="news-body">
+                        <span class="category">Actualité</span>
+                        <h4>Travaux de voirie dans le centre-ville</h4>
+                        <p>Des travaux de réaménagement débuteront lundi prochain dans plusieurs rues du centre-ville. La circulation pourra être temporairement perturbée.</p>
+                        <a href="#" class="read-more">Lire l'article <span>→</span></a>
+                    </div>
+                </article>
+
+                <article class="news-card nc-guichet">
+                    <div class="news-image"></div>
+                    <div class="news-body">
+                        <span class="category">Annonce</span>
+                        <h4>Ouverture d'un nouveau service administratif</h4>
+                        <p>Un nouveau guichet d'accompagnement aux démarches administratives est désormais disponible en mairie pour faciliter vos demandes.</p>
+                        <a href="#" class="read-more">Lire l'article <span>→</span></a>
+                    </div>
+                </article>
+
+                <article class="news-card nc-collecte">
+                    <div class="news-image"></div>
+                    <div class="news-body">
+                        <span class="category">Vie locale</span>
+                        <h4>Collecte exceptionnelle ce week-end</h4>
+                        <p>Une collecte exceptionnelle d'encombrants sera organisée samedi matin dans plusieurs quartiers de la ville.</p>
+                        <a href="#" class="read-more">Lire l'article <span>→</span></a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="events-section">
+        <div class="inner">
+            <div class="events-header">
+                <span class="eyebrow">Agenda</span>
+                <h3>Événements à venir</h3>
+                <p>Découvrez les rendez-vous importants organisés dans votre ville.</p>
+            </div>
+
+            <div class="events-list-elegant">
+                <div class="event-item-elegant">
+                    <div class="event-date-elegant">
+                        <span class="day">12</span>
+                        <span class="month">Mai</span>
+                    </div>
+                    <div class="event-content-elegant">
+                        <h4>Forum des associations</h4>
+                        <p>Maison des associations · 10h00 à 17h00</p>
+                    </div>
+                    <div class="event-arrow">→</div>
+                </div>
+
+                <div class="event-item-elegant">
+                    <div class="event-date-elegant">
+                        <span class="day">18</span>
+                        <span class="month">Mai</span>
+                    </div>
+                    <div class="event-content-elegant">
+                        <h4>Marché local des producteurs</h4>
+                        <p>Place centrale · 08h30 à 13h00</p>
+                    </div>
+                    <div class="event-arrow">→</div>
+                </div>
+
+                <div class="event-item-elegant">
+                    <div class="event-date-elegant">
+                        <span class="day">24</span>
+                        <span class="month">Mai</span>
+                    </div>
+                    <div class="event-content-elegant">
+                        <h4>Réunion publique de quartier</h4>
+                        <p>Salle municipale · 19h00</p>
+                    </div>
+                    <div class="event-arrow">→</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+<div class="infos-page">
+    <section class="stay-informed">
+        <div class="stay-informed-inner">
+            <h3>Rester informé, où que vous soyez</h3>
+            <p>
+                Consultez régulièrement cette page pour suivre les actualités municipales,
+                les changements de circulation, les événements culturels et les informations
+                importantes liées à la vie de la commune.
+            </p>
+        </div>
+    </section>
+</div>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}
