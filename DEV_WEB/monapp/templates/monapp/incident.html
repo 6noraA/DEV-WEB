@@ -1,147 +1,528 @@
 {% extends 'monapp/base.html' %}
 {% load static %}
 
-{% block title %}Incidents - MaVille{% endblock %}
+{% block title %}Administration - Barbz{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{% static 'incident.css' %}">
+<style>
+/* ── HERO ── */
+.admin-hero {
+  position: relative;
+  min-height: 38vh;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+}
+.admin-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(239,68,68,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(124,58,237,0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #0f172a 0%, #450a0a 40%, #1e3a8a 100%);
+  z-index: -1;
+}
+.admin-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.admin-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 28px;
+  width: 100%;
+}
+.admin-hero h2 {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+}
+.admin-hero p { font-size: 16px; color: rgba(255,255,255,0.72); }
+
+/* ── PAGE ── */
+.admin-page { padding: 48px 0 80px; background: #f8fafc; }
+
+/* Messages */
+.admin-messages { margin-bottom: 24px; }
+.admin-msg {
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.admin-msg.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+.admin-msg.error   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+/* Stats */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.admin-stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1.5px solid #e2e8f0;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(15,23,42,0.05);
+}
+.admin-stat-card .stat-icon { font-size: 28px; margin-bottom: 8px; }
+.admin-stat-card .stat-val  { font-size: 28px; font-weight: 900; color: #0f172a; line-height: 1; }
+.admin-stat-card .stat-lbl  { font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 4px; }
+
+/* Tableau */
+.admin-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.06);
+  overflow: hidden;
+}
+.admin-card-header {
+  padding: 20px 28px;
+  border-bottom: 1.5px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.admin-card-header h3 { font-size: 17px; font-weight: 800; color: #0f172a; }
+
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th {
+  padding: 14px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+.admin-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #0f172a;
+  vertical-align: middle;
+}
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tr:hover td { background: #fafafa; }
+
+/* Avatar inline */
+.user-cell { display: flex; align-items: center; gap: 12px; }
+.user-avatar-sm {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 15px; font-weight: 900;
+}
+.user-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+.user-name { font-weight: 700; }
+.user-email { font-size: 12px; color: #94a3b8; }
+
+/* Badges */
+.niveau-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.05em;
+}
+.niveau-pill.debutant     { background: #dcfce7; color: #166534; }
+.niveau-pill.intermediaire{ background: #fef9c3; color: #854d0e; }
+.niveau-pill.avance       { background: #ffedd5; color: #9a3412; }
+.niveau-pill.expert       { background: #fef3c7; color: #78350f; border: 1px solid #f59e0b; }
+
+.statut-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 700;
+}
+.statut-pill.actif  { background: #dcfce7; color: #166534; }
+.statut-pill.banni  { background: #fee2e2; color: #991b1b; }
+
+/* Actions */
+.actions-cell { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.btn-ban {
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  border: none; font-family: inherit; transition: all 0.2s;
+}
+.btn-ban.suspend { background: #fef9c3; color: #854d0e; }
+.btn-ban.suspend:hover { background: #fde047; }
+.btn-ban.reactive { background: #dcfce7; color: #166534; }
+.btn-ban.reactive:hover { background: #86efac; }
+.btn-ban.delete { background: #fee2e2; color: #991b1b; }
+.btn-ban.delete:hover { background: #fca5a5; }
+.btn-ban:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Modal de confirmation */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 0 25px 60px rgba(15,23,42,0.2);
+}
+.modal-box h4 { font-size: 20px; font-weight: 900; color: #0f172a; margin-bottom: 10px; }
+.modal-box p  { font-size: 14px; color: #64748b; margin-bottom: 20px; line-height: 1.55; }
+.modal-box textarea {
+  width: 100%; padding: 12px; border: 1.5px solid #e2e8f0;
+  border-radius: 10px; font-size: 14px; font-family: inherit;
+  resize: vertical; min-height: 80px; margin-bottom: 20px;
+  outline: none; box-sizing: border-box;
+}
+.modal-box textarea:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+.modal-cancel {
+  padding: 10px 20px; background: #f1f5f9; color: #475569;
+  border-radius: 10px; font-size: 14px; font-weight: 700;
+  border: none; cursor: pointer; font-family: inherit;
+}
+.modal-confirm {
+  padding: 10px 20px; border-radius: 10px; font-size: 14px;
+  font-weight: 700; border: none; cursor: pointer; font-family: inherit;
+  color: #fff;
+}
+.modal-confirm.ban    { background: #f59e0b; }
+.modal-confirm.delete { background: #ef4444; }
+
+@media (max-width: 768px) {
+  .admin-table th:nth-child(3),
+  .admin-table td:nth-child(3) { display: none; }
+}
+</style>
 {% endblock %}
 
 {% block hero %}
-<div class="incident-page">
-    <section class="hero-incident">
-        <div class="hero-inner">
-            <div class="alert-badge">
-                <span class="pulse"></span>
-                Signalement citoyen
-            </div>
-            <h2>Votre regard rend la ville<br>plus sûre et plus propre.</h2>
-            <p>
-                Signalez un problème urbain que vous avez constaté :
-                éclairage défectueux, voirie dégradée, propreté ou autre.
-                Vos signalements aident la ville à intervenir rapidement.
-            </p>
+<section class="admin-hero">
+    <div class="admin-hero-bg"></div>
+    <div class="admin-hero-inner">
+        <div class="hero-badge" style="margin-bottom: 20px;">
+            <span class="pulse"></span>
+            <span>Accès administrateur · Niveau Expert</span>
         </div>
-    </section>
-</div>
+        <h2>🛡️ Tableau de bord Admin</h2>
+        <p>Gérez les utilisateurs de la plateforme Barbz.</p>
+    </div>
+</section>
 {% endblock %}
 
 {% block content %}
-<div class="incident-page">
-    <section class="incident-section">
-        <div class="wrap">
-            <div class="incident-layout">
+<div class="admin-page">
+    <div class="wrap">
 
-                {# Étapes #}
-                <div class="incident-steps">
-                    <h3>Comment ça marche ?</h3>
-                    <p class="lead">Trois étapes simples pour signaler un problème et contribuer à l'amélioration de votre ville.</p>
-
-                    <ol class="steps-list">
-                        <li class="step">
-                            <div class="step-num">1</div>
-                            <div class="step-content">
-                                <h4>Décrivez le problème</h4>
-                                <p>Indiquez le type d'incident, sa localisation et ajoutez une description claire.</p>
-                            </div>
-                        </li>
-                        <li class="step">
-                            <div class="step-num">2</div>
-                            <div class="step-content">
-                                <h4>Les services sont alertés</h4>
-                                <p>Votre signalement est transmis au service compétent de la mairie sous 2h.</p>
-                            </div>
-                        </li>
-                        <li class="step">
-                            <div class="step-num">3</div>
-                            <div class="step-content">
-                                <h4>Suivez la résolution</h4>
-                                <p>Vous recevez une notification dès que l'incident est pris en charge et résolu.</p>
-                            </div>
-                        </li>
-                    </ol>
-                    <div style="margin-top:2rem;">
-                        <a href="{% url 'liste_signalements' %}" style="display:inline-flex;align-items:center;gap:8px;background:#1e293b;color:white;padding:12px 20px;border-radius:10px;font-weight:600;font-size:0.9rem;text-decoration:none;transition:background 0.2s;"
-                           onmouseover="this.style.background='#334155'" onmouseout="this.style.background='#1e293b'">
-                            🗺️ Voir la carte des signalements →
-                        </a>
-                    </div>
+        {# Messages #}
+        {% if messages %}
+        <div class="admin-messages">
+            {% for message in messages %}
+                <div class="admin-msg {% if 'erreur' in message.tags or 'error' in message.tags %}error{% else %}success{% endif %}">
+                    {{ message }}
                 </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-                {# Formulaire #}
-                <div class="incident-form-card">
-                    <div class="form-header-i">
-                        <h4>Signaler un incident</h4>
-                        <p>Remplissez le formulaire ci-dessous. Les champs marqués <span class="required">*</span> sont obligatoires.</p>
-                    </div>
+        {# Stats rapides #}
+        <div class="admin-stats">
+            <div class="admin-stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-val">{{ membres|length }}</div>
+                <div class="stat-lbl">Membres total</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-val">{{ membres|length }}</div>
+                <div class="stat-lbl">Comptes actifs</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-val">{% for m in membres %}{% if m.niveau == 'expert' %}{{ forloop.counter }}{% endif %}{% endfor %}</div>
+                <div class="stat-lbl">Experts</div>
+            </div>
+            <div class="admin-stat-card">
+                <div class="stat-icon">⛔</div>
+                <div class="stat-val" id="banned-count">0</div>
+                <div class="stat-lbl">Bannis</div>
+            </div>
+        </div>
 
-                    <form method="post">
-                        {% csrf_token %}
+        {# Boutons d'action admin #}
+        <div style="margin-bottom:24px;display:flex;gap:14px;flex-wrap:wrap;">
 
-                        <div>
-                            <label for="titre">Titre <span class="required">*</span></label>
-                            <input type="text" id="titre" name="titre"
-                                   placeholder="Ex : Lampadaire cassé rue de la Paix" required>
-                        </div>
+            <a href="{% url 'liste_signalements' %}" style="
+                display:inline-flex;align-items:center;gap:10px;
+                background:linear-gradient(135deg,#ef4444,#dc2626);
+                color:white;padding:14px 24px;border-radius:14px;
+                font-weight:700;font-size:15px;text-decoration:none;
+                box-shadow:0 4px 16px rgba(239,68,68,0.35);transition:transform 0.2s;"
+            onmouseover="this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.transform=''">
+                🚨 Signalements citoyens
+            </a>
 
-                        <div>
-                            <label for="categorie">Catégorie <span class="required">*</span></label>
-                            <select id="categorie" name="categorie" required>
-                                <option value="">-- Sélectionnez une catégorie --</option>
-                                <option value="eclairage">Éclairage public</option>
-                                <option value="voirie">Voirie (route, trottoir)</option>
-                                <option value="proprete">Propreté / Déchets</option>
-                                <option value="espaces_verts">Espaces verts</option>
-                                <option value="mobilier">Mobilier urbain</option>
-                                <option value="autre">Autre</option>
-                            </select>
-                        </div>
+            <a href="{% url 'liste_demandes_promotion' %}" style="
+                display:inline-flex;align-items:center;gap:10px;
+                background:linear-gradient(135deg,#3b82f6,#2563eb);
+                color:white;padding:14px 24px;border-radius:14px;
+                font-weight:700;font-size:15px;text-decoration:none;
+                box-shadow:0 4px 16px rgba(59,130,246,0.35);transition:transform 0.2s;"
+            onmouseover="this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.transform=''">
+                ⭐ Demandes de promotion
+                {% if nb_demandes_en_attente %}
+                <span style="background:white;color:#2563eb;border-radius:20px;padding:2px 8px;font-size:12px;font-weight:800;">
+                    {{ nb_demandes_en_attente }}
+                </span>
+                {% endif %}
+            </a>
 
-                        <div>
-                            <label for="lieu">Localisation <span class="required">*</span></label>
-                            <input type="text" id="lieu" name="lieu"
-                                   placeholder="Adresse ou point de repère" required>
-                        </div>
+        </div>
 
-                        <div>
-                            <label for="description">Description <span class="required">*</span></label>
-                            <textarea id="description" name="description"
-                                      placeholder="Décrivez le problème avec le plus de précisions possible..." required></textarea>
-                        </div>
+        {# Section Base de données #}
+        <div class="admin-card" style="margin-bottom:24px;">
+            <div class="admin-card-header">
+                <h3>Base de données</h3>
+                <span style="font-size:13px;color:#94a3b8;">Accès direct aux modèles</span>
+            </div>
+            <div style="padding:20px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;">
 
-                        <button type="submit" class="btn-submit-i">
-                            Envoyer le signalement
-                            <span>→</span>
-                        </button>
-                    </form>
-                </div>
+                <a href="/admin/auth/user/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">👤</span>
+                    Utilisateurs
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ membres|length }} enregistrés</span>
+                </a>
+
+                <a href="/admin/monapp/produit/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">📡</span>
+                    Objets connectés
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_produits }} enregistrés</span>
+                </a>
+
+                <a href="/admin/monapp/lieu/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">📍</span>
+                    Lieux
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_lieux }} enregistrés</span>
+                </a>
+
+                <a href="/admin/monapp/signalement/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">🚨</span>
+                    Signalements
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_signalements }} enregistrés</span>
+                </a>
+
+                <a href="/admin/monapp/information_locale/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">📰</span>
+                    Infos locales
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_infos }} enregistrées</span>
+                </a>
+
+                <a href="/admin/monapp/demandepromotion/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#fef9c3'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">⭐</span>
+                    Demandes promo
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_demandes_en_attente }} en attente</span>
+                </a>
 
             </div>
         </div>
-    </section>
+
+        {# Tableau utilisateurs #}
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3>👤 Gestion des utilisateurs</h3>
+                <span style="font-size:13px; color:#94a3b8;">{{ membres|length }} membre(s)</span>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Niveau</th>
+                        <th>Points</th>
+                        <th>Connexions</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for membre in membres %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar-sm">
+                                    {% if membre.photo %}
+                                        <img src="{{ membre.photo.url }}" alt="{{ membre.user.username }}">
+                                    {% else %}
+                                        {{ membre.user.username|first|upper }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="user-name">
+                                        {{ membre.user.username }}
+                                        {% if membre.user == request.user %}
+                                            <span style="font-size:10px; color:#2563eb; font-weight:700;">(vous)</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="user-email">{{ membre.user.email|default:"—" }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="niveau-pill {{ membre.niveau }}">
+                                {% if membre.niveau == 'debutant' %}🌱 Débutant
+                                {% elif membre.niveau == 'intermediaire' %}⚡ Intermédiaire
+                                {% elif membre.niveau == 'avance' %}🔥 Avancé
+                                {% elif membre.niveau == 'expert' %}🏆 Expert
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td><strong>{{ membre.points|floatformat:2 }}</strong></td>
+                        <td>{{ membre.nb_connexions }}</td>
+                        <td>
+                            {% if membre.user.is_active %}
+                                <span class="statut-pill actif">🟢 Actif</span>
+                            {% else %}
+                                <span class="statut-pill banni">🔴 Banni</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                {% if membre.user != request.user and membre.niveau != 'expert' %}
+                                    {% if membre.user.is_active %}
+                                        {# Bouton Bannir #}
+                                        <button class="btn-ban suspend"
+                                                onclick="openModal('ban', {{ membre.user.id }}, '{{ membre.user.username }}')">
+                                            ⛔ Bannir
+                                        </button>
+                                    {% else %}
+                                        {# Bouton Réactiver #}
+                                        <form method="POST" action="{% url 'reactiver_utilisateur' membre.user.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-ban reactive">✅ Réactiver</button>
+                                        </form>
+                                    {% endif %}
+
+                                    {# Bouton Supprimer #}
+                                    <button class="btn-ban delete"
+                                            onclick="openModal('delete', {{ membre.user.id }}, '{{ membre.user.username }}')">
+                                        🗑️ Supprimer
+                                    </button>
+                                {% else %}
+                                    <span style="font-size:12px; color:#94a3b8; font-style:italic;">—</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 </div>
+
+{# ── Modal Bannir ── #}
+<div class="modal-overlay" id="modal-ban">
+    <div class="modal-box">
+        <h4>⛔ Bannir l'utilisateur</h4>
+        <p>Vous allez suspendre le compte de <strong id="ban-username"></strong>. Un e-mail de notification lui sera envoyé.</p>
+        <form method="POST" id="form-ban">
+            {% csrf_token %}
+            <textarea name="raison" placeholder="Raison du bannissement (optionnel)..."></textarea>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" onclick="closeModal('ban')">Annuler</button>
+                <button type="submit" class="modal-confirm ban">⛔ Confirmer le bannissement</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ── Modal Supprimer ── #}
+<div class="modal-overlay" id="modal-delete">
+    <div class="modal-box">
+        <h4>🗑️ Supprimer le compte</h4>
+        <p>Vous allez <strong>supprimer définitivement</strong> le compte de <strong id="delete-username"></strong>. Cette action est irréversible. Un e-mail sera envoyé.</p>
+        <form method="POST" id="form-delete">
+            {% csrf_token %}
+            <textarea name="raison" placeholder="Raison de la suppression (optionnel)..."></textarea>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" onclick="closeModal('delete')">Annuler</button>
+                <button type="submit" class="modal-confirm delete">🗑️ Supprimer définitivement</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block footer %}
-<div class="incident-page">
-    <section class="info-box-incident">
-        <div class="inner">
-            <div class="icon-big">⚡</div>
-            <div>
-                <h3>Bon à savoir</h3>
-                <p>
-                    Les signalements sont traités par les services de la ville
-                    dans un délai de 48h ouvrées. Pour une urgence immédiate,
-                    composez le 17 (police) ou le 18 (pompiers).
-                </p>
-            </div>
-        </div>
-    </section>
-</div>
-
 <footer class="site-footer">
     <div class="wrap">
-        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+        <p>&copy; 2026 Barbz — Plateforme numérique de ville intelligente</p>
     </div>
 </footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openModal(type, userId, username) {
+    if (type === 'ban') {
+        document.getElementById('ban-username').textContent = username;
+        document.getElementById('form-ban').action = `/admin-dashboard/bannir/${userId}/`;
+        document.getElementById('modal-ban').classList.add('open');
+    } else {
+        document.getElementById('delete-username').textContent = username;
+        document.getElementById('form-delete').action = `/admin-dashboard/supprimer/${userId}/`;
+        document.getElementById('modal-delete').classList.add('open');
+    }
+}
+
+function closeModal(type) {
+    document.getElementById(`modal-${type}`).classList.remove('open');
+}
+
+// Fermer en cliquant en dehors
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+    });
+});
+
+// Compter les bannis
+const bannedCount = document.querySelectorAll('.statut-pill.banni').length;
+document.getElementById('banned-count').textContent = bannedCount;
+</script>
 {% endblock %}
