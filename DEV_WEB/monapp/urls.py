@@ -15,6 +15,7 @@ urlpatterns = [
 
     # Inscription / Connexion
     path('inscription/', views.inscription, name='inscription'),
+    path('confirmer-email/<str:token>/', views.confirmer_email, name='confirmer_email'),
     path('register/', views.inscription, name='register'),
     path('connexion/', views.connexion, name='connexion'),
     path('login/', views.connexion, name='login'),
@@ -54,6 +55,7 @@ urlpatterns = [
     path('signalements/creer/', views.creer_signalement, name='creer_signalement'),
     path('creer_signalement/', views.creer_signalement),
     path('signalements/<int:signalement_id>/', views.detail_signalement, name='detail_signalement'),
+    path('signalements/<int:signalement_id>/modifier/', views.modifier_signalement, name='modifier_signalement'),
 
     # Demandes de promotion
     path('promotion/demander/', views.demander_promotion, name='demander_promotion'),

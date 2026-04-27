@@ -10,6 +10,9 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 
 from django.core.mail import send_mail
+from .emails import (email_bienvenue, email_bannissement, email_reactivation,
+    email_promotion_admin_acceptee, email_promotion_admin_refusee,
+    email_demande_promotion_envoyee, email_confirmation_inscription, generer_token)
 
 import json
 
@@ -81,30 +84,44 @@ def liste_produits(request):
     })
 
 
-@niveau_requis('avance', 'expert')
+@login_required
 def modifier_produit(request, id):
-    produit = get_object_or_404(Produit, ID=id)
+    produit  = get_object_or_404(Produit, ID=id)
+    personne = request.user.personne
+    est_admin  = request.user.is_superuser or personne.type_membre == 'administrateur'
+    est_expert = est_admin or personne.niveau == 'expert'
+    est_avance = est_expert or personne.niveau == 'avance'
+
+    if not est_avance:
+        messages.error(request, "Niveau avancé requis pour modifier un objet.")
+        return redirect('detail_produit', id=produit.ID)
+
+    # Formulaire sans le champ ID (clé primaire non modifiable)
+    class ProduitModifierForm(ProduitForm):
+        class Meta(ProduitForm.Meta):
+            exclude = ['ID']
+
     if request.method == "POST":
-        form = ProduitForm(request.POST, request.FILES, instance=produit)
+        form = ProduitModifierForm(request.POST, request.FILES, instance=produit)
         if form.is_valid():
             form.save()
-            messages.success(request, '✅ Objet modifié avec succès.')
+            ajouter_points(request, points=0.5)
+            messages.success(request, 'Objet modifié avec succès.')
             return redirect('detail_produit', id=produit.ID)
+        else:
+            print("Erreurs form:", form.errors)
     else:
-        form = ProduitForm(instance=produit)
-    return render(request, "produits/modifier.html", {"form": form})
+        form = ProduitModifierForm(instance=produit)
+
+    return render(request, "produits/modifier.html", {
+        "form": form,
+        "produit": produit,
+    })
 
 
 def detail_produit(request, id):
     produit = get_object_or_404(Produit, ID=id)
-    if request.user.is_authenticated:
-        try:
-            personne = request.user.personne
-            personne.nb_actions += 1
-            personne.points += 0.50
-            personne.save()
-        except Exception:
-            pass
+    ajouter_points(request, points=0.5)
     return render(request, 'produits/detail_produit.html', {'produit': produit})
 
 
@@ -204,14 +221,49 @@ def inscription(request):
             profil.save()
             send_mail('Bienvenue sur MaVille', 'Votre compte a été créé avec succès.',
                       'admin@ville.com', [user.email], fail_silently=True)
-            login(request, user)
-            return redirect('accueil')
+            # Compte inactif jusqu'a confirmation email
+            user.is_active = False
+            user.save()
+            token = generer_token()
+            personne = user.personne
+            personne.token_confirmation = token
+            personne.save()
+            email_confirmation_inscription(user, token, request)
+            messages.success(request, 'Compte cree ! Verifiez votre email pour activer votre compte.')
+            return redirect('connexion')
     else:
         form = InscriptionForm()
         personne_form = PersonneForm()
     return render(request, 'monapp/connexion.html', {
         'page_active': 'connexion', 'form': form, 'personne_form': personne_form,
     })
+
+
+# ── Système de points ────────────────────────────────────────────
+
+def update_niveau(personne):
+    if personne.points >= 7:
+        personne.niveau = 'expert'
+    elif personne.points >= 5:
+        personne.niveau = 'avance'
+    elif personne.points >= 3:
+        personne.niveau = 'intermediaire'
+    else:
+        personne.niveau = 'debutant'
+
+
+def ajouter_points(request, points, action=1):
+    """Ajoute des points à l'utilisateur connecté et met à jour son niveau."""
+    if not request.user.is_authenticated:
+        return
+    try:
+        personne = request.user.personne
+        personne.points    += points
+        personne.nb_actions += action
+        update_niveau(personne)
+        personne.save()
+    except Exception:
+        pass
 
 
 # ── Pages principales ─────────────────────────────────────────────
@@ -256,6 +308,22 @@ def vie_citoyenne(request):
 
 
 # ── Niveau ────────────────────────────────────────────────────────
+
+def confirmer_email(request, token):
+    from .models import Personne
+    try:
+        personne = Personne.objects.get(token_confirmation=token)
+        personne.email_confirme = True
+        personne.token_confirmation = None
+        personne.user.is_active = True
+        personne.user.save()
+        personne.save()
+        email_bienvenue(personne.user)
+        messages.success(request, 'Email confirme ! Vous pouvez maintenant vous connecter.')
+    except Personne.DoesNotExist:
+        messages.error(request, 'Lien de confirmation invalide ou expire.')
+    return redirect('connexion')
+
 
 def connexion(request):
     error = None
@@ -356,6 +424,7 @@ def voir_profil(request, user_id):
     if user_cible == request.user:
         return redirect('profil')
     membre = get_object_or_404(Personne, user=user_cible)
+    ajouter_points(request, points=0.25)
     return render(request, 'monapp/profil_public.html', {'membre': membre})
 
 
@@ -393,7 +462,7 @@ def admin_dashboard(request):
     })
 
 
-@niveau_requis('administrateur')
+@niveau_requis('expert')
 def bannir_utilisateur(request, user_id):
     if request.method == 'POST':
         cible = get_object_or_404(User, id=user_id)
@@ -419,19 +488,12 @@ def bannir_utilisateur(request, user_id):
         raison = request.POST.get('raison', 'Violation des règles de la plateforme.')
         cible.is_active = False
         cible.save()
-        if cible.email:
-            send_mail(
-                subject='Votre compte MaVille a été suspendu',
-                message=f"Bonjour {cible.username},\n\nVotre compte a été suspendu.\nRaison : {raison}\n\n— L'équipe MaVille",
-                from_email='admin@ville.com',
-                recipient_list=[cible.email],
-                fail_silently=True,
-            )
+        email_bannissement(cible, raison)
         messages.success(request, f"Le compte de {cible.username} a été suspendu.")
     return redirect('admin_dashboard')
 
 
-@niveau_requis('administrateur')
+@niveau_requis('expert')
 def reactiver_utilisateur(request, user_id):
     if request.method == 'POST':
         cible = get_object_or_404(User, id=user_id)
@@ -449,7 +511,7 @@ def reactiver_utilisateur(request, user_id):
     return redirect('admin_dashboard')
 
 
-@niveau_requis('administrateur')
+@niveau_requis('expert')
 def supprimer_utilisateur(request, user_id):
     if request.method == 'POST':
         cible = get_object_or_404(User, id=user_id)
@@ -591,7 +653,7 @@ def retirer_produit_lieu(request, lieu_id, produit_id):
 
 # ── Signalements ──────────────────────────────────────────────────
 
-@niveau_requis('expert')
+@login_required
 def creer_signalement(request):
     # Pré-remplissage depuis l'accueil (bouton "Signaler" sur un objet)
     produit_id  = request.GET.get('produit', '')
@@ -606,7 +668,8 @@ def creer_signalement(request):
                 signalement.auteur = request.user.username
             signalement.save()
             form.save_m2m()
-            messages.success(request, '✅ Signalement envoyé avec succès.')
+            ajouter_points(request, points=1.0)
+            messages.success(request, 'Signalement envoyé avec succès.')
             return redirect('liste_signalements')
     else:
         initial = {}
@@ -687,6 +750,33 @@ def detail_signalement(request, signalement_id):
     return render(request, 'signalements/detail_signalement.html', {'signalement': signalement})
 
 
+@login_required
+def modifier_signalement(request, signalement_id):
+    signalement = get_object_or_404(Signalement, id=signalement_id)
+    personne    = request.user.personne
+    est_admin   = request.user.is_superuser or personne.type_membre == 'administrateur'
+    est_intermediaire = est_admin or personne.niveau in ['intermediaire', 'avance', 'expert']
+
+    if not est_intermediaire:
+        messages.error(request, "Niveau intermédiaire requis pour modifier un signalement.")
+        return redirect('detail_signalement', signalement_id=signalement_id)
+
+    if request.method == 'POST':
+        form = SignalementForm(request.POST, request.FILES, instance=signalement)
+        if form.is_valid():
+            form.save()
+            ajouter_points(request, points=0.5)
+            messages.success(request, 'Signalement modifié avec succès.')
+            return redirect('detail_signalement', signalement_id=signalement_id)
+    else:
+        form = SignalementForm(instance=signalement)
+
+    return render(request, 'signalements/modifier_signalement.html', {
+        'form': form,
+        'signalement': signalement,
+    })
+
+
 # ── Informations locales ───────────────────────────────────────────
 
 @login_required
@@ -739,7 +829,8 @@ def demander_promotion(request):
     if request.method == 'POST':
         message = request.POST.get('message', '').strip()
         DemandePromotion.objects.create(demandeur=personne, message=message)
-        messages.success(request, "✅ Votre demande a été envoyée aux administrateurs.")
+        email_demande_promotion_envoyee(request.user)
+        messages.success(request, "Votre demande a été envoyée aux administrateurs.")
         return redirect('profil')
 
     return render(request, 'monapp/demander_promotion.html')
@@ -763,9 +854,11 @@ def traiter_demande_promotion(request, demande_id, action):
         demande.demandeur.type_membre = 'administrateur'
         demande.demandeur.niveau      = 'expert'
         demande.demandeur.save()
-        messages.success(request, f"✅ {demande.demandeur} est maintenant administrateur.")
+        email_promotion_admin_acceptee(demande.demandeur.user)
+        messages.success(request, f"{demande.demandeur} est maintenant administrateur.")
     elif action == 'refuser':
         demande.statut = 'refusee'
+        email_promotion_admin_refusee(demande.demandeur.user)
         messages.info(request, f"Demande de {demande.demandeur} refusée.")
 
     demande.traitee_par = admin

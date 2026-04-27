@@ -295,8 +295,106 @@
 
         {# Note confidentialité #}
         <p style="text-align:center; font-size:13px; color:#94a3b8; margin-top:24px; font-style:italic;">
-            🔒 Le nom, prénom et mot de passe de cet utilisateur sont confidentiels.
+            Le nom, prénom et mot de passe de cet utilisateur sont confidentiels.
         </p>
+
+        {# Zone modération #}
+        {% if user.is_authenticated %}
+        {% if user.is_superuser or user.personne.type_membre == 'administrateur' or user.personne.niveau == 'expert' %}
+
+        {# Vérification : peut-on agir sur ce membre ? #}
+        {# Expert : peut agir uniquement sur niveaux < expert et non-admin #}
+        {# Admin/superuser : peut agir sur tout sauf autre admin/superuser #}
+        {% with cible_est_admin=membre.type_membre|lower cible_est_expert=membre.niveau|lower %}
+        {% if not membre.user.is_superuser and not cible_est_admin == 'administrateur' %}
+
+        <div style="background:#fff1f2;border:1.5px solid #fecdd3;border-radius:16px;padding:24px 28px;max-width:700px;margin:24px auto 0;">
+            <p style="font-weight:700;color:#991b1b;margin-bottom:4px;font-size:0.95rem;">Zone de modération</p>
+            <p style="font-size:0.82rem;color:#b91c1c;margin-bottom:16px;">Actions sur le compte de {{ membre.user.username }}</p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+
+                {# Expert ne peut pas agir sur un autre expert #}
+                {% if user.personne.niveau == 'expert' and not user.personne.type_membre == 'administrateur' and not user.is_superuser %}
+                    {% if cible_est_expert == 'expert' %}
+                    <p style="color:#94a3b8;font-style:italic;font-size:0.85rem;">Vous ne pouvez pas agir sur un autre expert.</p>
+                    {% else %}
+
+                    {% if not membre.user.is_active %}
+                    <form method="post" action="{% url 'reactiver_utilisateur' membre.user.id %}">
+                        {% csrf_token %}
+                        <button type="submit" style="padding:10px 20px;background:#22c55e;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                            Réactiver le compte
+                        </button>
+                    </form>
+                    {% else %}
+                    <form method="post" action="{% url 'bannir_utilisateur' membre.user.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="raison" value="Décision de modération.">
+                        <button type="submit"
+                            onclick="return confirm('Bannir {{ membre.user.username }} ?')"
+                            style="padding:10px 20px;background:#f97316;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                            Bannir
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'supprimer_utilisateur' membre.user.id %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            onclick="return confirm('Supprimer définitivement {{ membre.user.username }} ?')"
+                            style="padding:10px 20px;background:#ef4444;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                            Supprimer définitivement
+                        </button>
+                    </form>
+
+                    {% endif %}
+
+                {% else %}
+                {# Admin/superuser : accès complet #}
+
+                {% if not membre.user.is_active %}
+                <form method="post" action="{% url 'reactiver_utilisateur' membre.user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" style="padding:10px 20px;background:#22c55e;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                        Réactiver le compte
+                    </button>
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'bannir_utilisateur' membre.user.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="raison" value="Décision de modération.">
+                    <button type="submit"
+                        onclick="return confirm('Bannir {{ membre.user.username }} ?')"
+                        style="padding:10px 20px;background:#f97316;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                        Bannir
+                    </button>
+                </form>
+                {% endif %}
+
+                <form method="post" action="{% url 'supprimer_utilisateur' membre.user.id %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                        onclick="return confirm('Supprimer définitivement {{ membre.user.username }} ? Cette action est irréversible.')"
+                        style="padding:10px 20px;background:#ef4444;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                        Supprimer définitivement
+                    </button>
+                </form>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+        {% else %}
+        {# Cible est admin ou superuser — aucune action possible #}
+        <div style="background:#f1f5f9;border:1.5px solid #e2e8f0;border-radius:16px;padding:16px 24px;max-width:700px;margin:24px auto 0;text-align:center;">
+            <p style="color:#64748b;font-size:0.85rem;">Aucune action de modération disponible sur ce compte.</p>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% endif %}
+        {% endif %}
 
     </div>
 </section>

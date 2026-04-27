@@ -152,6 +152,56 @@
         </div>
     </section>
 
+    {# ===== ZONE ADMIN : SUPPRIMER / BANNIR ===== #}
+    {% if user.is_authenticated %}
+        {% if user.is_superuser or user.personne.type_membre == 'administrateur' or user.personne.niveau == 'expert' %}
+            {% if personne.user != request.user %}
+            <section style="background:#fff1f2;border-top:2px solid #fecdd3;padding:24px 0;">
+                <div class="wrap">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+                        <div>
+                            <p style="font-weight:700;color:#991b1b;margin-bottom:4px;">Zone de modération</p>
+                            <p style="font-size:0.85rem;color:#b91c1c;">Actions sur le compte de {{ personne.user.username }}</p>
+                        </div>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+
+                            {% if not personne.user.is_active %}
+                            <form method="post" action="{% url 'reactiver_utilisateur' personne.user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" style="padding:10px 20px;background:#22c55e;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                                    Réactiver le compte
+                                </button>
+                            </form>
+                            {% else %}
+                            <form method="post" action="{% url 'bannir_utilisateur' personne.user.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="raison" value="Décision de modération.">
+                                <button type="submit"
+                                    onclick="return confirm('Bannir {{ personne.user.username }} ?')"
+                                    style="padding:10px 20px;background:#f97316;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                                    Bannir
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            <form method="post" action="{% url 'supprimer_utilisateur' personne.user.id %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    onclick="return confirm('Supprimer définitivement {{ personne.user.username }} ? Cette action est irréversible.')"
+                                    style="padding:10px 20px;background:#ef4444;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                                    Supprimer définitivement
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    {# ===== FIN ZONE ADMIN ===== #}
+
     {# MESSAGES #}
     {% if messages %}
         {% for message in messages %}

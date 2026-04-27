@@ -1,0 +1,68 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Modifier le signalement — MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'incident.css' %}">
+{% endblock %}
+
+{% block content %}
+<div style="max-width:700px;margin:60px auto;padding:0 24px;">
+
+    <a href="{% url 'detail_signalement' signalement.id %}" style="display:inline-flex;align-items:center;gap:6px;color:#64748b;font-size:0.9rem;text-decoration:none;margin-bottom:24px;">
+        ← Retour au signalement
+    </a>
+
+    <div style="background:white;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);overflow:hidden;">
+
+        <div style="background:linear-gradient(135deg,#1e293b,#0f172a);padding:28px 32px;color:white;">
+            <h1 style="font-size:1.5rem;font-weight:800;margin-bottom:4px;">Modifier le signalement</h1>
+            <p style="color:#94a3b8;font-size:0.9rem;">{{ signalement.nom }}</p>
+        </div>
+
+        <div style="padding:32px;">
+            {% if messages %}
+                {% for msg in messages %}
+                <div style="background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:0.9rem;">
+                    {{ msg }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:20px;">
+                {% csrf_token %}
+
+                <div>
+                    <label style="display:block;font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:6px;">Titre</label>
+                    {{ form.nom }}
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:6px;">Description</label>
+                    {{ form.description }}
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:6px;">Type d'incident</label>
+                    {{ form.type_signalement }}
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:6px;">Lieu</label>
+                    {{ form.lieu }}
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:6px;">Objet connecté</label>
+                    {{ form.produit }}
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:6px;">Photo</label>
+                    {{ form.photo }}
+                </div>
+
+                <button type="submit" style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;padding:14px 28px;border-radius:10px;font-weight:700;font-size:0.95rem;cursor:pointer;">
+                    Enregistrer les modifications
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

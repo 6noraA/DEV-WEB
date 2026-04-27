@@ -21,7 +21,9 @@ class Personne(models.Model):
     points         = models.FloatField(default=0)
     nb_connexions  = models.IntegerField(default=0)
     nb_actions     = models.IntegerField(default=0)
-    niveau         = models.CharField(max_length=20, default='debutant')
+    niveau             = models.CharField(max_length=20, default='debutant')
+    email_confirme     = models.BooleanField(default=False)
+    token_confirmation = models.CharField(max_length=64, blank=True, null=True)
 
     def __str__(self):
         return self.user.username

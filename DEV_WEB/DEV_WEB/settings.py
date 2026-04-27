@@ -82,3 +82,12 @@ MEDIA_URL = '/media/'                          # AJOUTÉ : pour les photos de pr
 MEDIA_ROOT = BASE_DIR / 'media'                # AJOUTÉ : dossier où les uploads sont stockés
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ── Email ──────────────────────────────────────────────────────────
+EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST          = 'smtp.gmail.com'
+EMAIL_PORT          = 587
+EMAIL_USE_TLS       = True
+EMAIL_HOST_USER     = 'jude.owonaassoum@gmail.com'
+EMAIL_HOST_PASSWORD = 'szhz gzsm zrqr kjnh'
+DEFAULT_FROM_EMAIL  = 'MaVille <jude.owonaassoum@gmail.com>'

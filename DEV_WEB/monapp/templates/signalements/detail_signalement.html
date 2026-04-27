@@ -158,14 +158,28 @@
                 {% if signalement.lieu %}
                 <div class="detail-section">
                     <label>Lieu concerné</label>
-                    <p>📍 {{ signalement.lieu.Nom }} — {{ signalement.lieu.Adresse }}</p>
+                    <p>{{ signalement.lieu.Nom }} — {{ signalement.lieu.Adresse }}</p>
+                </div>
+                {% else %}
+                <div class="detail-section">
+                    <label>Lieu concerné</label>
+                    <p style="color:#94a3b8;font-style:italic;">Non précisé</p>
                 </div>
                 {% endif %}
 
                 {% if signalement.produit %}
                 <div class="detail-section">
                     <label>Objet connecté concerné</label>
-                    <p>🔌 <a href="{% url 'detail_produit' signalement.produit.ID %}" style="color:#3b82f6;">{{ signalement.produit.Nom }}</a></p>
+                    {% if user.is_authenticated %}
+                    <p><a href="{% url 'detail_produit' signalement.produit.ID %}" style="color:#3b82f6;">{{ signalement.produit.Nom }}</a></p>
+                    {% else %}
+                    <p>{{ signalement.produit.Nom }} <span style="font-size:0.8rem;color:#94a3b8;">(connectez-vous pour voir le détail)</span></p>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="detail-section">
+                    <label>Objet connecté concerné</label>
+                    <p style="color:#94a3b8;font-style:italic;">Aucun objet lié</p>
                 </div>
                 {% endif %}
 
@@ -185,9 +199,20 @@
                 <a href="{% url 'liste_signalements' %}" class="btn-back-list">
                     📋 Tous les signalements
                 </a>
+                {% if user.is_authenticated %}
                 <a href="{% url 'creer_signalement' %}" class="btn-new">
                     + Nouveau signalement
                 </a>
+                {% if user.personne.niveau in 'intermediaire avance expert' or user.personne.type_membre == 'administrateur' or user.is_superuser %}
+                <a href="{% url 'modifier_signalement' signalement.id %}" class="btn-back-list" style="background:#f1f5f9;">
+                    Modifier
+                </a>
+                {% endif %}
+                {% else %}
+                <a href="{% url 'connexion' %}" class="btn-new" style="background:#64748b;">
+                    Connectez-vous pour signaler
+                </a>
+                {% endif %}
             </div>
 
         </div>
