@@ -8,6 +8,17 @@ from django.contrib.auth import login, authenticate, logout
 
 from django.core.mail import send_mail
 
+from .models import Lieu
+from django.shortcuts import render, get_object_or_404
+from .models import Lieu
+from django.urls import reverse
+from .models import Signalement
+from .models import Information_locale
+import folium
+from django.contrib.staticfiles import finders
+
+image_path = finders.find("images/image_fond.png")
+
 @login_required
 def creer_produit(request):
     if request.method == 'POST' :
@@ -165,6 +176,138 @@ def liste_profils(request):
 def detail_profil(request, id):
     personne = Personne.objects.get(id=id)
     return render(request, 'detail_profil.html', {'personne': personne})
+
+def detail_lieu(request, lieu_id):
+    lieu = get_object_or_404(Lieu, id=lieu_id)
+
+    produits = lieu.liste_produits.all()
+    all_produits = Produit.objects.all()
+
+    return render(request, 'lieux/detail_lieu.html', {
+        'lieu': lieu,
+        'produits': produits,
+        'all_produits': all_produits
+    })
+
+def liste_lieux(request):
+    lieux = Lieu.objects.all()
+    return render(request, 'lieux/liste_lieux.html', {'lieux': lieux})
+
+def creer_lieu(request):
+    if request.method == 'POST':
+        nom = request.POST.get('nom')
+        x = request.POST.get('x')
+        y = request.POST.get('y')
+
+        lieu = Lieu(nom=nom, x=x, y=y)
+        lieu.save()
+
+        return redirect('liste_lieux')
+
+    return render(request, 'lieux/creer_lieu.html')
+
+def carte_lieux(request):
+
+    carte = folium.Map(
+        location=[0, 0],
+        zoom_start=2,
+        tiles=None
+    )
+
+    # Fond de carte
+    folium.raster_layers.ImageOverlay(
+        image=image_path,
+        bounds=[[-100, -100], [100, 100]],
+        opacity=1
+    ).add_to(carte)
+
+    # Lieux fictifs (test)
+    lieux_fictifs = [
+        {"nom": "Zone Alpha", "x": 10, "y": 20},
+        {"nom": "Base Beta", "x": -30, "y": 40},
+        {"nom": "Marché Central", "x": 0, "y": 0},
+    ]
+
+    # Lieux base de données
+    lieux_db = Lieu.objects.all()
+
+    # Affichage lieux fictifs
+    for lieu in lieux_fictifs:
+        folium.Marker(
+            location=[lieu["y"], lieu["x"]],
+            popup=f"<b>{lieu['nom']}</b>",
+            tooltip=lieu["nom"],
+            icon=folium.Icon(color="purple")
+        ).add_to(carte)
+
+    # Affichage lieux DB
+    for lieu in lieux_db:
+        folium.Marker(
+            location=[lieu.y, lieu.x],
+            popup=f"<b>{lieu.nom}</b>",
+            tooltip=lieu.nom,
+            icon=folium.Icon(color="blue")
+        ).add_to(carte)
+
+    return render(request, 'produits/carte.html', {
+        'carte': carte._repr_html_()
+    })
+
+@login_required
+def ajouter_produit_lieu(request, lieu_id, produit_id):
+    lieu = get_object_or_404(Lieu, id=lieu_id)
+    produit = get_object_or_404(Produit, ID=produit_id)
+
+    lieu.liste_produits.add(produit)
+
+    return redirect('detail_lieu', lieu_id=lieu.id)
+
+@login_required
+def retirer_produit_lieu(request, lieu_id, produit_id):
+    lieu = get_object_or_404(Lieu, id=lieu_id)
+    produit = get_object_or_404(Produit, ID=produit_id)
+
+    lieu.liste_produits.remove(produit)
+
+    return redirect('detail_lieu', lieu_id=lieu.id)
+
+@login_required
+def creer_signalement(request):
+    if request.method == 'POST':
+        form = SignalementForm(request.POST, request.FILES)
+        if form.is_valid():
+            signalement = form.save()
+            return redirect('liste_signalements')
+    return render(request, 'signalements/creer_signalement.html')
+
+def liste_signalements(request):
+    signalements = Signalement.objects.all()
+    return render(request, 'signalements/liste_signalements.html', {'signalements': signalements})
+
+@login_required
+def creer_information_locale(request):
+    if request.method == 'POST':
+        form = InformationLocaleForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            information_locale = form.save()
+            return redirect('liste_informations_locales')
+
+    return render(request, 'informations_locales/creer_information_locale.html')
+
+def liste_informations_locales(request):
+    informations_locales = Information_locale.objects.all()
+    return render(request, 'informations_locales/liste_informations_locales.html', {'informations_locales': informations_locales})
+
+def detail_information_locale(request, information_locale_id):
+    information_locale = get_object_or_404(Information_locale, id=information_locale_id)
+    return render(request, 'informations_locales/detail_information_locale.html', {'information_locale': information_locale})
+
+def detail_signalement(request, signalement_id):
+    signalement = get_object_or_404(Signalement, id=signalement_id)
+    return render(request, 'signalements/detail_signalement.html', {'signalement': signalement})
+
+
 
     
 
