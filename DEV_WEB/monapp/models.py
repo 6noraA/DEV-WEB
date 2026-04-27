@@ -63,3 +63,34 @@ class Produit(models.Model):
     photo = models.ImageField(upload_to='photos/outils/', null=True, blank=True)
     def __str__(self):
         return self.Nom
+
+  class Lieu(models.Model):
+    Nom = models.CharField(max_length=100)
+    Adresse = models.CharField(max_length=200, unique=True)
+    Description = models.TextField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    photo = models.ImageField(upload_to='photos/lieux/', null=True, blank=True)
+    liste_produits = models.ManyToManyField('Produit', related_name='lieux')
+    def __str__(self):
+        return self.Nom
+    
+
+
+class Information(models.Model):
+    nom = models.CharField(max_length=100)
+    description = models.TextField()
+    photo = models.ImageField(upload_to='photos/information/', null=True, blank=True)
+    date = models.DateField(auto_now_add=True)
+    auteur = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nom
+
+
+class Information_locale(Information):
+    pass
+
+
+class Signalement(Information):
+    pass
