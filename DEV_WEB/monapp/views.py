@@ -271,6 +271,7 @@ def connexion(request):
             return redirect('accueil')
         else:
             error = "Nom d'utilisateur ou mot de passe incorrect."
+
     return render(request, 'monapp/connexion.html', {'page_active': 'connexion', 'error': error})
 
 
