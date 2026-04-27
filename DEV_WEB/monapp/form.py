@@ -53,5 +53,8 @@ class SignalementForm(forms.ModelForm):
             'nom',
             'description',
             'photo',
-            'auteur'
+            'auteur',
+            'lieu',
+            'type_signalement',
+            'produit'
         ]
