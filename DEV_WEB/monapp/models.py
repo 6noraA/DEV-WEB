@@ -93,4 +93,44 @@ class Information_locale(Information):
 
 
 class Signalement(Information):
-    pass
+    TYPE_CHOICES = [
+        ('accident', 'Accident'),
+        ('danger', 'Danger'),
+        ('autre', 'Autre'),
+    ]
+
+    lieu = models.ForeignKey(
+        Lieu,
+        on_delete=models.CASCADE,
+        related_name='signalements'
+    )
+
+    type_signalement = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES
+    )
+
+    produit = models.ForeignKey(
+        Produit,
+        on_delete=models.CASCADE,
+        related_name='signalements',
+        null=True,
+        blank=True
+    )
+
+    def clean(self):
+        # Vérifier cohérence produit ↔ lieu
+        if self.produit:
+            if self.produit not in self.lieu.liste_produits.all():
+                raise ValidationError({
+                    'produit': "Ce produit n'est pas présent dans ce lieu."
+                })
+
+        # Règle métier : accident doit être lié à un produit
+        if self.type_signalement == 'accident' and not self.produit:
+            raise ValidationError({
+                'produit': "Un accident doit être lié à un produit."
+            })
+
+    def __str__(self):
+        return f"{self.nom} - {self.type_signalement}"
