@@ -14,24 +14,29 @@
             <div class="brand">
                 <h1>MaVille</h1>
             </div>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
             <nav>
-                <ul class="site-nav">
+                <ul class="site-nav" id="site-nav">
                     <li><a href="{% url 'accueil' %}" class="{% if page_active == 'accueil' %}active{% endif %}">Accueil</a></li>
                     <li><a href="{% url 'transport' %}" class="{% if page_active == 'transport' %}active{% endif %}">Transports</a></li>
+                    {% if user.is_authenticated %}
                     <li><a href="{% url 'incident' %}" class="{% if page_active == 'incident' %}active{% endif %}">Incidents</a></li>
+                    {% else %}
+                    <li><a href="{% url 'liste_signalements' %}" class="{% if page_active == 'incident' %}active{% endif %}">Incidents</a></li>
+                    {% endif %}
                     <li><a href="{% url 'services-public' %}" class="{% if page_active == 'services-public' %}active{% endif %}">Services publics</a></li>
                     <li><a href="{% url 'info-locale' %}" class="{% if page_active == 'info-locale' %}active{% endif %}">Infos locales</a></li>
 
+                    {# ---------- Connexion / Profil / Déconnexion ---------- #}
                     {% if user.is_authenticated %}
-                        {# Lien admin uniquement pour les experts #}
-                        {% if user.personne.niveau == 'expert' %}
-                            <li>
-                                <a href="{% url 'admin_dashboard' %}"
-                                   class="{% if page_active == 'admin' %}active{% endif %}"
-                                   style="color: #f59e0b; font-weight: 800;">
-                                    🛡️ Admin
-                                </a>
-                            </li>
+                        {% if user.is_superuser or user.personne.type_membre == 'administrateur' %}
+                        <li>
+                            <a href="{% url 'admin_dashboard' %}" class="{% if page_active == 'admin' %}active{% endif %}" style="color:#ef4444;font-weight:700;">
+                                Admin
+                            </a>
+                        </li>
                         {% endif %}
                         <li>
                             <a href="{% url 'profil' %}" class="{% if page_active == 'profil' %}active{% endif %}">
@@ -68,5 +73,21 @@
     {% endblock %}
 
     {% block scripts %}{% endblock %}
+<script>
+    const toggle = document.getElementById('nav-toggle');
+    const nav    = document.getElementById('site-nav');
+    toggle.addEventListener('click', () => {
+        toggle.classList.toggle('open');
+        nav.classList.toggle('open');
+        document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+    });
+    nav.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
+            toggle.classList.remove('open');
+            nav.classList.remove('open');
+            document.body.style.overflow = '';
+        });
+    });
+</script>
 </body>
 </html>

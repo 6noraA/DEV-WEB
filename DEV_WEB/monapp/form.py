@@ -49,7 +49,15 @@ class PersonneForm(forms.ModelForm):
 class ProduitForm(forms.ModelForm):
     class Meta:
         model = Produit
+<<<<<<< HEAD
         fields = ['ID', 'Nom', 'Connectiviter_type', 'etat', 'marque', 'mode', 'Bactterie', 'Adresse_IP', 'Temp_restante', 'Date_dernier_maintenance', 'Date_dernier_utilisation', 'Description', 'photo']
+=======
+        fields = ['ID', 'Nom', 'Connectiviter_type', 'etat', 'marque', 'mode',
+                  'Bactterie', 'Adresse_IP', 'Temp_restante', 'Date_dernier_maintenance',
+                  'Date_dernier_utilisation', 'Description', 'photo']
+from .models import Lieu, Information_locale, Signalement
+
+>>>>>>> 9254315 (galère)
 
 class LieuForm(forms.ModelForm):
     class Meta:
@@ -61,9 +69,16 @@ class LieuForm(forms.ModelForm):
             'latitude',
             'longitude',
             'photo',
+<<<<<<< HEAD
             'liste_produits'
         ]
 
+=======
+            'liste_produits',
+        ]
+
+
+>>>>>>> 9254315 (galère)
 class InformationLocaleForm(forms.ModelForm):
     class Meta:
         model = Information_locale
@@ -71,9 +86,16 @@ class InformationLocaleForm(forms.ModelForm):
             'nom',
             'description',
             'photo',
+<<<<<<< HEAD
             'auteur'
         ]
 
+=======
+            'auteur',
+        ]
+
+
+>>>>>>> 9254315 (galère)
 class SignalementForm(forms.ModelForm):
     class Meta:
         model = Signalement
@@ -82,7 +104,14 @@ class SignalementForm(forms.ModelForm):
             'description',
             'photo',
             'auteur',
+<<<<<<< HEAD
             'lieu',
             'type_signalement',
             'produit'
         ]
+=======
+            'type_signalement',
+            'lieu',
+            'produit',
+        ]
+>>>>>>> 9254315 (galère)

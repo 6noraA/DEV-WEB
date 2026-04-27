@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .form import ProduitForm, InscriptionForm, PersonneForm
+from .form import ProduitForm, InscriptionForm, PersonneForm, SignalementForm, InformationLocaleForm, LieuForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q, Count, Avg
 
-from .models import Produit, Personne
+from .models import Produit, Personne, DemandePromotion
 
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
@@ -16,14 +16,26 @@ import json
 
 # ── Décorateur niveau requis ──────────────────────────────────────
 def niveau_requis(*niveaux):
+    """
+    Niveaux : 'expert', 'administrateur'
+    - 'expert'         : experts + administrateurs + superuser
+    - 'administrateur' : administrateurs + superuser uniquement
+    """
     def decorator(view_func):
         def wrapper(request, *args, **kwargs):
             if not request.user.is_authenticated:
                 return redirect('connexion')
             try:
                 personne = request.user.personne
-                if personne.niveau not in niveaux:
-                    messages.error(request, "⛔ Accès refusé. Niveau insuffisant.")
+                est_superuser = request.user.is_superuser
+                est_admin     = est_superuser or personne.type_membre == 'administrateur'
+                est_expert    = est_admin or personne.niveau == 'expert'
+
+                if 'administrateur' in niveaux and not est_admin:
+                    messages.error(request, "⛔ Accès refusé. Réservé aux administrateurs.")
+                    return redirect('accueil')
+                elif 'administrateur' not in niveaux and 'expert' in niveaux and not est_expert:
+                    messages.error(request, "⛔ Accès refusé. Niveau expert requis.")
                     return redirect('accueil')
             except Exception:
                 return redirect('accueil')
@@ -238,6 +250,7 @@ def accueil(request):
 def transport(request):
     return render(request, 'monapp/transport.html', {'page_active': 'transport'})
 
+@login_required
 def incident(request):
     return render(request, 'monapp/incident.html', {'page_active': 'incident'})
 
@@ -304,13 +317,21 @@ def profil(request):
         peut_monter      = personne.points >= seuil_suivant
         points_manquants = max(0, seuil_suivant - personne.points)
 
+    # Demande de promotion en attente
+    demande_en_attente = None
+    if personne.niveau == 'expert' and personne.type_membre != 'administrateur':
+        demande_en_attente = DemandePromotion.objects.filter(
+            demandeur=personne, statut='en_attente'
+        ).first()
+
     return render(request, 'monapp/profil.html', {
-        'personne'        : personne,
-        'autres_membres'  : autres_membres,
-        'niveau_suivant'  : niveau_suivant,
-        'seuil_suivant'   : seuil_suivant,
-        'peut_monter'     : peut_monter,
-        'points_manquants': points_manquants,
+        'personne'          : personne,
+        'autres_membres'    : autres_membres,
+        'niveau_suivant'    : niveau_suivant,
+        'seuil_suivant'     : seuil_suivant,
+        'peut_monter'       : peut_monter,
+        'points_manquants'  : points_manquants,
+        'demande_en_attente': demande_en_attente,
     })
 
 
@@ -531,43 +552,56 @@ def detail_signalement(request, signalement_id):
 
 # ── Administration ────────────────────────────────────────────────
 
-@niveau_requis('expert')
+@niveau_requis('administrateur')
 def admin_dashboard(request):
     membres = Personne.objects.select_related('user').order_by('-points')
+    nb_demandes_en_attente = DemandePromotion.objects.filter(statut='en_attente').count()
     return render(request, 'monapp/admin_dashboard.html', {
-        'membres': membres, 'page_active': 'admin',
+        'membres': membres,
+        'page_active': 'admin',
+        'nb_demandes_en_attente': nb_demandes_en_attente,
     })
 
 
-@niveau_requis('expert')
+@niveau_requis('administrateur')
 def bannir_utilisateur(request, user_id):
     if request.method == 'POST':
         cible = get_object_or_404(User, id=user_id)
-        if cible == request.user:
+        admin = request.user
+
+        # Ne peut pas se bannir soi-même
+        if cible == admin:
             messages.error(request, "Vous ne pouvez pas vous bannir vous-même.")
             return redirect('admin_dashboard')
+
+        # Ne peut pas bannir un autre administrateur ou superuser
         try:
-            if cible.personne.niveau == 'expert':
-                messages.error(request, "Impossible de bannir un autre expert.")
+            est_admin_cible = (
+                cible.is_superuser or
+                cible.personne.type_membre == 'administrateur'
+            )
+            if est_admin_cible:
+                messages.error(request, f"Impossible de bannir {cible.username} : il est administrateur.")
                 return redirect('admin_dashboard')
         except Exception:
             pass
+
         raison = request.POST.get('raison', 'Violation des règles de la plateforme.')
         cible.is_active = False
         cible.save()
         if cible.email:
             send_mail(
-                subject='⛔ Votre compte MaVille a été suspendu',
+                subject='Votre compte MaVille a été suspendu',
                 message=f"Bonjour {cible.username},\n\nVotre compte a été suspendu.\nRaison : {raison}\n\n— L'équipe MaVille",
                 from_email='admin@ville.com',
                 recipient_list=[cible.email],
                 fail_silently=True,
             )
-        messages.success(request, f"✅ Le compte de {cible.username} a été suspendu.")
+        messages.success(request, f"Le compte de {cible.username} a été suspendu.")
     return redirect('admin_dashboard')
 
 
-@niveau_requis('expert')
+@niveau_requis('administrateur')
 def reactiver_utilisateur(request, user_id):
     if request.method == 'POST':
         cible = get_object_or_404(User, id=user_id)
@@ -585,7 +619,7 @@ def reactiver_utilisateur(request, user_id):
     return redirect('admin_dashboard')
 
 
-@niveau_requis('expert')
+@niveau_requis('administrateur')
 def supprimer_utilisateur(request, user_id):
     if request.method == 'POST':
         cible = get_object_or_404(User, id=user_id)
@@ -612,3 +646,298 @@ def supprimer_utilisateur(request, user_id):
             )
         messages.success(request, f"✅ Le compte de {username} a été supprimé définitivement.")
     return redirect('admin_dashboard')
+
+# ── Lieux ─────────────────────────────────────────────────────────
+
+from .models import Lieu
+from .models import Signalement
+from .models import Information_locale
+import folium
+import os
+from django.conf import settings
+
+# Chemin absolu vers l'image de fond — recherche dans tout le projet
+import glob as _glob
+_candidates = _glob.glob(str(settings.BASE_DIR) + '/**/carte.jpg', recursive=True)
+image_path = _candidates[0] if _candidates else None
+
+
+def detail_lieu(request, lieu_id):
+    lieu = get_object_or_404(Lieu, id=lieu_id)
+    produits = lieu.liste_produits.all()
+    all_produits = Produit.objects.all()
+    return render(request, 'lieux/detail_lieu.html', {
+        'lieu': lieu,
+        'produits': produits,
+        'all_produits': all_produits,
+    })
+
+
+def liste_lieux(request):
+    lieux = Lieu.objects.all()
+    return render(request, 'lieux/liste_lieux.html', {'lieux': lieux})
+
+
+@login_required
+def creer_lieu(request):
+    if request.method == 'POST':
+        form = LieuForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '✅ Lieu ajouté avec succès.')
+            return redirect('liste_lieux')
+        else:
+            print(form.errors)
+    else:
+        form = LieuForm()
+    return render(request, 'lieux/creer_lieu.html', {'form': form})
+
+
+def carte_lieux(request):
+    carte = folium.Map(location=[0, 0], zoom_start=2, tiles=None)
+
+    if image_path:
+        folium.raster_layers.ImageOverlay(
+            image=image_path,
+            bounds=[[-100, -100], [100, 100]],
+            opacity=1,
+        ).add_to(carte)
+
+    # ── Lieux (marqueurs bleus) ──
+    lieux_db = Lieu.objects.all()
+    for lieu in lieux_db:
+        popup_html = (
+            f"<b>{lieu.Nom}</b><br>"
+            f"{lieu.Adresse}<br>"
+            f"<a href='/lieux/{lieu.id}/'>Voir le détail</a>"
+        )
+        folium.Marker(
+            location=[lieu.latitude, lieu.longitude],
+            popup=folium.Popup(popup_html, max_width=200),
+            tooltip=lieu.Nom,
+            icon=folium.Icon(color="blue", icon="info-sign"),
+        ).add_to(carte)
+
+    # ── Signalements (marqueurs colorés par type) ──
+    COULEURS = {
+        'accident': 'red',
+        'danger':   'orange',
+        'autre':    'blue',
+    }
+    signalements = Signalement.objects.select_related('lieu', 'produit').filter(lieu__isnull=False)
+    for s in signalements:
+        couleur = COULEURS.get(s.type_signalement, 'gray')
+        popup_html = (
+            f"<b>{s.nom}</b><br>"
+            f"Type : {s.get_type_signalement_display()}<br>"
+            f"Lieu : {s.lieu.Nom}<br>"
+            f"Objet : {s.produit.Nom if s.produit else 'Aucun'}"
+        )
+        folium.Marker(
+            location=[s.lieu.latitude, s.lieu.longitude],
+            popup=folium.Popup(popup_html, max_width=220),
+            tooltip=s.nom,
+            icon=folium.Icon(color=couleur, icon='warning-sign'),
+        ).add_to(carte)
+
+    return render(request, 'produits/carte.html', {'carte': carte._repr_html_()})
+
+
+@login_required
+def ajouter_produit_lieu(request, lieu_id, produit_id):
+    lieu    = get_object_or_404(Lieu, id=lieu_id)
+    produit = get_object_or_404(Produit, ID=produit_id)
+    lieu.liste_produits.add(produit)
+    return redirect('detail_lieu', lieu_id=lieu.id)
+
+
+@login_required
+def retirer_produit_lieu(request, lieu_id, produit_id):
+    lieu    = get_object_or_404(Lieu, id=lieu_id)
+    produit = get_object_or_404(Produit, ID=produit_id)
+    lieu.liste_produits.remove(produit)
+    return redirect('detail_lieu', lieu_id=lieu.id)
+
+
+# ── Signalements ──────────────────────────────────────────────────
+
+@niveau_requis('expert')
+def creer_signalement(request):
+    # Pré-remplissage depuis l'accueil (bouton "Signaler" sur un objet)
+    produit_id  = request.GET.get('produit', '')
+    produit_nom = request.GET.get('nom', '')
+
+    if request.method == 'POST':
+        form = SignalementForm(request.POST, request.FILES)
+        if form.is_valid():
+            signalement = form.save(commit=False)
+            # Associe automatiquement l'utilisateur comme auteur
+            if not signalement.auteur:
+                signalement.auteur = request.user.username
+            signalement.save()
+            form.save_m2m()
+            messages.success(request, '✅ Signalement envoyé avec succès.')
+            return redirect('liste_signalements')
+    else:
+        initial = {}
+        if produit_id:
+            try:
+                produit_obj = Produit.objects.get(ID=produit_id)
+                initial['produit'] = produit_obj
+                initial['nom']     = f"Problème sur {produit_nom or produit_obj.Nom}"
+            except Produit.DoesNotExist:
+                pass
+        form = SignalementForm(initial=initial)
+
+    return render(request, 'signalements/creer_signalement.html', {
+        'form': form,
+        'produit_nom': produit_nom,
+    })
+
+
+def liste_signalements(request):
+    signalements = Signalement.objects.all().order_by('-date')
+
+    # Carte folium avec un marker par signalement
+    # Les coordonnées sont dérivées de l'id pour les disperser sur la carte
+    carte = folium.Map(location=[0, 0], zoom_start=2, tiles=None)
+    if image_path:
+        folium.raster_layers.ImageOverlay(
+            image=image_path,
+            bounds=[[-100, -100], [100, 100]],
+            opacity=1,
+        ).add_to(carte)
+
+    # Positions prédéfinies dans la zone urbaine de la carte
+    positions = [
+        (18, 8), (-2, 12), (30, -5), (10, 25), (22, -18),
+        (5, 0),  (35, 15), (-8, -5), (15, -12), (28, 5),
+        (12, 18), (-5, 20), (40, 0), (8, -20), (20, 30),
+    ]
+
+    for i, sig in enumerate(signalements):
+        # Utilise les coords du lieu si disponible, sinon position auto
+        if sig.lieu:
+            lat = sig.lieu.latitude
+            lon = sig.lieu.longitude
+            # Légère dispersion si plusieurs signalements au même lieu
+            lat += (sig.id % 3) * 0.8
+            lon += (sig.id % 4) * 0.8
+        else:
+            lat, lon = positions[i % len(positions)]
+            lat += (sig.id % 5) * 1.5
+            lon += (sig.id % 7) * 1.5
+
+        COULEURS = {'accident': 'red', 'danger': 'orange', 'autre': 'blue'}
+        couleur = COULEURS.get(sig.type_signalement, 'red')
+
+        popup_html = (
+            f"<b>⚠️ {sig.nom}</b><br>"
+            f"Type : {sig.get_type_signalement_display()}<br>"
+            f"Lieu : {sig.lieu.Nom if sig.lieu else 'Non précisé'}<br>"
+            f"Objet : {sig.produit.Nom if sig.produit else 'Aucun'}<br>"
+            f"<small>par {sig.auteur} — {sig.date}</small><br>"
+            f"<a href='/signalements/{sig.id}/'>Voir le détail →</a>"
+        )
+        folium.Marker(
+            location=[lat, lon],
+            popup=folium.Popup(popup_html, max_width=240),
+            tooltip=sig.nom,
+            icon=folium.Icon(color=couleur, icon="warning-sign"),
+        ).add_to(carte)
+
+    return render(request, 'signalements/liste_signalements.html', {
+        'signalements': signalements,
+        'carte': carte._repr_html_(),
+    })
+
+
+def detail_signalement(request, signalement_id):
+    signalement = get_object_or_404(Signalement, id=signalement_id)
+    return render(request, 'signalements/detail_signalement.html', {'signalement': signalement})
+
+
+# ── Informations locales ───────────────────────────────────────────
+
+@login_required
+def creer_information_locale(request):
+    if request.method == 'POST':
+        form = InformationLocaleForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('liste_informations_locales')
+    else:
+        form = InformationLocaleForm()
+    return render(request, 'informations_locales/creer_information_locale.html', {'form': form})
+
+
+def liste_informations_locales(request):
+    informations_locales = Information_locale.objects.all()
+    return render(request, 'informations_locales/liste_informations_locales.html', {
+        'informations_locales': informations_locales,
+    })
+
+
+def detail_information_locale(request, information_locale_id):
+    information_locale = get_object_or_404(Information_locale, id=information_locale_id)
+    return render(request, 'informations_locales/detail_information_locale.html', {
+        'information_locale': information_locale,
+    })
+
+# ── Demandes de promotion ─────────────────────────────────────────
+
+@login_required
+def demander_promotion(request):
+    """Un expert peut demander à devenir administrateur."""
+    personne = request.user.personne
+
+    # Seuls les experts peuvent demander
+    if personne.niveau != 'expert' and personne.type_membre != 'administrateur':
+        messages.error(request, "⛔ Seuls les experts peuvent faire cette demande.")
+        return redirect('profil')
+
+    # Déjà admin
+    if personne.type_membre == 'administrateur' or request.user.is_superuser:
+        messages.info(request, "Vous êtes déjà administrateur.")
+        return redirect('profil')
+
+    # Demande déjà en attente
+    if DemandePromotion.objects.filter(demandeur=personne, statut='en_attente').exists():
+        messages.warning(request, "Vous avez déjà une demande en attente.")
+        return redirect('profil')
+
+    if request.method == 'POST':
+        message = request.POST.get('message', '').strip()
+        DemandePromotion.objects.create(demandeur=personne, message=message)
+        messages.success(request, "✅ Votre demande a été envoyée aux administrateurs.")
+        return redirect('profil')
+
+    return render(request, 'monapp/demander_promotion.html')
+
+
+@niveau_requis('administrateur')
+def liste_demandes_promotion(request):
+    """Les admins voient toutes les demandes en attente."""
+    demandes = DemandePromotion.objects.filter(statut='en_attente').order_by('-date')
+    return render(request, 'monapp/liste_demandes_promotion.html', {'demandes': demandes})
+
+
+@niveau_requis('administrateur')
+def traiter_demande_promotion(request, demande_id, action):
+    """Accepter ou refuser une demande (action = 'accepter' ou 'refuser')."""
+    demande = get_object_or_404(DemandePromotion, id=demande_id)
+    admin   = request.user.personne
+
+    if action == 'accepter':
+        demande.statut = 'acceptee'
+        demande.demandeur.type_membre = 'administrateur'
+        demande.demandeur.niveau      = 'expert'
+        demande.demandeur.save()
+        messages.success(request, f"✅ {demande.demandeur} est maintenant administrateur.")
+    elif action == 'refuser':
+        demande.statut = 'refusee'
+        messages.info(request, f"Demande de {demande.demandeur} refusée.")
+
+    demande.traitee_par = admin
+    demande.save()
+    return redirect('liste_demandes_promotion')

@@ -55,10 +55,10 @@
                         {# ===== BLOC NIVEAU ===== #}
                         <div class="niveau-bloc">
                             <span class="niveau-badge niveau-{{ personne.niveau }}">
-                                {% if personne.niveau == 'debutant' %}🌱 Débutant
-                                {% elif personne.niveau == 'intermediaire' %}⚡ Intermédiaire
-                                {% elif personne.niveau == 'avance' %}🔥 Avancé
-                                {% elif personne.niveau == 'expert' %}🏆 Expert
+                                {% if personne.niveau == 'debutant' %} Débutant
+                                {% elif personne.niveau == 'intermediaire' %} Intermédiaire
+                                {% elif personne.niveau == 'avance' %} Avancé
+                                {% elif personne.niveau == 'expert' %} Expert
                                 {% else %}{{ personne.niveau }}
                                 {% endif %}
                             </span>
@@ -79,7 +79,31 @@
                             </div>
 
                             {% if personne.niveau == 'expert' %}
-                                <p class="niveau-max">🎉 Vous avez atteint le niveau maximum !</p>
+                                <p class="niveau-max">Vous avez atteint le niveau maximum !</p>
+
+                                {% if personne.type_membre == 'administrateur' or request.user.is_superuser %}
+                                <div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:8px;padding:8px 14px;font-size:0.85rem;font-weight:600;">
+                                    Vous êtes Administrateur
+                                </div>
+                                {% elif demande_en_attente %}
+                                <div style="margin-top:16px;background:#fef9c3;border:1px solid #fde047;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px;">
+                                    <div>
+                                        <p style="font-weight:700;color:#854d0e;margin-bottom:2px;font-size:0.9rem;">Demande en cours de traitement</p>
+                                        <p style="color:#92400e;font-size:0.82rem;">Votre demande a été envoyée le {{ demande_en_attente.date|date:"d/m/Y à H:i" }}. Un administrateur va l'examiner prochainement.</p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div style="margin-top:16px;">
+                                    <a href="{% url 'demander_promotion' %}" style="
+                                        display:inline-flex;align-items:center;gap:8px;
+                                        background:linear-gradient(135deg,#3b82f6,#2563eb);
+                                        color:white;padding:12px 22px;border-radius:10px;
+                                        font-weight:700;font-size:0.9rem;text-decoration:none;
+                                        box-shadow:0 4px 14px rgba(59,130,246,0.35);">
+                                        Demander à devenir Administrateur
+                                    </a>
+                                </div>
+                                {% endif %}
                             {% else %}
                                 {# Barre de progression #}
                                 <div class="progression">
@@ -101,17 +125,17 @@
                                     {% csrf_token %}
                                     {% if peut_monter %}
                                         <button type="submit" class="btn-monter-niveau">
-                                            🚀 Passer au niveau suivant
+                                             Passer au niveau suivant
                                             <span class="niveau-next">
-                                                {% if niveau_suivant == 'intermediaire' %}⚡ Intermédiaire
-                                                {% elif niveau_suivant == 'avance' %}🔥 Avancé
-                                                {% elif niveau_suivant == 'expert' %}🏆 Expert
+                                                {% if niveau_suivant == 'intermediaire' %} Intermédiaire
+                                                {% elif niveau_suivant == 'avance' %} Avancé
+                                                {% elif niveau_suivant == 'expert' %} Expert
                                                 {% endif %}
                                             </span>
                                         </button>
                                     {% else %}
                                         <div class="niveau-locked">
-                                            🔒 Il vous faut
+                                             Il vous faut
                                             <strong>{{ seuil_suivant|floatformat:0|add:"0" }}
                                             {# calcul du manque en JS #}
                                             </strong>
@@ -236,10 +260,10 @@
                                 <span class="membre-type">{{ membre.type_membre|capfirst }}</span>
                                 <p class="membre-meta">{{ membre.age }} ans · {{ membre.get_sexe_display }}</p>
                                 <span class="membre-niveau niveau-{{ membre.niveau }}">
-                                    {% if membre.niveau == 'debutant' %}🌱 Débutant
-                                    {% elif membre.niveau == 'intermediaire' %}⚡ Intermédiaire
-                                    {% elif membre.niveau == 'avance' %}🔥 Avancé
-                                    {% elif membre.niveau == 'expert' %}🏆 Expert
+                                    {% if membre.niveau == 'debutant' %} Débutant
+                                    {% elif membre.niveau == 'intermediaire' %} Intermédiaire
+                                    {% elif membre.niveau == 'avance' %} Avancé
+                                    {% elif membre.niveau == 'expert' %} Expert
                                     {% endif %}
                                 </span>
                             </div>
@@ -266,7 +290,7 @@
 <div class="profil-page">
     <section class="privacy-section">
         <div class="privacy-inner">
-            <div class="lock-icon">🔒</div>
+            <div class="lock-icon"></div>
             <div>
                 <h3>Confidentialité</h3>
                 <p>Votre nom, votre prénom et votre mot de passe ne sont jamais communiqués aux autres membres.</p>

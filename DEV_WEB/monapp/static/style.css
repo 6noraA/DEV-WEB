@@ -806,3 +806,86 @@ textarea::placeholder {
     padding: 0 22px;
   }
 }
+
+/* ================================================================
+   MOBILE FRIENDLY — Ajouts responsive
+   ================================================================ */
+
+/* Hamburger button */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    border: none;
+    background: none;
+    flex-shrink: 0;
+}
+.nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #1e3a8a;
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+
+    /* Header redevient une ligne */
+    .header-inner {
+        flex-direction: row;
+        height: 64px;
+        padding: 0 20px;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    /* Affiche le bouton hamburger */
+    .nav-toggle { display: flex; }
+
+    /* Nav cachée par défaut sur mobile */
+    .site-nav {
+        display: none;
+        position: fixed;
+        top: 64px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.98);
+        backdrop-filter: blur(12px);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 20px;
+        gap: 4px;
+        overflow-y: auto;
+        z-index: 999;
+        flex-wrap: nowrap;
+    }
+    .site-nav.open { display: flex; }
+
+    .site-nav a {
+        padding: 14px 16px;
+        font-size: 1rem;
+        border-radius: 8px;
+        white-space: normal;
+    }
+
+    /* Hero */
+    .hero { padding: 48px 0; }
+    .hero h2 { font-size: 26px; }
+    .hero p  { font-size: 15px; }
+
+    /* Cards en 1 colonne */
+    .cards { grid-template-columns: 1fr; }
+
+    /* Formulaire */
+    .form-container { padding: 20px 16px; }
+
+    /* Wrap */
+    .wrap { padding: 0 16px; }
+}

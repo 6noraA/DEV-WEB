@@ -1,0 +1,184 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Signalements - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'incident.css' %}">
+<style>
+.signalements-page { background: #f8fafc; min-height: 100vh; }
+
+.signalements-hero {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 60px 24px 40px;
+    text-align: center;
+    color: white;
+}
+.signalements-hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
+.signalements-hero p  { color: #94a3b8; font-size: 1.05rem; }
+
+.sig-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+}
+@media (max-width: 900px) {
+    .sig-layout { grid-template-columns: 1fr; }
+}
+
+/* Carte */
+.map-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.map-card h2 {
+    padding: 20px 24px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.map-container { height: 480px; }
+.map-container iframe, .map-container > div { width: 100% !important; height: 100% !important; }
+
+/* Liste */
+.list-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+.list-card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.list-card-header h2 { font-size: 1.1rem; font-weight: 700; color: #1e293b; }
+.badge-count {
+    background: #ef4444;
+    color: white;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+.sig-list { padding: 12px; max-height: 440px; overflow-y: auto; }
+.sig-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 10px;
+    transition: background 0.15s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+.sig-item:hover { background: #f8fafc; }
+.sig-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #fee2e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+.sig-info { flex: 1; min-width: 0; }
+.sig-info h4 { font-size: 0.9rem; font-weight: 600; color: #1e293b; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sig-info p  { font-size: 0.8rem; color: #64748b; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sig-date    { font-size: 0.75rem; color: #94a3b8; white-space: nowrap; }
+.sig-empty   { text-align: center; padding: 40px; color: #94a3b8; }
+.sig-empty .icon { font-size: 2.5rem; margin-bottom: 8px; }
+
+.btn-nouveau {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ef4444;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s;
+    margin: 16px 24px;
+}
+.btn-nouveau:hover { background: #dc2626; }
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="signalements-hero">
+    <h1>🚨 Signalements citoyens</h1>
+    <p>Carte en temps réel des incidents signalés dans la ville</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="signalements-page">
+    <div class="sig-layout">
+
+        {# Carte des signalements #}
+        <div class="map-card">
+            <h2>📍 Carte des incidents</h2>
+            <div class="map-container">
+                {{ carte|safe }}
+            </div>
+        </div>
+
+        {# Liste des signalements #}
+        <div class="list-card">
+            <div class="list-card-header">
+                <h2>Incidents récents</h2>
+                <span class="badge-count">{{ signalements|length }}</span>
+            </div>
+
+            <a href="{% url 'creer_signalement' %}" class="btn-nouveau">
+                + Nouveau signalement
+            </a>
+
+            <div class="sig-list">
+                {% if signalements %}
+                    {% for s in signalements %}
+                    <a href="{% url 'detail_signalement' s.id %}" class="sig-item">
+                        <div class="sig-icon">⚠️</div>
+                        <div class="sig-info">
+                            <h4>{{ s.nom }}</h4>
+                            <p>{{ s.description|truncatechars:60 }}</p>
+                            <p>par {{ s.auteur }}</p>
+                        </div>
+                        <div class="sig-date">{{ s.date|date:"d/m" }}</div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="sig-empty">
+                        <div class="icon">✅</div>
+                        <p>Aucun signalement pour le moment.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}

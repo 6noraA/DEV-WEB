@@ -1,0 +1,204 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}{{ signalement.nom }} - MaVille{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'incident.css' %}">
+<style>
+.detail-page { background: #f8fafc; min-height: 100vh; padding: 40px 24px; }
+.detail-wrap { max-width: 760px; margin: 0 auto; }
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+    transition: color 0.2s;
+}
+.back-link:hover { color: #1e293b; }
+
+.detail-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.detail-header {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    padding: 32px;
+    color: white;
+}
+.detail-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(239,68,68,0.2);
+    border: 1px solid rgba(239,68,68,0.4);
+    color: #fca5a5;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+.detail-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+.detail-meta { color: #94a3b8; font-size: 0.9rem; display: flex; gap: 20px; flex-wrap: wrap; }
+.detail-meta span { display: flex; align-items: center; gap: 6px; }
+
+.detail-body { padding: 32px; }
+
+.detail-photo {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 28px;
+}
+
+.detail-section { margin-bottom: 24px; }
+.detail-section label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    margin-bottom: 8px;
+}
+.detail-section p {
+    color: #1e293b;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 12px;
+    padding: 24px 32px;
+    border-top: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+}
+.btn-back-list {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.btn-back-list:hover { background: #e2e8f0; }
+.btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ef4444;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.btn-new:hover { background: #dc2626; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+    <div class="detail-wrap">
+
+        <a href="{% url 'liste_signalements' %}" class="back-link">
+            ← Retour aux signalements
+        </a>
+
+        <div class="detail-card">
+
+            <div class="detail-header">
+                <div class="detail-badge">⚠️ Incident signalé</div>
+                <h1>{{ signalement.nom }}</h1>
+                <div class="detail-meta">
+                    <span>📅 {{ signalement.date|date:"d F Y" }}</span>
+                    <span>👤 {{ signalement.auteur }}</span>
+                </div>
+            </div>
+
+            <div class="detail-body">
+
+                {% if signalement.photo %}
+                <img src="{{ signalement.photo.url }}" alt="{{ signalement.nom }}" class="detail-photo">
+                {% endif %}
+
+                <div class="detail-section">
+                    <label>Type d'incident</label>
+                    <p>
+                        {% if signalement.type_signalement == 'accident' %}🔴
+                        {% elif signalement.type_signalement == 'danger' %}🟠
+                        {% else %}🔵{% endif %}
+                        {{ signalement.get_type_signalement_display }}
+                    </p>
+                </div>
+
+                <div class="detail-section">
+                    <label>Description</label>
+                    <p>{{ signalement.description }}</p>
+                </div>
+
+                {% if signalement.lieu %}
+                <div class="detail-section">
+                    <label>Lieu concerné</label>
+                    <p>📍 {{ signalement.lieu.Nom }} — {{ signalement.lieu.Adresse }}</p>
+                </div>
+                {% endif %}
+
+                {% if signalement.produit %}
+                <div class="detail-section">
+                    <label>Objet connecté concerné</label>
+                    <p>🔌 <a href="{% url 'detail_produit' signalement.produit.ID %}" style="color:#3b82f6;">{{ signalement.produit.Nom }}</a></p>
+                </div>
+                {% endif %}
+
+                <div class="detail-section">
+                    <label>Signalé par</label>
+                    <p>{{ signalement.auteur }}</p>
+                </div>
+
+                <div class="detail-section">
+                    <label>Date du signalement</label>
+                    <p>{{ signalement.date|date:"l d F Y" }}</p>
+                </div>
+
+            </div>
+
+            <div class="detail-actions">
+                <a href="{% url 'liste_signalements' %}" class="btn-back-list">
+                    📋 Tous les signalements
+                </a>
+                <a href="{% url 'creer_signalement' %}" class="btn-new">
+                    + Nouveau signalement
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer">
+    <div class="wrap">
+        <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
+    </div>
+</footer>
+{% endblock %}

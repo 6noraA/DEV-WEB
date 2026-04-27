@@ -5,84 +5,31 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'detail_produit.css' %}">
-<style>
-/* ── Boutons d'action ── */
-.detail-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 32px;
-  padding-bottom: 40px;
-}
-.btn-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 24px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.25s;
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-}
-.btn-action.btn-secondary {
-  background: #f1f5f9;
-  color: #475569;
-  border: 1.5px solid #e2e8f0;
-}
-.btn-action.btn-secondary:hover {
-  background: #e2e8f0;
-  color: #0f172a;
-  transform: translateY(-2px);
-}
-.btn-action.btn-primary {
-  background: linear-gradient(135deg, #2563eb, #1e3a8a);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(37,99,235,0.3);
-}
-.btn-action.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(37,99,235,0.45);
-}
-.btn-action.btn-stats {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(16,185,129,0.3);
-}
-.btn-action.btn-stats:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(16,185,129,0.45);
-}
-.btn-action.btn-liste {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(124,58,237,0.3);
-}
-.btn-action.btn-liste:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(124,58,237,0.45);
-}
-</style>
 {% endblock %}
 
 {% block hero %}
 <section class="detail-hero">
     <div class="detail-hero-bg"></div>
     <div class="detail-hero-inner">
-        <a href="{% url 'liste_produits' %}" class="btn-retour">← Retour aux objets</a>
+
+        <a href="{% url 'accueil' %}#objets" class="btn-retour">
+            ← Retour aux objets
+        </a>
+
         <div class="detail-hero-content">
             <div class="detail-hero-icon">
                 {% if produit.photo %}
                     <img src="{{ produit.photo.url }}" alt="{{ produit.Nom }}">
-                {% else %}📡{% endif %}
+                {% else %}
+                    📡
+                {% endif %}
             </div>
+
             <div class="detail-hero-info">
                 <div class="detail-id">ID : {{ produit.ID }}</div>
                 <h2>{{ produit.Nom }}</h2>
                 <p class="detail-lead">{{ produit.Description }}</p>
+
                 <div class="detail-badges">
                     <span class="etat-badge etat-{{ produit.etat|lower }}">
                         {% if produit.etat == 'ACTIF' %}🟢
@@ -106,6 +53,7 @@
 <div class="detail-page">
     <div class="wrap">
 
+        {# ── GRILLE DE STATS RAPIDES ── #}
         <section class="detail-stats-bar">
             <div class="detail-stat">
                 <div class="detail-stat-icon">🔋</div>
@@ -132,9 +80,14 @@
             </div>
         </section>
 
+        {# ── CONTENU PRINCIPAL ── #}
         <div class="detail-grid">
+
+            {# Carte infos principales #}
             <section class="detail-card">
-                <div class="detail-card-header"><h3>📋 Informations générales</h3></div>
+                <div class="detail-card-header">
+                    <h3>📋 Informations générales</h3>
+                </div>
                 <div class="detail-card-body">
                     <div class="detail-row">
                         <span class="detail-key">Identifiant unique</span>
@@ -151,11 +104,13 @@
                     <div class="detail-row">
                         <span class="detail-key">État actuel</span>
                         <span class="detail-val">
-                            <span class="etat-badge etat-{{ produit.etat|lower }}">{{ produit.etat }}</span>
+                            <span class="etat-badge etat-{{ produit.etat|lower }}">
+                                {{ produit.etat }}
+                            </span>
                         </span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-key">Mode</span>
+                        <span class="detail-key">Mode de fonctionnement</span>
                         <span class="detail-val">{{ produit.mode }}</span>
                     </div>
                     <div class="detail-row">
@@ -165,8 +120,11 @@
                 </div>
             </section>
 
+            {# Carte connectivité #}
             <section class="detail-card">
-                <div class="detail-card-header"><h3>🔗 Connectivité & Réseau</h3></div>
+                <div class="detail-card-header">
+                    <h3>🔗 Connectivité & Réseau</h3>
+                </div>
                 <div class="detail-card-body">
                     <div class="detail-row">
                         <span class="detail-key">Type de connectivité</span>
@@ -177,19 +135,22 @@
                         <span class="detail-val mono">{{ produit.Adresse_IP }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-key">Batterie</span>
+                        <span class="detail-key">Niveau de batterie</span>
                         <span class="detail-val">
                             {{ produit.Bactterie }}%
                             <div class="batt-bar inline-batt">
-                                <div class="batt-fill" style="width:{{ produit.Bactterie }}%; background:{% if produit.Bactterie > 60 %}#22c55e{% elif produit.Bactterie > 30 %}#f59e0b{% else %}#ef4444{% endif %}"></div>
+                                <div class="batt-fill" style="width: {{ produit.Bactterie }}%; background: {% if produit.Bactterie > 60 %}#22c55e{% elif produit.Bactterie > 30 %}#f59e0b{% else %}#ef4444{% endif %}"></div>
                             </div>
                         </span>
                     </div>
                 </div>
             </section>
 
+            {# Carte dates #}
             <section class="detail-card">
-                <div class="detail-card-header"><h3>📅 Historique & Dates</h3></div>
+                <div class="detail-card-header">
+                    <h3>📅 Historique & Dates</h3>
+                </div>
                 <div class="detail-card-body">
                     <div class="detail-row">
                         <span class="detail-key">Dernière utilisation</span>
@@ -200,23 +161,21 @@
                         <span class="detail-val">{{ produit.Date_dernier_maintenance }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-key">Durée de vie</span>
+                        <span class="detail-key">Durée de vie restante</span>
                         <span class="detail-val">Jusqu'au {{ produit.Temp_restante }}</span>
                     </div>
                 </div>
             </section>
+
         </div>
 
-        {# ── BOUTONS ── #}
+        {# ── BOUTONS D'ACTION ── #}
         <div class="detail-actions">
-            <a href="{% url 'liste_produits' %}" class="btn-action btn-secondary">
-                ← Liste des objets
+            <a href="{% url 'accueil' %}#objets" class="btn-action btn-secondary">
+                ← Retour à la liste
             </a>
             {% if user.is_authenticated %}
                 {% if user.personne.niveau == 'avance' or user.personne.niveau == 'expert' %}
-                    <a href="{% url 'statistiques' %}" class="btn-action btn-stats">
-                        📊 Statistiques
-                    </a>
                     <a href="{% url 'modifier_produit' produit.ID %}" class="btn-action btn-primary">
                         ✏️ Modifier cet objet
                     </a>
@@ -234,15 +193,4 @@
         <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
     </div>
 </footer>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    const batt = {{ produit.Bactterie }};
-    const fill = document.getElementById('batt-fill');
-    if (fill) {
-        fill.style.width = batt + '%';
-        fill.style.background = batt > 60 ? '#22c55e' : batt > 30 ? '#f59e0b' : '#ef4444';
-    }
-</script>
 {% endblock %}

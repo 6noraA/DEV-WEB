@@ -90,6 +90,7 @@ class Produit(models.Model):
     def __str__(self):
         return self.Nom
 
+<<<<<<< HEAD
   class Lieu(models.Model):
     Nom = models.CharField(max_length=100)
     Adresse = models.CharField(max_length=200, unique=True)
@@ -109,6 +110,27 @@ class Information(models.Model):
     photo = models.ImageField(upload_to='photos/information/', null=True, blank=True)
     date = models.DateField(auto_now_add=True)
     auteur = models.CharField(max_length=100)
+=======
+class Lieu(models.Model):
+    Nom            = models.CharField(max_length=100)
+    Adresse        = models.CharField(max_length=200, unique=True)
+    Description    = models.TextField()
+    latitude       = models.FloatField()
+    longitude      = models.FloatField()
+    photo          = models.ImageField(upload_to='photos/lieux/', null=True, blank=True)
+    liste_produits = models.ManyToManyField('Produit', related_name='lieux')
+
+    def __str__(self):
+        return self.Nom
+
+
+class Information(models.Model):
+    nom         = models.CharField(max_length=100)
+    description = models.TextField()
+    photo       = models.ImageField(upload_to='photos/information/', null=True, blank=True)
+    date        = models.DateField(auto_now_add=True)
+    auteur      = models.CharField(max_length=100)
+>>>>>>> 9254315 (galère)
 
     def __str__(self):
         return self.nom
@@ -121,6 +143,7 @@ class Information_locale(Information):
 class Signalement(Information):
     TYPE_CHOICES = [
         ('accident', 'Accident'),
+<<<<<<< HEAD
         ('danger', 'Danger'),
         ('autre', 'Autre'),
     ]
@@ -160,3 +183,49 @@ class Signalement(Information):
 
     def __str__(self):
         return f"{self.nom} - {self.type_signalement}"
+=======
+        ('danger',   'Danger'),
+        ('autre',    'Autre'),
+    ]
+    type_signalement = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES,
+        default='autre',
+    )
+    lieu    = models.ForeignKey(
+        'Lieu',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='signalements',
+    )
+    produit = models.ForeignKey(
+        'Produit',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='signalements',
+    )
+
+class DemandePromotion(models.Model):
+    STATUT_CHOICES = [
+        ('en_attente', 'En attente'),
+        ('acceptee',   'Acceptée'),
+        ('refusee',    'Refusée'),
+    ]
+    demandeur  = models.ForeignKey(
+        Personne,
+        on_delete=models.CASCADE,
+        related_name='demandes_promotion',
+    )
+    message    = models.TextField(blank=True, help_text="Motif de la demande")
+    statut     = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')
+    date       = models.DateTimeField(auto_now_add=True)
+    traitee_par = models.ForeignKey(
+        Personne,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='demandes_traitees',
+    )
+
+    def __str__(self):
+        return f"Demande de {self.demandeur} — {self.statut}"
+>>>>>>> 9254315 (galère)

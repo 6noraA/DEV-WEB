@@ -52,47 +52,18 @@
   line-height: 1.65;
   margin-bottom: 28px;
 }
-.liste-hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-
-/* ── Boutons hero ── */
-.btn-hero {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 24px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.25s;
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
+.liste-hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
 }
-.btn-hero.add {
-  background: linear-gradient(135deg, #2563eb, #1e3a8a);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(37,99,235,0.35);
-}
-.btn-hero.add:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(37,99,235,0.5); }
-
-.btn-hero.stats {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(16,185,129,0.35);
-}
-.btn-hero.stats:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(16,185,129,0.5); }
-
-.btn-hero.back {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(8px);
-  border: 1.5px solid rgba(255,255,255,0.25);
-  color: #fff;
-}
-.btn-hero.back:hover { background: rgba(255,255,255,0.18); transform: translateY(-1px); }
 
 /* Recherche */
-.liste-search { background: #f8fafc; padding: 32px 0; border-bottom: 1px solid #e2e8f0; }
+.liste-search {
+  background: #f8fafc;
+  padding: 32px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
 .liste-search-box {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr auto;
@@ -109,29 +80,27 @@
   border-right: 1px solid #e2e8f0;
 }
 .liste-search-box .field:last-of-type { border-right: none; }
-.liste-search-box .field svg { width: 18px; height: 18px; color: #94a3b8; margin-right: 10px; flex-shrink: 0; }
+.liste-search-box .field svg {
+  width: 18px; height: 18px;
+  color: #94a3b8;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
 .liste-search-box input,
 .liste-search-box select {
-  border: none !important; outline: none !important;
+  border: none !important;
+  outline: none !important;
   background: transparent !important;
-  font-size: 14px !important; color: #0f172a !important; width: 100%;
+  font-size: 14px !important;
+  color: #0f172a !important;
+  width: 100%;
 }
-.btn-filtrer {
-  padding: 0 24px;
-  background: linear-gradient(135deg, #2563eb, #1e3a8a);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  font-size: 14px;
-  font-family: inherit;
-  transition: all 0.2s;
-}
-.btn-filtrer:hover { opacity: 0.9; transform: scale(1.02); }
 
-/* Liste header */
-.liste-section { padding: 48px 0 80px; background: #f8fafc; }
+/* Grille */
+.liste-section {
+  padding: 48px 0 80px;
+  background: #f8fafc;
+}
 .liste-header {
   display: flex;
   align-items: center;
@@ -140,28 +109,21 @@
   flex-wrap: wrap;
   gap: 12px;
 }
-.liste-header h3 { font-size: 22px; font-weight: 800; color: #0f172a; }
-.liste-header-right { display: flex; align-items: center; gap: 12px; }
-.liste-count { font-size: 14px; color: #94a3b8; font-weight: 500; }
-
-.btn-stats-sm {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: #fff;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(16,185,129,0.25);
+.liste-header h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
 }
-.btn-stats-sm:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(16,185,129,0.4); }
-
-/* Grille produits */
-.produits-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+.liste-count {
+  font-size: 14px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+.produits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
 .produit-card {
   background: #fff;
   border-radius: 20px;
@@ -172,7 +134,11 @@
   display: flex;
   flex-direction: column;
 }
-.produit-card:hover { transform: translateY(-6px); border-color: #bfdbfe; box-shadow: 0 16px 40px rgba(37,99,235,0.12); }
+.produit-card:hover {
+  transform: translateY(-6px);
+  border-color: #bfdbfe;
+  box-shadow: 0 16px 40px rgba(37,99,235,0.12);
+}
 .produit-card-header {
   position: relative;
   height: 150px;
@@ -182,12 +148,20 @@
   justify-content: center;
   font-size: 48px;
 }
-.produit-card-header img { width: 100%; height: 100%; object-fit: cover; }
+.produit-card-header img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
 .produit-etat {
-  position: absolute; top: 10px; right: 10px;
-  padding: 4px 10px; border-radius: 100px;
-  font-size: 10px; font-weight: 800; letter-spacing: 0.07em;
-  text-transform: uppercase; backdrop-filter: blur(8px);
+  position: absolute;
+  top: 10px; right: 10px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
 }
 .produit-etat.etat-actif       { background: rgba(220,252,231,0.95); color: #166534; }
 .produit-etat.etat-inactif     { background: rgba(241,245,249,0.95); color: #475569; }
@@ -196,50 +170,83 @@
 .produit-etat.etat-deconnecte  { background: rgba(219,234,254,0.95); color: #1e40af; }
 
 .produit-card-body { padding: 20px; flex: 1; }
-.produit-card-body h4 { font-size: 17px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
-.produit-card-body .pid { font-size: 11px; color: #94a3b8; font-family: monospace; margin-bottom: 10px; }
-.produit-card-body p { font-size: 13px; color: #64748b; line-height: 1.55; margin-bottom: 14px; }
-.produit-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.produit-card-body h4 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+.produit-card-body .pid {
+  font-size: 11px;
+  color: #94a3b8;
+  font-family: monospace;
+  margin-bottom: 10px;
+}
+.produit-card-body p {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+.produit-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 .produit-meta span {
-  background: #f1f5f9; border: 1px solid #e2e8f0;
-  border-radius: 8px; padding: 3px 8px;
-  font-size: 11px; color: #475569; font-weight: 600;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: #475569;
+  font-weight: 600;
 }
-
-/* ── Boutons carte ── */
-.produit-card-footer { padding: 14px 20px; border-top: 1px solid #f1f5f9; display: flex; gap: 8px; }
+.produit-card-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 10px;
+}
 .btn-voir {
-  flex: 1; text-align: center; padding: 10px;
+  flex: 1;
+  text-align: center;
+  padding: 10px;
   background: linear-gradient(135deg, #2563eb, #1e3a8a);
-  color: #fff; border-radius: 10px;
-  font-size: 13px; font-weight: 700; text-decoration: none;
-  transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;
-  box-shadow: 0 4px 12px rgba(37,99,235,0.2);
-}
-.btn-voir:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(37,99,235,0.35); }
-
-.btn-modifier {
-  padding: 10px 14px;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
   color: #fff;
   border-radius: 10px;
-  font-size: 13px; font-weight: 700; text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(245,158,11,0.2);
-  display: flex; align-items: center;
 }
-.btn-modifier:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(245,158,11,0.4); }
+.btn-voir:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-modifier {
+  padding: 10px 14px;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1.5px solid #e2e8f0;
+}
+.btn-modifier:hover { background: #e2e8f0; color: #0f172a; }
 
 .liste-empty {
-  text-align: center; padding: 80px 20px; background: #fff;
-  border-radius: 20px; border: 2px dashed #e2e8f0; color: #94a3b8;
+  text-align: center;
+  padding: 80px 20px;
+  background: #fff;
+  border-radius: 20px;
+  border: 2px dashed #e2e8f0;
+  color: #94a3b8;
 }
 .liste-empty span { font-size: 52px; display: block; margin-bottom: 16px; }
 
 @media (max-width: 768px) {
   .liste-search-box { grid-template-columns: 1fr; }
   .produits-grid { grid-template-columns: 1fr; }
-  .liste-hero-actions { flex-direction: column; }
 }
 </style>
 {% endblock %}
@@ -257,15 +264,13 @@
         <div class="liste-hero-actions">
             {% if user.is_authenticated %}
                 {% if user.personne.niveau == 'avance' or user.personne.niveau == 'expert' %}
-                    <a href="{% url 'creer_produit' %}" class="btn-hero add">
-                        ➕ Ajouter un objet
-                    </a>
-                    <a href="{% url 'statistiques' %}" class="btn-hero stats">
-                        📊 Statistiques
+                    <a href="{% url 'creer_produit' %}" class="btn-cinema">
+                        <span>➕ Ajouter un objet</span>
+                        <span class="arrow">→</span>
                     </a>
                 {% endif %}
             {% endif %}
-            <a href="{% url 'accueil' %}" class="btn-hero back">← Accueil</a>
+            <a href="{% url 'accueil' %}" class="btn-ghost">← Retour à l'accueil</a>
         </div>
     </div>
 </section>
@@ -273,6 +278,7 @@
 
 {% block content %}
 <div>
+    {# Recherche #}
     <section class="liste-search">
         <div class="wrap">
             <form method="GET" action="{% url 'liste_produits' %}">
@@ -281,7 +287,8 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
                         </svg>
-                        <input type="text" name="q" placeholder="Nom ou description..." value="{{ q|default:'' }}">
+                        <input type="text" name="q" placeholder="Nom ou description..."
+                               value="{{ q|default:'' }}">
                     </div>
                     <div class="field">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -306,24 +313,20 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <button type="submit" class="btn-filtrer">Filtrer</button>
+                    <button type="submit" class="btn-search-objets" style="border-radius:10px; padding: 0 24px; background: linear-gradient(135deg,#2563eb,#1e3a8a); color:#fff; border:none; font-weight:700; cursor:pointer; font-size:14px;">
+                        Filtrer
+                    </button>
                 </div>
             </form>
         </div>
     </section>
 
+    {# Liste #}
     <section class="liste-section">
         <div class="wrap">
             <div class="liste-header">
                 <h3>Tous les équipements</h3>
-                <div class="liste-header-right">
-                    <span class="liste-count">{{ produits|length }} résultat(s)</span>
-                    {% if user.is_authenticated %}
-                        {% if user.personne.niveau == 'avance' or user.personne.niveau == 'expert' %}
-                            <a href="{% url 'statistiques' %}" class="btn-stats-sm">📊 Statistiques</a>
-                        {% endif %}
-                    {% endif %}
-                </div>
+                <span class="liste-count">{{ produits|length }} résultat(s)</span>
             </div>
 
             {% if produits %}
@@ -333,7 +336,9 @@
                         <div class="produit-card-header">
                             {% if produit.photo %}
                                 <img src="{{ produit.photo.url }}" alt="{{ produit.Nom }}">
-                            {% else %}📡{% endif %}
+                            {% else %}
+                                📡
+                            {% endif %}
                             <span class="produit-etat etat-{{ produit.etat|lower }}">{{ produit.etat }}</span>
                         </div>
                         <div class="produit-card-body">
@@ -347,9 +352,7 @@
                             </div>
                         </div>
                         <div class="produit-card-footer">
-                            <a href="{% url 'detail_produit' produit.ID %}" class="btn-voir">
-                                👁️ Voir le détail
-                            </a>
+                            <a href="{% url 'detail_produit' produit.ID %}" class="btn-voir">Voir le détail</a>
                             {% if user.is_authenticated %}
                                 {% if user.personne.niveau == 'avance' or user.personne.niveau == 'expert' %}
                                     <a href="{% url 'modifier_produit' produit.ID %}" class="btn-modifier">✏️</a>

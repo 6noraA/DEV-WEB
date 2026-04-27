@@ -1,0 +1,79 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Demandes de promotion — Admin{% endblock %}
+
+{% block content %}
+<div style="max-width:900px;margin:60px auto;padding:0 24px;">
+
+    <a href="{% url 'admin_dashboard' %}" style="display:inline-flex;align-items:center;gap:6px;color:#64748b;font-size:0.9rem;text-decoration:none;margin-bottom:24px;">
+        ← Retour au dashboard
+    </a>
+
+    <div style="background:white;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);overflow:hidden;">
+
+        <div style="background:linear-gradient(135deg,#1e293b,#0f172a);padding:28px 32px;color:white;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1 style="font-size:1.5rem;font-weight:800;margin-bottom:4px;">Demandes de promotion</h1>
+                <p style="color:#94a3b8;font-size:0.9rem;">Experts souhaitant devenir administrateurs</p>
+            </div>
+            <span style="background:#3b82f6;color:white;border-radius:20px;padding:4px 14px;font-weight:700;font-size:0.85rem;">
+                {{ demandes|length }} en attente
+            </span>
+        </div>
+
+        <div style="padding:24px;">
+            {% if messages %}
+                {% for msg in messages %}
+                <div style="background:#dcfce7;border:1px solid #86efac;color:#166534;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.9rem;">
+                    {{ msg }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if demandes %}
+                {% for demande in demandes %}
+                <div style="border:1px solid #f1f5f9;border-radius:12px;padding:24px;margin-bottom:16px;background:#fafafa;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
+                        <div>
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                                <span style="font-weight:700;font-size:1rem;color:#1e293b;">{{ demande.demandeur.user.username }}</span>
+                                <span style="background:#dbeafe;color:#1e40af;border-radius:20px;padding:2px 10px;font-size:0.75rem;font-weight:700;">Expert</span>
+                            </div>
+                            <p style="color:#64748b;font-size:0.85rem;margin-bottom:8px;">
+                                📅 {{ demande.date|date:"d F Y à H:i" }}
+                            </p>
+                            {% if demande.message %}
+                            <div style="background:white;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;font-size:0.9rem;color:#475569;max-width:500px;">
+                                {{ demande.message }}
+                            </div>
+                            {% else %}
+                            <p style="color:#94a3b8;font-size:0.85rem;font-style:italic;">Aucun motif fourni.</p>
+                            {% endif %}
+                        </div>
+
+                        <div style="display:flex;gap:10px;flex-shrink:0;">
+                            <a href="{% url 'traiter_demande_promotion' demande.id 'accepter' %}"
+                               style="display:inline-flex;align-items:center;gap:6px;background:#22c55e;color:white;padding:10px 18px;border-radius:8px;font-weight:700;font-size:0.88rem;text-decoration:none;"
+                               onclick="return confirm('Promouvoir {{ demande.demandeur.user.username }} en administrateur ?')">
+                                ✓ Accepter
+                            </a>
+                            <a href="{% url 'traiter_demande_promotion' demande.id 'refuser' %}"
+                               style="display:inline-flex;align-items:center;gap:6px;background:#ef4444;color:white;padding:10px 18px;border-radius:8px;font-weight:700;font-size:0.88rem;text-decoration:none;"
+                               onclick="return confirm('Refuser la demande de {{ demande.demandeur.user.username }} ?')">
+                                ✗ Refuser
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align:center;padding:60px;color:#94a3b8;">
+                    <div style="font-size:3rem;margin-bottom:12px;">✅</div>
+                    <p>Aucune demande en attente.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

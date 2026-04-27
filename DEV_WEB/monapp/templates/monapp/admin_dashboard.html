@@ -274,6 +274,91 @@
             </div>
         </div>
 
+        {# Boutons d'action admin #}
+        <div style="margin-bottom:24px;display:flex;gap:14px;flex-wrap:wrap;">
+
+            <a href="{% url 'liste_signalements' %}" style="
+                display:inline-flex;align-items:center;gap:10px;
+                background:linear-gradient(135deg,#ef4444,#dc2626);
+                color:white;padding:14px 24px;border-radius:14px;
+                font-weight:700;font-size:15px;text-decoration:none;
+                box-shadow:0 4px 16px rgba(239,68,68,0.35);transition:transform 0.2s;"
+            onmouseover="this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.transform=''">
+                🚨 Signalements citoyens
+            </a>
+
+            <a href="{% url 'liste_demandes_promotion' %}" style="
+                display:inline-flex;align-items:center;gap:10px;
+                background:linear-gradient(135deg,#3b82f6,#2563eb);
+                color:white;padding:14px 24px;border-radius:14px;
+                font-weight:700;font-size:15px;text-decoration:none;
+                box-shadow:0 4px 16px rgba(59,130,246,0.35);transition:transform 0.2s;"
+            onmouseover="this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.transform=''">
+                ⭐ Demandes de promotion
+                {% if nb_demandes_en_attente %}
+                <span style="background:white;color:#2563eb;border-radius:20px;padding:2px 8px;font-size:12px;font-weight:800;">
+                    {{ nb_demandes_en_attente }}
+                </span>
+                {% endif %}
+            </a>
+
+        </div>
+
+        {# Section Base de données #}
+        <div class="admin-card" style="margin-bottom:24px;">
+            <div class="admin-card-header">
+                <h3>Base de données</h3>
+                <span style="font-size:13px;color:#94a3b8;">Accès direct aux modèles</span>
+            </div>
+            <div style="padding:20px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;">
+
+                <a href="/admin/auth/user/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">👤</span>
+                    Utilisateurs
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ membres|length }} enregistrés</span>
+                </a>
+
+                <a href="/admin/monapp/produit/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">📡</span>
+                    Objets connectés
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_produits }} enregistrés</span>
+                </a>
+
+                <a href="/admin/monapp/lieu/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">📍</span>
+                    Lieux
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_lieux }} enregistrés</span>
+                </a>
+
+                <a href="/admin/monapp/signalement/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">🚨</span>
+                    Signalements
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_signalements }} enregistrés</span>
+                </a>
+
+                <a href="/admin/monapp/information_locale/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">📰</span>
+                    Infos locales
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_infos }} enregistrées</span>
+                </a>
+
+                <a href="/admin/monapp/demandepromotion/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
+                   onmouseover="this.style.background='#fef9c3'" onmouseout="this.style.background='#f8fafc'">
+                    <span style="font-size:1.8rem;">⭐</span>
+                    Demandes promo
+                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_demandes_en_attente }} en attente</span>
+                </a>
+
+            </div>
+        </div>
+
         {# Tableau utilisateurs #}
         <div class="admin-card">
             <div class="admin-card-header">

@@ -1,0 +1,55 @@
+{% extends 'monapp/base.html' %}
+{% load static %}
+
+{% block title %}Demande de promotion — MaVille{% endblock %}
+
+{% block content %}
+<div style="max-width:600px;margin:60px auto;padding:0 24px;">
+
+    <a href="{% url 'profil' %}" style="display:inline-flex;align-items:center;gap:6px;color:#64748b;font-size:0.9rem;text-decoration:none;margin-bottom:24px;">
+        ← Retour au profil
+    </a>
+
+    <div style="background:white;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);overflow:hidden;">
+
+        <div style="background:linear-gradient(135deg,#1e293b,#0f172a);padding:32px;color:white;">
+            <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.4);color:#93c5fd;border-radius:20px;padding:4px 14px;font-size:0.78rem;font-weight:700;margin-bottom:12px;">
+                ⭐ Demande de promotion
+            </div>
+            <h1 style="font-size:1.8rem;font-weight:800;margin-bottom:8px;">Devenir Administrateur</h1>
+            <p style="color:#94a3b8;font-size:0.95rem;">Votre demande sera examinée par un administrateur existant.</p>
+        </div>
+
+        <div style="padding:32px;">
+            {% if messages %}
+                {% for msg in messages %}
+                <div style="background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:0.9rem;">
+                    {{ msg }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div style="margin-bottom:20px;">
+                    <label style="display:block;font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:8px;">
+                        Motif de la demande
+                    </label>
+                    <textarea name="message" rows="5"
+                        placeholder="Expliquez pourquoi vous souhaitez devenir administrateur..."
+                        style="width:100%;padding:12px 16px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:0.95rem;font-family:inherit;resize:vertical;"></textarea>
+                </div>
+
+                <button type="submit" style="
+                    display:inline-flex;align-items:center;gap:8px;
+                    background:linear-gradient(135deg,#3b82f6,#2563eb);
+                    color:white;padding:14px 28px;border:none;border-radius:10px;
+                    font-weight:700;font-size:0.95rem;cursor:pointer;width:100%;
+                    justify-content:center;">
+                    Envoyer la demande →
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

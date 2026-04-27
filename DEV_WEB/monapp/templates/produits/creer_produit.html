@@ -45,11 +45,21 @@
   letter-spacing: -0.03em;
   margin-bottom: 10px;
 }
-.form-hero p { font-size: 16px; color: rgba(255,255,255,0.75); max-width: 500px; }
+.form-hero p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.75);
+  max-width: 500px;
+}
 
-.form-section { padding: 60px 0 80px; background: #f8fafc; }
-.form-wrapper { max-width: 800px; margin: 0 auto; }
-
+/* Formulaire */
+.form-section {
+  padding: 60px 0 80px;
+  background: #f8fafc;
+}
+.form-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
 .form-card {
   background: #fff;
   border-radius: 20px;
@@ -63,15 +73,22 @@
   border-bottom: 1.5px solid #f1f5f9;
   background: linear-gradient(135deg, #f8fafc, #fff);
 }
-.form-card-header h3 { font-size: 16px; font-weight: 800; color: #0f172a; }
+.form-card-header h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
 .form-card-body {
   padding: 28px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
+.form-card-body.single { grid-template-columns: 1fr; }
+
 .input-group { display: flex; flex-direction: column; gap: 6px; }
 .input-group.full { grid-column: 1 / -1; }
+
 .input-group label {
   font-size: 11px;
   font-weight: 700;
@@ -80,6 +97,7 @@
   letter-spacing: 0.08em;
 }
 .input-group label .required { color: #ef4444; margin-left: 2px; }
+
 .input-group input,
 .input-group select,
 .input-group textarea {
@@ -97,25 +115,24 @@
 .input-group select:focus,
 .input-group textarea:focus {
   background: #fff;
-  border-color: #10b981;
-  box-shadow: 0 0 0 4px rgba(16,185,129,0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
 }
 .input-group textarea { resize: vertical; min-height: 100px; }
-.input-group input[type="file"] { padding: 10px; border-style: dashed; cursor: pointer; }
+.input-group input[type="file"] {
+  padding: 10px;
+  border-style: dashed;
+  cursor: pointer;
+}
 
-/* ── Boutons ── */
 .form-actions {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   justify-content: flex-end;
   flex-wrap: wrap;
-  align-items: center;
 }
 .btn-submit {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 28px;
+  padding: 14px 32px;
   background: linear-gradient(135deg, #10b981, #059669);
   color: #fff;
   border: none;
@@ -129,12 +146,9 @@
 }
 .btn-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(16,185,129,0.5);
+  box-shadow: 0 12px 35px rgba(16,185,129,0.45);
 }
 .btn-cancel {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   padding: 14px 24px;
   background: #f1f5f9;
   color: #475569;
@@ -145,26 +159,7 @@
   border: 1.5px solid #e2e8f0;
   transition: all 0.2s;
 }
-.btn-cancel:hover { background: #e2e8f0; color: #0f172a; transform: translateY(-1px); }
-
-.btn-stats-form {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: #fff;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.25s;
-  box-shadow: 0 8px 20px rgba(99,102,241,0.3);
-}
-.btn-stats-form:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(99,102,241,0.45);
-}
+.btn-cancel:hover { background: #e2e8f0; color: #0f172a; }
 
 .form-errors {
   background: #fee2e2;
@@ -179,8 +174,6 @@
 @media (max-width: 600px) {
   .form-card-body { grid-template-columns: 1fr; }
   .input-group.full { grid-column: 1; }
-  .form-actions { justify-content: stretch; flex-direction: column; }
-  .btn-submit, .btn-cancel, .btn-stats-form { justify-content: center; }
 }
 </style>
 {% endblock %}
@@ -210,89 +203,90 @@
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
+                {# Identité #}
                 <div class="form-card">
-                    <div class="form-card-header"><h3>🔖 Identité de l'objet</h3></div>
+                    <div class="form-card-header">
+                        <h3>🔖 Identité de l'objet</h3>
+                    </div>
                     <div class="form-card-body">
                         <div class="input-group">
-                            <label>Identifiant unique <span class="required">*</span></label>
+                            <label for="id_ID">Identifiant unique <span class="required">*</span></label>
                             {{ form.ID }}
                             {% if form.ID.errors %}<span style="color:#ef4444;font-size:12px;">{{ form.ID.errors }}</span>{% endif %}
                         </div>
                         <div class="input-group">
-                            <label>Nom <span class="required">*</span></label>
+                            <label for="id_Nom">Nom <span class="required">*</span></label>
                             {{ form.Nom }}
                             {% if form.Nom.errors %}<span style="color:#ef4444;font-size:12px;">{{ form.Nom.errors }}</span>{% endif %}
                         </div>
                         <div class="input-group">
-                            <label>Marque <span class="required">*</span></label>
+                            <label for="id_marque">Marque <span class="required">*</span></label>
                             {{ form.marque }}
                         </div>
                         <div class="input-group">
-                            <label>Type de connectivité <span class="required">*</span></label>
+                            <label for="id_Connectiviter_type">Type de connectivité <span class="required">*</span></label>
                             {{ form.Connectiviter_type }}
                         </div>
                         <div class="input-group full">
-                            <label>Description <span class="required">*</span></label>
+                            <label for="id_Description">Description <span class="required">*</span></label>
                             {{ form.Description }}
                         </div>
                         <div class="input-group full">
-                            <label>Photo</label>
+                            <label for="id_photo">Photo</label>
                             {{ form.photo }}
                         </div>
                     </div>
                 </div>
 
+                {# État & config #}
                 <div class="form-card">
-                    <div class="form-card-header"><h3>⚙️ Configuration & État</h3></div>
+                    <div class="form-card-header">
+                        <h3>⚙️ Configuration & État</h3>
+                    </div>
                     <div class="form-card-body">
                         <div class="input-group">
-                            <label>État <span class="required">*</span></label>
+                            <label for="id_etat">État <span class="required">*</span></label>
                             {{ form.etat }}
                         </div>
                         <div class="input-group">
-                            <label>Mode <span class="required">*</span></label>
+                            <label for="id_mode">Mode <span class="required">*</span></label>
                             {{ form.mode }}
                         </div>
                         <div class="input-group">
-                            <label>Batterie (%) <span class="required">*</span></label>
+                            <label for="id_Bactterie">Batterie (%) <span class="required">*</span></label>
                             {{ form.Bactterie }}
                         </div>
                         <div class="input-group">
-                            <label>Adresse IP <span class="required">*</span></label>
+                            <label for="id_Adresse_IP">Adresse IP <span class="required">*</span></label>
                             {{ form.Adresse_IP }}
                         </div>
                     </div>
                 </div>
 
+                {# Dates #}
                 <div class="form-card">
-                    <div class="form-card-header"><h3>📅 Dates</h3></div>
+                    <div class="form-card-header">
+                        <h3>📅 Dates</h3>
+                    </div>
                     <div class="form-card-body">
                         <div class="input-group">
-                            <label>Durée de vie (date fin) <span class="required">*</span></label>
+                            <label for="id_Temp_restante">Durée de vie (date fin) <span class="required">*</span></label>
                             {{ form.Temp_restante }}
                         </div>
                         <div class="input-group">
-                            <label>Dernière maintenance <span class="required">*</span></label>
+                            <label for="id_Date_dernier_maintenance">Dernière maintenance <span class="required">*</span></label>
                             {{ form.Date_dernier_maintenance }}
                         </div>
                         <div class="input-group">
-                            <label>Dernière utilisation <span class="required">*</span></label>
+                            <label for="id_Date_dernier_utilisation">Dernière utilisation <span class="required">*</span></label>
                             {{ form.Date_dernier_utilisation }}
                         </div>
                     </div>
                 </div>
 
-                {# ── BOUTONS ── #}
                 <div class="form-actions">
-                    <a href="{% url 'liste_produits' %}" class="btn-cancel">
-                        ✕ Annuler
-                    </a>
-                    <a href="{% url 'statistiques' %}" class="btn-stats-form">
-                        📊 Statistiques
-                    </a>
-                    <button type="submit" class="btn-submit">
-                        ✅ Enregistrer l'objet
-                    </button>
+                    <a href="{% url 'liste_produits' %}" class="btn-cancel">Annuler</a>
+                    <button type="submit" class="btn-submit">✅ Enregistrer l'objet</button>
                 </div>
 
             </form>

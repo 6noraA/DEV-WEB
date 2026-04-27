@@ -1,10 +1,21 @@
 {% extends 'monapp/base.html' %}
 {% load static %}
 
-{% block title %}Incidents - MaVille{% endblock %}
+{% block title %}Signaler un incident - MaVille{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'incident.css' %}">
+<style>
+.form-errors {
+    background: #fee2e2;
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    color: #b91c1c;
+    font-size: 0.9rem;
+}
+</style>
 {% endblock %}
 
 {% block hero %}
@@ -36,7 +47,6 @@
                 <div class="incident-steps">
                     <h3>Comment ça marche ?</h3>
                     <p class="lead">Trois étapes simples pour signaler un problème et contribuer à l'amélioration de votre ville.</p>
-
                     <ol class="steps-list">
                         <li class="step">
                             <div class="step-num">1</div>
@@ -60,53 +70,73 @@
                             </div>
                         </li>
                     </ol>
+
                     <div style="margin-top:2rem;">
-                        <a href="{% url 'liste_signalements' %}" style="display:inline-flex;align-items:center;gap:8px;background:#1e293b;color:white;padding:12px 20px;border-radius:10px;font-weight:600;font-size:0.9rem;text-decoration:none;transition:background 0.2s;"
-                           onmouseover="this.style.background='#334155'" onmouseout="this.style.background='#1e293b'">
-                            🗺️ Voir la carte des signalements →
+                        <a href="{% url 'liste_signalements' %}" style="display:inline-flex;align-items:center;gap:8px;color:#3b82f6;font-weight:600;text-decoration:none;">
+                            📋 Voir tous les signalements →
                         </a>
                     </div>
                 </div>
 
-                {# Formulaire #}
+                {# Formulaire connecté à SignalementForm #}
                 <div class="incident-form-card">
                     <div class="form-header-i">
                         <h4>Signaler un incident</h4>
                         <p>Remplissez le formulaire ci-dessous. Les champs marqués <span class="required">*</span> sont obligatoires.</p>
                     </div>
 
-                    <form method="post">
+                    {% if form.errors %}
+                    <div class="form-errors">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div>⚠ {{ field.label }} : {{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if produit_nom %}
+                    <div style="background:#fef9c3;border:1px solid #fde047;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.88rem;color:#854d0e;">
+                        ⚠️ Signalement lié à l'objet : <strong>{{ produit_nom }}</strong>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
 
                         <div>
-                            <label for="titre">Titre <span class="required">*</span></label>
-                            <input type="text" id="titre" name="titre"
-                                   placeholder="Ex : Lampadaire cassé rue de la Paix" required>
+                            <label for="id_nom">Titre <span class="required">*</span></label>
+                            {{ form.nom }}
                         </div>
 
                         <div>
-                            <label for="categorie">Catégorie <span class="required">*</span></label>
-                            <select id="categorie" name="categorie" required>
-                                <option value="">-- Sélectionnez une catégorie --</option>
-                                <option value="eclairage">Éclairage public</option>
-                                <option value="voirie">Voirie (route, trottoir)</option>
-                                <option value="proprete">Propreté / Déchets</option>
-                                <option value="espaces_verts">Espaces verts</option>
-                                <option value="mobilier">Mobilier urbain</option>
-                                <option value="autre">Autre</option>
-                            </select>
+                            <label for="id_description">Description <span class="required">*</span></label>
+                            {{ form.description }}
                         </div>
 
                         <div>
-                            <label for="lieu">Localisation <span class="required">*</span></label>
-                            <input type="text" id="lieu" name="lieu"
-                                   placeholder="Adresse ou point de repère" required>
+                            <label for="id_auteur">Votre nom <span class="required">*</span></label>
+                            {{ form.auteur }}
                         </div>
 
                         <div>
-                            <label for="description">Description <span class="required">*</span></label>
-                            <textarea id="description" name="description"
-                                      placeholder="Décrivez le problème avec le plus de précisions possible..." required></textarea>
+                            <label for="id_type_signalement">Type d'incident <span class="required">*</span></label>
+                            {{ form.type_signalement }}
+                        </div>
+
+                        <div>
+                            <label for="id_lieu">Lieu concerné</label>
+                            {{ form.lieu }}
+                        </div>
+
+                        <div>
+                            <label for="id_produit">Objet connecté concerné</label>
+                            {{ form.produit }}
+                        </div>
+
+                        <div>
+                            <label for="id_photo">Photo (optionnel)</label>
+                            {{ form.photo }}
                         </div>
 
                         <button type="submit" class="btn-submit-i">
@@ -138,7 +168,6 @@
         </div>
     </section>
 </div>
-
 <footer class="site-footer">
     <div class="wrap">
         <p>&copy; 2026 MaVille — Plateforme numérique de ville intelligente</p>
