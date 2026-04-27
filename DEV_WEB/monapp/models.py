@@ -89,3 +89,74 @@ class Produit(models.Model):
 
     def __str__(self):
         return self.Nom
+
+  class Lieu(models.Model):
+    Nom = models.CharField(max_length=100)
+    Adresse = models.CharField(max_length=200, unique=True)
+    Description = models.TextField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    photo = models.ImageField(upload_to='photos/lieux/', null=True, blank=True)
+    liste_produits = models.ManyToManyField('Produit', related_name='lieux')
+    def __str__(self):
+        return self.Nom
+    
+
+
+class Information(models.Model):
+    nom = models.CharField(max_length=100)
+    description = models.TextField()
+    photo = models.ImageField(upload_to='photos/information/', null=True, blank=True)
+    date = models.DateField(auto_now_add=True)
+    auteur = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nom
+
+
+class Information_locale(Information):
+    pass
+
+
+class Signalement(Information):
+    TYPE_CHOICES = [
+        ('accident', 'Accident'),
+        ('danger', 'Danger'),
+        ('autre', 'Autre'),
+    ]
+
+    lieu = models.ForeignKey(
+        Lieu,
+        on_delete=models.CASCADE,
+        related_name='signalements'
+    )
+
+    type_signalement = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES
+    )
+
+    produit = models.ForeignKey(
+        Produit,
+        on_delete=models.CASCADE,
+        related_name='signalements',
+        null=True,
+        blank=True
+    )
+
+    def clean(self):
+        # Vérifier cohérence produit ↔ lieu
+        if self.produit:
+            if self.produit not in self.lieu.liste_produits.all():
+                raise ValidationError({
+                    'produit': "Ce produit n'est pas présent dans ce lieu."
+                })
+
+        # Règle métier : accident doit être lié à un produit
+        if self.type_signalement == 'accident' and not self.produit:
+            raise ValidationError({
+                'produit': "Un accident doit être lié à un produit."
+            })
+
+    def __str__(self):
+        return f"{self.nom} - {self.type_signalement}"
