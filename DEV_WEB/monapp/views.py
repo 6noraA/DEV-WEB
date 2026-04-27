@@ -221,13 +221,7 @@ def carte_lieux(request):
         opacity=1
     ).add_to(carte)
 
-    # Lieux fictifs (test)
-    lieux_fictifs = [
-        {"nom": "Zone Alpha", "x": 10, "y": 20},
-        {"nom": "Base Beta", "x": -30, "y": 40},
-        {"nom": "Marché Central", "x": 0, "y": 0},
-    ]
-
+   
     # Lieux base de données
     lieux_db = Lieu.objects.all()
 
