@@ -231,14 +231,6 @@ def carte_lieux(request):
     # Lieux base de données
     lieux_db = Lieu.objects.all()
 
-    # Affichage lieux fictifs
-    for lieu in lieux_fictifs:
-        folium.Marker(
-            location=[lieu["y"], lieu["x"]],
-            popup=f"<b>{lieu['nom']}</b>",
-            tooltip=lieu["nom"],
-            icon=folium.Icon(color="purple")
-        ).add_to(carte)
 
     # Affichage lieux DB
     for lieu in lieux_db:
