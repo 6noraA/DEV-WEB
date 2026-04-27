@@ -48,18 +48,6 @@ def niveau_requis(*niveaux):
 # ── Produits ──────────────────────────────────────────────────────
 
 @niveau_requis('avance', 'expert')
-from .models import Lieu
-from django.shortcuts import render, get_object_or_404
-from .models import Lieu
-from django.urls import reverse
-from .models import Signalement
-from .models import Information_locale
-import folium
-from django.contrib.staticfiles import finders
-
-image_path = finders.find("images/image_fond.png")
-
-@login_required
 def creer_produit(request):
     if request.method == 'POST':
         form = ProduitForm(request.POST, request.FILES)
@@ -284,7 +272,6 @@ def connexion(request):
             return redirect('accueil')
         else:
             error = "Nom d'utilisateur ou mot de passe incorrect."
-
     return render(request, 'monapp/connexion.html', {'page_active': 'connexion', 'error': error})
 
 
@@ -391,163 +378,6 @@ def edit_profil(request):
             messages.success(request, '✓ Votre profil a bien été mis à jour.')
             return redirect('profil')
     return redirect('profil')
-def detail_lieu(request, lieu_id):
-    lieu = get_object_or_404(Lieu, id=lieu_id)
-
-    produits = lieu.liste_produits.all()
-    all_produits = Produit.objects.all()
-
-    return render(request, 'lieux/detail_lieu.html', {
-        'lieu': lieu,
-        'produits': produits,
-        'all_produits': all_produits
-    })
-
-def liste_lieux(request):
-    lieux = Lieu.objects.all()
-    return render(request, 'lieux/liste_lieux.html', {'lieux': lieux})
-
-def creer_lieu(request):
-    if request.method == 'POST':
-        nom = request.POST.get('nom')
-        x = request.POST.get('x')
-        y = request.POST.get('y')
-
-        lieu = Lieu(nom=nom, x=x, y=y)
-        lieu.save()
-
-        return redirect('liste_lieux')
-
-    return render(request, 'lieux/creer_lieu.html')
-
-
-def carte_lieux(request):
-
-
-    carte = folium.Map(
-        location=[0, 0],
-        zoom_start=2,
-        tiles=None
-    )
-
-    # Fond de carte
-    folium.raster_layers.ImageOverlay(
-        image=image_path,
-        bounds=[[-100, -100], [100, 100]],
-        opacity=1
-    ).add_to(carte)
-
-    signalements = Signalement.objects.select_related('lieu')
-
-    COULEURS = {
-        "accident": "red",
-        "danger": "orange",
-        "autre": "blue"
-    }
-
-    for signalement in signalements:
-
-        couleur = COULEURS.get(signalement.type_signalement, "gray")
-
-        folium.Marker(
-            location=[
-                signalement.lieu.latitude,
-                signalement.lieu.longitude
-            ],
-            popup=f"""
-                <b>{signalement.nom}</b><br>
-                Type: {signalement.get_type_signalement_display()}<br>
-                Lieu: {signalement.lieu.Nom}<br>
-                Objet concerné: {signalement.produit.Nom if signalement.produit else "Aucun"}
-            """
-            tooltip=signalement.nom,
-            icon=folium.Icon(color=couleur)
-        ).add_to(carte)
-
-    return render(request, 'produits/carte.html', {
-        'carte': carte._repr_html_()
-    })
-
-
-
-@login_required
-def ajouter_produit_lieu(request, lieu_id, produit_id):
-    lieu = get_object_or_404(Lieu, id=lieu_id)
-    produit = get_object_or_404(Produit, ID=produit_id)
-
-    lieu.liste_produits.add(produit)
-
-    return redirect('detail_lieu', lieu_id=lieu.id)
-
-@login_required
-def retirer_produit_lieu(request, lieu_id, produit_id):
-    lieu = get_object_or_404(Lieu, id=lieu_id)
-    produit = get_object_or_404(Produit, ID=produit_id)
-
-    lieu.liste_produits.remove(produit)
-
-    return redirect('detail_lieu', lieu_id=lieu.id)
-
-@login_required
-def creer_signalement(request):
-    if request.method == 'POST':
-        form = SignalementForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            signalement = form.save(commit=False)
-
-            #important : validation métier (clean)
-            signalement.full_clean()
-            signalement.save()
-
-            return redirect('liste_signalements')
-
-    else:
-        form = SignalementForm()
-
-    return render(request, 'signalements/creer_signalement.html', {
-        'form': form
-    })
-
-def liste_signalements(request):
-    type_filtre = request.GET.get('type')
-
-    signalements = Signalement.objects.select_related('lieu', 'produit')
-
-    if type_filtre:
-        signalements = signalements.filter(type_signalement=type_filtre)
-
-    return render(request, 'signalements/liste_signalements.html', {
-        'signalements': signalements,
-        'type_filtre': type_filtre
-    })
-
-@login_required
-def creer_information_locale(request):
-    if request.method == 'POST':
-        form = InformationLocaleForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            information_locale = form.save()
-            return redirect('liste_informations_locales')
-
-    return render(request, 'informations_locales/creer_information_locale.html')
-
-def liste_informations_locales(request):
-    informations_locales = Information_locale.objects.all()
-    return render(request, 'informations_locales/liste_informations_locales.html', {'informations_locales': informations_locales})
-
-def detail_information_locale(request, information_locale_id):
-    information_locale = get_object_or_404(Information_locale, id=information_locale_id)
-    return render(request, 'informations_locales/detail_information_locale.html', {'information_locale': information_locale})
-
-def detail_signalement(request, signalement_id):
-    signalement = get_object_or_404(Signalement, id=signalement_id)
-    return render(request, 'signalements/detail_signalement.html', {'signalement': signalement})
-
-
-
-    
 
 
 # ── Administration ────────────────────────────────────────────────

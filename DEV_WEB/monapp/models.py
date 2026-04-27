@@ -12,16 +12,16 @@ class Personne(models.Model):
         ('administrateur', 'Administrateur'),
     ]
 
-    user         = models.OneToOneField(User, on_delete=models.CASCADE)
-    age          = models.IntegerField(default=0)
-    sexe         = models.CharField(max_length=10, choices=GENRE_CHOIX, default='H')
-    type_membre  = models.CharField(max_length=30, choices=TYPE_MEMBRE, default='visiteur')
-    photo        = models.ImageField(upload_to='photo/personne/', null=True, blank=True)
+    user           = models.OneToOneField(User, on_delete=models.CASCADE)
+    age            = models.IntegerField(default=0)
+    sexe           = models.CharField(max_length=10, choices=GENRE_CHOIX, default='H')
+    type_membre    = models.CharField(max_length=30, choices=TYPE_MEMBRE, default='visiteur')
+    photo          = models.ImageField(upload_to='photo/personne/', null=True, blank=True)
     date_naissance = models.DateField(null=True, blank=True)
-    points       = models.FloatField(default=0)
-    nb_connexions = models.IntegerField(default=0)
-    nb_actions   = models.IntegerField(default=0)
-    niveau       = models.CharField(max_length=20, default='debutant')
+    points         = models.FloatField(default=0)
+    nb_connexions  = models.IntegerField(default=0)
+    nb_actions     = models.IntegerField(default=0)
+    niveau         = models.CharField(max_length=20, default='debutant')
 
     def __str__(self):
         return self.user.username
@@ -33,7 +33,6 @@ from django.dispatch import receiver
 @receiver(post_save, sender=User)
 def create_profil(sender, instance, created, **kwargs):
     if created:
-        # Si c'est un superuser → niveau expert directement
         if instance.is_superuser:
             Personne.objects.create(
                 user=instance,
@@ -46,7 +45,6 @@ def create_profil(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def upgrade_superuser_profil(sender, instance, created, **kwargs):
-    """Si un utilisateur existant devient superuser, on le passe expert."""
     if not created:
         try:
             personne = instance.personne
@@ -60,15 +58,15 @@ def upgrade_superuser_profil(sender, instance, created, **kwargs):
 
 
 class EtatObjet(models.TextChoices):
-    ACTIF        = 'ACTIF', 'Actif'
-    INACTIF      = 'INACTIF', 'Inactif'
-    PANNE        = 'PANNE', 'Panne'
-    MAINTENANCE  = 'MAINTENANCE', 'Maintenance'
-    DECONNECTE   = 'DECONNECTE', 'Déconnecté'
+    ACTIF       = 'ACTIF',       'Actif'
+    INACTIF     = 'INACTIF',     'Inactif'
+    PANNE       = 'PANNE',       'Panne'
+    MAINTENANCE = 'MAINTENANCE', 'Maintenance'
+    DECONNECTE  = 'DECONNECTE',  'Déconnecté'
 
 
 class MODE(models.TextChoices):
-    AUTOMATIQUE = 'AUTO', 'Automatique'
+    AUTOMATIQUE = 'AUTO',   'Automatique'
     MANUEL      = 'MANUEL', 'Manuel'
 
 
@@ -90,27 +88,7 @@ class Produit(models.Model):
     def __str__(self):
         return self.Nom
 
-<<<<<<< HEAD
-  class Lieu(models.Model):
-    Nom = models.CharField(max_length=100)
-    Adresse = models.CharField(max_length=200, unique=True)
-    Description = models.TextField()
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    photo = models.ImageField(upload_to='photos/lieux/', null=True, blank=True)
-    liste_produits = models.ManyToManyField('Produit', related_name='lieux')
-    def __str__(self):
-        return self.Nom
-    
 
-
-class Information(models.Model):
-    nom = models.CharField(max_length=100)
-    description = models.TextField()
-    photo = models.ImageField(upload_to='photos/information/', null=True, blank=True)
-    date = models.DateField(auto_now_add=True)
-    auteur = models.CharField(max_length=100)
-=======
 class Lieu(models.Model):
     Nom            = models.CharField(max_length=100)
     Adresse        = models.CharField(max_length=200, unique=True)
@@ -130,7 +108,6 @@ class Information(models.Model):
     photo       = models.ImageField(upload_to='photos/information/', null=True, blank=True)
     date        = models.DateField(auto_now_add=True)
     auteur      = models.CharField(max_length=100)
->>>>>>> 9254315 (galère)
 
     def __str__(self):
         return self.nom
@@ -143,47 +120,6 @@ class Information_locale(Information):
 class Signalement(Information):
     TYPE_CHOICES = [
         ('accident', 'Accident'),
-<<<<<<< HEAD
-        ('danger', 'Danger'),
-        ('autre', 'Autre'),
-    ]
-
-    lieu = models.ForeignKey(
-        Lieu,
-        on_delete=models.CASCADE,
-        related_name='signalements'
-    )
-
-    type_signalement = models.CharField(
-        max_length=20,
-        choices=TYPE_CHOICES
-    )
-
-    produit = models.ForeignKey(
-        Produit,
-        on_delete=models.CASCADE,
-        related_name='signalements',
-        null=True,
-        blank=True
-    )
-
-    def clean(self):
-        # Vérifier cohérence produit ↔ lieu
-        if self.produit:
-            if self.produit not in self.lieu.liste_produits.all():
-                raise ValidationError({
-                    'produit': "Ce produit n'est pas présent dans ce lieu."
-                })
-
-        # Règle métier : accident doit être lié à un produit
-        if self.type_signalement == 'accident' and not self.produit:
-            raise ValidationError({
-                'produit': "Un accident doit être lié à un produit."
-            })
-
-    def __str__(self):
-        return f"{self.nom} - {self.type_signalement}"
-=======
         ('danger',   'Danger'),
         ('autre',    'Autre'),
     ]
@@ -205,20 +141,21 @@ class Signalement(Information):
         related_name='signalements',
     )
 
+
 class DemandePromotion(models.Model):
     STATUT_CHOICES = [
         ('en_attente', 'En attente'),
         ('acceptee',   'Acceptée'),
         ('refusee',    'Refusée'),
     ]
-    demandeur  = models.ForeignKey(
+    demandeur   = models.ForeignKey(
         Personne,
         on_delete=models.CASCADE,
         related_name='demandes_promotion',
     )
-    message    = models.TextField(blank=True, help_text="Motif de la demande")
-    statut     = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')
-    date       = models.DateTimeField(auto_now_add=True)
+    message     = models.TextField(blank=True, help_text="Motif de la demande")
+    statut      = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')
+    date        = models.DateTimeField(auto_now_add=True)
     traitee_par = models.ForeignKey(
         Personne,
         on_delete=models.SET_NULL,
@@ -228,4 +165,3 @@ class DemandePromotion(models.Model):
 
     def __str__(self):
         return f"Demande de {self.demandeur} — {self.statut}"
->>>>>>> 9254315 (galère)
