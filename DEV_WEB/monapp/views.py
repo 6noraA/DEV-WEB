@@ -206,7 +206,9 @@ def creer_lieu(request):
 
     return render(request, 'lieux/creer_lieu.html')
 
+
 def carte_lieux(request):
+
 
     carte = folium.Map(
         location=[0, 0],
@@ -221,23 +223,38 @@ def carte_lieux(request):
         opacity=1
     ).add_to(carte)
 
-   
-    # Lieux base de données
-    lieux_db = Lieu.objects.all()
+    signalements = Signalement.objects.select_related('lieu')
 
+    COULEURS = {
+        "accident": "red",
+        "danger": "orange",
+        "autre": "blue"
+    }
 
-    # Affichage lieux DB
-    for lieu in lieux_db:
+    for signalement in signalements:
+
+        couleur = COULEURS.get(signalement.type_signalement, "gray")
+
         folium.Marker(
-            location=[lieu.y, lieu.x],
-            popup=f"<b>{lieu.nom}</b>",
-            tooltip=lieu.nom,
-            icon=folium.Icon(color="blue")
+            location=[
+                signalement.lieu.latitude,
+                signalement.lieu.longitude
+            ],
+            popup=f"""
+                <b>{signalement.nom}</b><br>
+                Type: {signalement.get_type_signalement_display()}<br>
+                Lieu: {signalement.lieu.Nom}<br>
+                Objet concerné: {signalement.produit.Nom if signalement.produit else "Aucun"}
+            """
+            tooltip=signalement.nom,
+            icon=folium.Icon(color=couleur)
         ).add_to(carte)
 
     return render(request, 'produits/carte.html', {
         'carte': carte._repr_html_()
     })
+
+
 
 @login_required
 def ajouter_produit_lieu(request, lieu_id, produit_id):
@@ -261,14 +278,35 @@ def retirer_produit_lieu(request, lieu_id, produit_id):
 def creer_signalement(request):
     if request.method == 'POST':
         form = SignalementForm(request.POST, request.FILES)
+
         if form.is_valid():
-            signalement = form.save()
+            signalement = form.save(commit=False)
+
+            #important : validation métier (clean)
+            signalement.full_clean()
+            signalement.save()
+
             return redirect('liste_signalements')
-    return render(request, 'signalements/creer_signalement.html')
+
+    else:
+        form = SignalementForm()
+
+    return render(request, 'signalements/creer_signalement.html', {
+        'form': form
+    })
 
 def liste_signalements(request):
-    signalements = Signalement.objects.all()
-    return render(request, 'signalements/liste_signalements.html', {'signalements': signalements})
+    type_filtre = request.GET.get('type')
+
+    signalements = Signalement.objects.select_related('lieu', 'produit')
+
+    if type_filtre:
+        signalements = signalements.filter(type_signalement=type_filtre)
+
+    return render(request, 'signalements/liste_signalements.html', {
+        'signalements': signalements,
+        'type_filtre': type_filtre
+    })
 
 @login_required
 def creer_information_locale(request):
