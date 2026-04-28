@@ -33,6 +33,7 @@ urlpatterns = [
     # Profil
     path('profil/', views.profil, name='profil'),
     path('profil/modifier/', views.edit_profil, name='edit_profil'),
+    path('profil/changer-mot-de-passe/', views.changer_mot_de_passe, name='changer_mot_de_passe'),
     path('profil/niveau/', views.changer_niveau, name='changer_niveau'),
     path('profil/<int:user_id>/', views.voir_profil, name='voir_profil'),
 

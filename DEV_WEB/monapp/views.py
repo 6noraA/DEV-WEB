@@ -7,7 +7,7 @@ from django.http import JsonResponse
 
 from .models import Produit, Personne, DemandePromotion
 
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 
 from django.core.mail import send_mail
@@ -493,6 +493,39 @@ def voir_profil(request, user_id):
     membre = get_object_or_404(Personne, user=user_cible)
     ajouter_points(request, points=0.25)
     return render(request, 'monapp/profil_public.html', {'membre': membre})
+
+
+@login_required
+def changer_mot_de_passe(request):
+    """Permet à l'utilisateur connecté de changer son mot de passe depuis le profil."""
+    if request.method != 'POST':
+        return redirect('profil')
+
+    ancien   = request.POST.get('ancien_mdp', '')
+    nouveau  = request.POST.get('nouveau_mdp', '')
+    confirme = request.POST.get('confirme_mdp', '')
+
+    if not request.user.check_password(ancien):
+        messages.error(request, "❌ Le mot de passe actuel est incorrect.")
+        return redirect('profil')
+
+    if len(nouveau) < 8:
+        messages.error(request, "❌ Le nouveau mot de passe doit contenir au moins 8 caractères.")
+        return redirect('profil')
+
+    if nouveau != confirme:
+        messages.error(request, "❌ Les deux nouveaux mots de passe ne correspondent pas.")
+        return redirect('profil')
+
+    if nouveau == ancien:
+        messages.error(request, "❌ Le nouveau mot de passe doit être différent de l'ancien.")
+        return redirect('profil')
+
+    request.user.set_password(nouveau)
+    request.user.save()
+    update_session_auth_hash(request, request.user)
+    messages.success(request, "✅ Votre mot de passe a été mis à jour.")
+    return redirect('profil')
 
 
 @login_required
