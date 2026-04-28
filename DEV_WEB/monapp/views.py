@@ -12,7 +12,8 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from .emails import (email_bienvenue, email_bannissement, email_reactivation,
     email_promotion_admin_acceptee, email_promotion_admin_refusee,
-    email_demande_promotion_envoyee, email_confirmation_inscription, generer_token)
+    email_demande_promotion_envoyee, email_confirmation_inscription,
+    email_suppression, generer_token)
 
 import json
 
@@ -499,14 +500,7 @@ def reactiver_utilisateur(request, user_id):
         cible = get_object_or_404(User, id=user_id)
         cible.is_active = True
         cible.save()
-        if cible.email:
-            send_mail(
-                subject='✅ Votre compte MaVille a été réactivé',
-                message=f"Bonjour {cible.username},\n\nVotre compte a été réactivé.\n\n— L'équipe MaVille",
-                from_email='admin@ville.com',
-                recipient_list=[cible.email],
-                fail_silently=True,
-            )
+        email_reactivation(cible)
         messages.success(request, f"✅ Le compte de {cible.username} a été réactivé.")
     return redirect('admin_dashboard')
 
@@ -527,15 +521,8 @@ def supprimer_utilisateur(request, user_id):
         raison   = request.POST.get('raison', 'Décision administrative.')
         email    = cible.email
         username = cible.username
+        email_suppression(username, email, raison)
         cible.delete()
-        if email:
-            send_mail(
-                subject='🗑️ Votre compte MaVille a été supprimé',
-                message=f"Bonjour {username},\n\nVotre compte a été définitivement supprimé.\nRaison : {raison}\n\n— L'équipe MaVille",
-                from_email='admin@ville.com',
-                recipient_list=[email],
-                fail_silently=True,
-            )
         messages.success(request, f"✅ Le compte de {username} a été supprimé définitivement.")
     return redirect('admin_dashboard')
 

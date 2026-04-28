@@ -89,5 +89,5 @@ EMAIL_HOST          = 'smtp.gmail.com'
 EMAIL_PORT          = 587
 EMAIL_USE_TLS       = True
 EMAIL_HOST_USER     = 'jude.owonaassoum@gmail.com'
-EMAIL_HOST_PASSWORD = 'szhz gzsm zrqr kjnh'
-DEFAULT_FROM_EMAIL  = 'MaVille <jude.owonaassoum@gmail.com>'
+EMAIL_HOST_PASSWORD = 'eqln tubs qhvw rtbl'
+DEFAULT_FROM_EMAIL  = 'Barbz <jude.owonaassoum@gmail.com>'
