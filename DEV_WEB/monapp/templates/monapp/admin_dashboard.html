@@ -49,6 +49,18 @@
 
 /* ── PAGE ── */
 .admin-page { padding: 48px 0 80px; background: #f8fafc; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+
+/* Section title */
+.section-title {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+}
+.section-title h3 {
+  font-size: 18px; font-weight: 900; color: #0f172a;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title .meta { font-size: 13px; color: #64748b; }
 
 /* Messages */
 .admin-messages { margin-bottom: 24px; }
@@ -62,42 +74,156 @@
 .admin-msg.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
 .admin-msg.error   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 
-/* Stats */
-.admin-stats {
+/* KPI cards */
+.kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 16px;
-  margin-bottom: 36px;
+  margin-bottom: 28px;
 }
-.admin-stat-card {
+.kpi-card {
   background: #fff;
   border-radius: 16px;
-  padding: 20px;
+  padding: 18px 20px;
   border: 1.5px solid #e2e8f0;
-  text-align: center;
   box-shadow: 0 4px 16px rgba(15,23,42,0.05);
+  display: flex; align-items: center; gap: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.admin-stat-card .stat-icon { font-size: 28px; margin-bottom: 8px; }
-.admin-stat-card .stat-val  { font-size: 28px; font-weight: 900; color: #0f172a; line-height: 1; }
-.admin-stat-card .stat-lbl  { font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 4px; }
+.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(15,23,42,0.08); }
+.kpi-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.kpi-icon.blue   { background: #dbeafe; }
+.kpi-icon.green  { background: #dcfce7; }
+.kpi-icon.red    { background: #fee2e2; }
+.kpi-icon.amber  { background: #fef3c7; }
+.kpi-icon.purple { background: #ede9fe; }
+.kpi-icon.teal   { background: #ccfbf1; }
+.kpi-val { font-size: 26px; font-weight: 900; color: #0f172a; line-height: 1; }
+.kpi-lbl { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+.kpi-trend {
+  font-size: 11px; font-weight: 700; margin-top: 4px;
+  display: inline-flex; gap: 4px; align-items: center;
+}
+.kpi-trend.up   { color: #16a34a; }
+.kpi-trend.down { color: #dc2626; }
 
-/* Tableau */
+/* Two-column layout */
+.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+@media (max-width: 900px) { .two-cols { grid-template-columns: 1fr; } }
+
+/* Card */
 .admin-card {
   background: #fff;
-  border-radius: 20px;
+  border-radius: 18px;
   border: 1.5px solid #e2e8f0;
   box-shadow: 0 4px 20px rgba(15,23,42,0.06);
   overflow: hidden;
 }
 .admin-card-header {
-  padding: 20px 28px;
+  padding: 18px 24px;
   border-bottom: 1.5px solid #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
 }
-.admin-card-header h3 { font-size: 17px; font-weight: 800; color: #0f172a; }
+.admin-card-header h3 { font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+.admin-card-header .pill {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 100px;
+  background: #f1f5f9; color: #475569;
+}
+.admin-card-header .pill.alert { background: #fee2e2; color: #991b1b; }
 
+/* Quick actions row */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.quick-action {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  font-weight: 700; font-size: 14px;
+  text-decoration: none; color: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.quick-action:hover { transform: translateY(-2px); }
+.quick-action .qa-icon { font-size: 22px; }
+.quick-action .qa-badge {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 11px; font-weight: 800;
+  padding: 2px 8px; border-radius: 100px;
+}
+.qa-red    { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 14px rgba(239,68,68,0.3); }
+.qa-blue   { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 4px 14px rgba(59,130,246,0.3); }
+.qa-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 14px rgba(139,92,246,0.3); }
+.qa-green  { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 14px rgba(16,185,129,0.3); }
+
+/* IoT Health row */
+.iot-health {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  padding: 20px 24px;
+}
+.iot-tile {
+  text-align: center;
+  padding: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+.iot-tile .v { font-size: 22px; font-weight: 900; color: #0f172a; }
+.iot-tile .l { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.iot-tile.green  .v { color: #16a34a; }
+.iot-tile.red    .v { color: #dc2626; }
+.iot-tile.amber  .v { color: #d97706; }
+
+/* Activité récente */
+.feed-list { padding: 8px 0; }
+.feed-item {
+  padding: 14px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex; gap: 12px; align-items: flex-start;
+  text-decoration: none; color: inherit;
+  transition: background 0.15s;
+}
+.feed-item:last-child { border-bottom: none; }
+.feed-item:hover { background: #f8fafc; }
+.feed-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: #fee2e2;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 16px;
+}
+.feed-icon.danger      { background: #fee2e2; }
+.feed-icon.warning     { background: #fef9c3; }
+.feed-icon.info        { background: #dbeafe; }
+.feed-content { flex: 1; min-width: 0; }
+.feed-title  { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+.feed-meta   { font-size: 12px; color: #64748b; }
+.feed-empty  { padding: 24px; text-align: center; color: #94a3b8; font-size: 13px; }
+
+/* Tableau utilisateurs */
 .admin-table { width: 100%; border-collapse: collapse; }
 .admin-table th {
   padding: 14px 20px;
@@ -119,6 +245,43 @@
 }
 .admin-table tr:last-child td { border-bottom: none; }
 .admin-table tr:hover td { background: #fafafa; }
+.admin-table tr.row-hidden { display: none; }
+
+/* Toolbar */
+.users-toolbar {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: #fafbfc;
+}
+.users-search {
+  flex: 1; min-width: 220px;
+  display: flex; align-items: center; gap: 8px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 14px;
+}
+.users-search input {
+  border: none; outline: none; font-size: 14px;
+  flex: 1; font-family: inherit; background: transparent;
+}
+.filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-pill {
+  padding: 7px 14px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 100px;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  color: #475569;
+  transition: all 0.15s;
+}
+.filter-pill:hover { border-color: #94a3b8; }
+.filter-pill.active {
+  background: #0f172a; border-color: #0f172a; color: #fff;
+}
 
 /* Avatar inline */
 .user-cell { display: flex; align-items: center; gap: 12px; }
@@ -157,7 +320,6 @@
 
 /* Actions */
 .actions-cell { display: flex; gap: 8px; flex-wrap: wrap; }
-
 .btn-ban {
   padding: 7px 14px; border-radius: 8px;
   font-size: 12px; font-weight: 700; cursor: pointer;
@@ -171,7 +333,30 @@
 .btn-ban.delete:hover { background: #fca5a5; }
 .btn-ban:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* Modal de confirmation */
+/* DB tiles */
+.db-tiles {
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+.db-tile {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 18px;
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+  text-decoration: none; color: #1e293b;
+  transition: background 0.2s, transform 0.2s;
+  text-align: center;
+}
+.db-tile:hover { background: #eff6ff; transform: translateY(-1px); }
+.db-tile-icon { font-size: 1.7rem; }
+.db-tile-title { font-weight: 700; font-size: 0.9rem; }
+.db-tile-count { font-size: 0.74rem; color: #64748b; font-weight: 500; }
+
+/* Mini chart */
+.mini-chart-wrap { padding: 16px 24px 24px; height: 240px; position: relative; }
+
+/* Modal */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -230,7 +415,7 @@
             <span>Accès administrateur · Niveau Expert</span>
         </div>
         <h2>🛡️ Tableau de bord Admin</h2>
-        <p>Gérez les utilisateurs de la plateforme Barbz.</p>
+        <p>Pilotez la plateforme Barbz : utilisateurs, objets connectés, signalements et demandes.</p>
     </div>
 </section>
 {% endblock %}
@@ -250,123 +435,257 @@
         </div>
         {% endif %}
 
-        {# Stats rapides #}
-        <div class="admin-stats">
-            <div class="admin-stat-card">
-                <div class="stat-icon">👥</div>
-                <div class="stat-val">{{ membres|length }}</div>
-                <div class="stat-lbl">Membres total</div>
+        {# ============ KPI utilisateurs ============ #}
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon blue">👥</div>
+                <div>
+                    <div class="kpi-val">{{ nb_total }}</div>
+                    <div class="kpi-lbl">Membres total</div>
+                    {% if nb_recents %}
+                    <div class="kpi-trend up">↑ {{ nb_recents }} sur 7 jours</div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="admin-stat-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-val">{{ membres|length }}</div>
-                <div class="stat-lbl">Comptes actifs</div>
+            <div class="kpi-card">
+                <div class="kpi-icon green">✅</div>
+                <div>
+                    <div class="kpi-val">{{ nb_actifs }}</div>
+                    <div class="kpi-lbl">Comptes actifs</div>
+                </div>
             </div>
-            <div class="admin-stat-card">
-                <div class="stat-icon">🏆</div>
-                <div class="stat-val">{% for m in membres %}{% if m.niveau == 'expert' %}{{ forloop.counter }}{% endif %}{% endfor %}</div>
-                <div class="stat-lbl">Experts</div>
+            <div class="kpi-card">
+                <div class="kpi-icon red">⛔</div>
+                <div>
+                    <div class="kpi-val">{{ nb_bannis }}</div>
+                    <div class="kpi-lbl">Comptes bannis</div>
+                </div>
             </div>
-            <div class="admin-stat-card">
-                <div class="stat-icon">⛔</div>
-                <div class="stat-val" id="banned-count">0</div>
-                <div class="stat-lbl">Bannis</div>
+            <div class="kpi-card">
+                <div class="kpi-icon amber">🏆</div>
+                <div>
+                    <div class="kpi-val">{{ nb_experts }}</div>
+                    <div class="kpi-lbl">Experts</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon purple">🛡️</div>
+                <div>
+                    <div class="kpi-val">{{ nb_admins }}</div>
+                    <div class="kpi-lbl">Administrateurs</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon teal">⭐</div>
+                <div>
+                    <div class="kpi-val">{{ nb_demandes_en_attente }}</div>
+                    <div class="kpi-lbl">Demandes en attente</div>
+                </div>
             </div>
         </div>
 
-        {# Boutons d'action admin #}
-        <div style="margin-bottom:24px;display:flex;gap:14px;flex-wrap:wrap;">
-
-            <a href="{% url 'liste_signalements' %}" style="
-                display:inline-flex;align-items:center;gap:10px;
-                background:linear-gradient(135deg,#ef4444,#dc2626);
-                color:white;padding:14px 24px;border-radius:14px;
-                font-weight:700;font-size:15px;text-decoration:none;
-                box-shadow:0 4px 16px rgba(239,68,68,0.35);transition:transform 0.2s;"
-            onmouseover="this.style.transform='translateY(-2px)'"
-            onmouseout="this.style.transform=''">
-                🚨 Signalements citoyens
+        {# ============ Actions rapides ============ #}
+        <div class="quick-actions">
+            <a href="{% url 'liste_signalements' %}" class="quick-action qa-red">
+                <span class="qa-icon">🚨</span>
+                <span>Signalements citoyens</span>
+                {% if nb_signalements %}<span class="qa-badge">{{ nb_signalements }}</span>{% endif %}
             </a>
+            <a href="{% url 'liste_demandes_promotion' %}" class="quick-action qa-blue">
+                <span class="qa-icon">⭐</span>
+                <span>Demandes de promotion</span>
+                {% if nb_demandes_en_attente %}<span class="qa-badge">{{ nb_demandes_en_attente }}</span>{% endif %}
+            </a>
+            <a href="{% url 'statistiques' %}" class="quick-action qa-green">
+                <span class="qa-icon">📊</span>
+                <span>Statistiques objets</span>
+            </a>
+            <a href="{% url 'liste_produits' %}" class="quick-action qa-purple">
+                <span class="qa-icon">📡</span>
+                <span>Gérer les objets</span>
+            </a>
+        </div>
 
-            <a href="{% url 'liste_demandes_promotion' %}" style="
-                display:inline-flex;align-items:center;gap:10px;
-                background:linear-gradient(135deg,#3b82f6,#2563eb);
-                color:white;padding:14px 24px;border-radius:14px;
-                font-weight:700;font-size:15px;text-decoration:none;
-                box-shadow:0 4px 16px rgba(59,130,246,0.35);transition:transform 0.2s;"
-            onmouseover="this.style.transform='translateY(-2px)'"
-            onmouseout="this.style.transform=''">
-                ⭐ Demandes de promotion
-                {% if nb_demandes_en_attente %}
-                <span style="background:white;color:#2563eb;border-radius:20px;padding:2px 8px;font-size:12px;font-weight:800;">
-                    {{ nb_demandes_en_attente }}
-                </span>
+        {# ============ Santé IoT + Niveau distribution ============ #}
+        <div class="two-cols">
+
+            {# Santé IoT #}
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3>📡 Santé des objets connectés</h3>
+                    {% if nb_iot_pannes or nb_iot_batt_low %}
+                    <span class="pill alert">⚠️ Attention requise</span>
+                    {% else %}
+                    <span class="pill">Tout est nominal</span>
+                    {% endif %}
+                </div>
+                <div class="iot-health">
+                    <div class="iot-tile">
+                        <div class="v">{{ nb_produits }}</div>
+                        <div class="l">Total</div>
+                    </div>
+                    <div class="iot-tile green">
+                        <div class="v">{{ nb_iot_actifs }}</div>
+                        <div class="l">Actifs</div>
+                    </div>
+                    <div class="iot-tile red">
+                        <div class="v">{{ nb_iot_pannes }}</div>
+                        <div class="l">En panne</div>
+                    </div>
+                    <div class="iot-tile amber">
+                        <div class="v">{{ nb_iot_maintenance }}</div>
+                        <div class="l">Maintenance</div>
+                    </div>
+                    <div class="iot-tile">
+                        <div class="v">{{ batt_moy }}%</div>
+                        <div class="l">Batterie ⌀</div>
+                    </div>
+                    <div class="iot-tile">
+                        <div class="v">{{ temp_moy }}°C</div>
+                        <div class="l">Température ⌀</div>
+                    </div>
+                </div>
+            </div>
+
+            {# Distribution niveaux #}
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3>📊 Répartition des niveaux</h3>
+                    <span class="pill">{{ nb_total }} membres</span>
+                </div>
+                <div class="mini-chart-wrap">
+                    <canvas id="chartNiveaux"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        {# ============ Activité récente ============ #}
+        <div class="two-cols">
+
+            {# Derniers signalements #}
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3>🚨 Derniers signalements</h3>
+                    <a href="{% url 'liste_signalements' %}" class="pill">Tout voir →</a>
+                </div>
+                {% if derniers_signalements %}
+                <div class="feed-list">
+                    {% for s in derniers_signalements %}
+                    <a href="{% url 'detail_signalement' s.id %}" class="feed-item">
+                        <div class="feed-icon {% if s.type_signalement == 'accident' %}danger{% elif s.type_signalement == 'danger' %}warning{% else %}info{% endif %}">
+                            {% if s.type_signalement == 'accident' %}🚨
+                            {% elif s.type_signalement == 'danger' %}⚠️
+                            {% else %}📌{% endif %}
+                        </div>
+                        <div class="feed-content">
+                            <div class="feed-title">{{ s.nom|truncatechars:60 }}</div>
+                            <div class="feed-meta">
+                                {{ s.get_type_signalement_display }} ·
+                                {% if s.lieu %}{{ s.lieu.Nom }} · {% endif %}
+                                par {{ s.auteur }} · {{ s.date|date:"d/m/Y" }}
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="feed-empty">✨ Aucun signalement récent.</div>
                 {% endif %}
-            </a>
+            </div>
+
+            {# Demandes de promotion en attente #}
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3>⭐ Demandes de promotion en attente</h3>
+                    <a href="{% url 'liste_demandes_promotion' %}" class="pill {% if nb_demandes_en_attente %}alert{% endif %}">
+                        {{ nb_demandes_en_attente }} en attente
+                    </a>
+                </div>
+                {% if dernieres_demandes %}
+                <div class="feed-list">
+                    {% for d in dernieres_demandes %}
+                    <a href="{% url 'liste_demandes_promotion' %}" class="feed-item">
+                        <div class="feed-icon warning">⭐</div>
+                        <div class="feed-content">
+                            <div class="feed-title">{{ d.demandeur.user.username }}</div>
+                            <div class="feed-meta">
+                                {% if d.message %}{{ d.message|truncatechars:60 }}{% else %}Demande de promotion administrateur{% endif %}
+                                · {{ d.date|date:"d/m/Y H:i" }}
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="feed-empty">✅ Aucune demande en attente.</div>
+                {% endif %}
+            </div>
 
         </div>
 
-        {# Section Base de données #}
+        {# ============ Base de données ============ #}
         <div class="admin-card" style="margin-bottom:24px;">
             <div class="admin-card-header">
-                <h3>Base de données</h3>
-                <span style="font-size:13px;color:#94a3b8;">Accès direct aux modèles</span>
+                <h3>🗄️ Base de données</h3>
+                <span class="pill">Accès direct aux modèles</span>
             </div>
-            <div style="padding:20px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;">
-
-                <a href="/admin/auth/user/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
-                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
-                    <span style="font-size:1.8rem;">👤</span>
-                    Utilisateurs
-                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ membres|length }} enregistrés</span>
+            <div class="db-tiles">
+                <a href="/admin/auth/user/" class="db-tile">
+                    <span class="db-tile-icon">👤</span>
+                    <span class="db-tile-title">Utilisateurs</span>
+                    <span class="db-tile-count">{{ nb_total }} enregistrés</span>
                 </a>
-
-                <a href="/admin/monapp/produit/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
-                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
-                    <span style="font-size:1.8rem;">📡</span>
-                    Objets connectés
-                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_produits }} enregistrés</span>
+                <a href="/admin/monapp/produit/" class="db-tile">
+                    <span class="db-tile-icon">📡</span>
+                    <span class="db-tile-title">Objets connectés</span>
+                    <span class="db-tile-count">{{ nb_produits }} enregistrés</span>
                 </a>
-
-                <a href="/admin/monapp/lieu/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
-                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
-                    <span style="font-size:1.8rem;">📍</span>
-                    Lieux
-                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_lieux }} enregistrés</span>
+                <a href="/admin/monapp/lieu/" class="db-tile">
+                    <span class="db-tile-icon">📍</span>
+                    <span class="db-tile-title">Lieux</span>
+                    <span class="db-tile-count">{{ nb_lieux }} enregistrés</span>
                 </a>
-
-                <a href="/admin/monapp/signalement/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
-                   onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#f8fafc'">
-                    <span style="font-size:1.8rem;">🚨</span>
-                    Signalements
-                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_signalements }} enregistrés</span>
+                <a href="/admin/monapp/signalement/" class="db-tile">
+                    <span class="db-tile-icon">🚨</span>
+                    <span class="db-tile-title">Signalements</span>
+                    <span class="db-tile-count">{{ nb_signalements }} enregistrés</span>
                 </a>
-
-                <a href="/admin/monapp/information_locale/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
-                   onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#f8fafc'">
-                    <span style="font-size:1.8rem;">📰</span>
-                    Infos locales
-                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_infos }} enregistrées</span>
+                <a href="/admin/monapp/information_locale/" class="db-tile">
+                    <span class="db-tile-icon">📰</span>
+                    <span class="db-tile-title">Infos locales</span>
+                    <span class="db-tile-count">{{ nb_infos }} enregistrées</span>
                 </a>
-
-                <a href="/admin/monapp/demandepromotion/" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;color:#1e293b;transition:background 0.2s;font-weight:600;font-size:0.9rem;text-align:center;"
-                   onmouseover="this.style.background='#fef9c3'" onmouseout="this.style.background='#f8fafc'">
-                    <span style="font-size:1.8rem;">⭐</span>
-                    Demandes promo
-                    <span style="font-size:0.75rem;color:#64748b;font-weight:400;">{{ nb_demandes_en_attente }} en attente</span>
+                <a href="/admin/monapp/demandepromotion/" class="db-tile">
+                    <span class="db-tile-icon">⭐</span>
+                    <span class="db-tile-title">Demandes promo</span>
+                    <span class="db-tile-count">{{ nb_demandes_en_attente }} en attente</span>
                 </a>
-
             </div>
         </div>
 
-        {# Tableau utilisateurs #}
+        {# ============ Tableau utilisateurs avec recherche/filtres ============ #}
         <div class="admin-card">
             <div class="admin-card-header">
                 <h3>👤 Gestion des utilisateurs</h3>
-                <span style="font-size:13px; color:#94a3b8;">{{ membres|length }} membre(s)</span>
+                <span class="pill" id="users-counter">{{ nb_total }} membre(s)</span>
             </div>
 
-            <table class="admin-table">
+            <div class="users-toolbar">
+                <div class="users-search">
+                    <span>🔍</span>
+                    <input type="text" id="users-search-input"
+                           placeholder="Rechercher un utilisateur ou un email...">
+                </div>
+                <div class="filter-pills" id="filter-pills">
+                    <button class="filter-pill active" data-filter="all">Tous</button>
+                    <button class="filter-pill" data-filter="actif">Actifs</button>
+                    <button class="filter-pill" data-filter="banni">Bannis</button>
+                    <button class="filter-pill" data-filter="expert">Experts</button>
+                </div>
+            </div>
+
+            <table class="admin-table" id="users-table">
                 <thead>
                     <tr>
                         <th>Utilisateur</th>
@@ -379,7 +698,10 @@
                 </thead>
                 <tbody>
                     {% for membre in membres %}
-                    <tr>
+                    <tr data-username="{{ membre.user.username|lower }}"
+                        data-email="{{ membre.user.email|lower }}"
+                        data-niveau="{{ membre.niveau }}"
+                        data-actif="{% if membre.user.is_active %}1{% else %}0{% endif %}">
                         <td>
                             <div class="user-cell">
                                 <div class="user-avatar-sm">
@@ -422,20 +744,16 @@
                             <div class="actions-cell">
                                 {% if membre.user != request.user and membre.niveau != 'expert' %}
                                     {% if membre.user.is_active %}
-                                        {# Bouton Bannir #}
                                         <button class="btn-ban suspend"
                                                 onclick="openModal('ban', {{ membre.user.id }}, '{{ membre.user.username }}')">
                                             ⛔ Bannir
                                         </button>
                                     {% else %}
-                                        {# Bouton Réactiver #}
                                         <form method="POST" action="{% url 'reactiver_utilisateur' membre.user.id %}" style="display:inline;">
                                             {% csrf_token %}
                                             <button type="submit" class="btn-ban reactive">✅ Réactiver</button>
                                         </form>
                                     {% endif %}
-
-                                    {# Bouton Supprimer #}
                                     <button class="btn-ban delete"
                                             onclick="openModal('delete', {{ membre.user.id }}, '{{ membre.user.username }}')">
                                         🗑️ Supprimer
@@ -497,7 +815,9 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
+/* ── Modales ── */
 function openModal(type, userId, username) {
     if (type === 'ban') {
         document.getElementById('ban-username').textContent = username;
@@ -509,20 +829,79 @@ function openModal(type, userId, username) {
         document.getElementById('modal-delete').classList.add('open');
     }
 }
-
 function closeModal(type) {
     document.getElementById(`modal-${type}`).classList.remove('open');
 }
-
-// Fermer en cliquant en dehors
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) this.classList.remove('open');
     });
 });
 
-// Compter les bannis
-const bannedCount = document.querySelectorAll('.statut-pill.banni').length;
-document.getElementById('banned-count').textContent = bannedCount;
+/* ── Recherche & filtres utilisateurs ── */
+(function() {
+    const input  = document.getElementById('users-search-input');
+    const pills  = document.querySelectorAll('#filter-pills .filter-pill');
+    const rows   = document.querySelectorAll('#users-table tbody tr');
+    const counter = document.getElementById('users-counter');
+    let activeFilter = 'all';
+
+    function apply() {
+        const q = (input.value || '').trim().toLowerCase();
+        let visible = 0;
+        rows.forEach(r => {
+            const u = r.dataset.username || '';
+            const e = r.dataset.email || '';
+            const n = r.dataset.niveau || '';
+            const a = r.dataset.actif === '1';
+
+            const matchSearch = !q || u.includes(q) || e.includes(q);
+            let matchFilter = true;
+            if (activeFilter === 'actif')  matchFilter = a;
+            if (activeFilter === 'banni')  matchFilter = !a;
+            if (activeFilter === 'expert') matchFilter = (n === 'expert');
+
+            const show = matchSearch && matchFilter;
+            r.classList.toggle('row-hidden', !show);
+            if (show) visible++;
+        });
+        counter.textContent = visible + ' membre(s)';
+    }
+
+    input.addEventListener('input', apply);
+    pills.forEach(p => {
+        p.addEventListener('click', () => {
+            pills.forEach(x => x.classList.remove('active'));
+            p.classList.add('active');
+            activeFilter = p.dataset.filter;
+            apply();
+        });
+    });
+})();
+
+/* ── Mini graphique des niveaux ── */
+(function() {
+    const data = {{ niveaux_count_json|safe }};
+    const ctx = document.getElementById('chartNiveaux');
+    if (!ctx) return;
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['🌱 Débutant', '⚡ Intermédiaire', '🔥 Avancé', '🏆 Expert'],
+            datasets: [{
+                data: [data.debutant, data.intermediaire, data.avance, data.expert],
+                backgroundColor: ['#22c55e', '#f59e0b', '#fb923c', '#eab308'],
+                borderWidth: 2, borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right', labels: { font: { size: 12 }, padding: 12 } }
+            },
+            cutout: '60%'
+        }
+    });
+})();
 </script>
 {% endblock %}

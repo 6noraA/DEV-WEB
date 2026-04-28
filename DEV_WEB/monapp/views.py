@@ -553,12 +553,79 @@ def edit_profil(request):
 
 @niveau_requis('administrateur')
 def admin_dashboard(request):
+    from .models import Lieu, Signalement, Information_locale
+    from datetime import timedelta
+    from django.utils import timezone
+
     membres = Personne.objects.select_related('user').order_by('-points')
+
+    # ── Stats utilisateurs ──
+    nb_total   = membres.count()
+    nb_actifs  = membres.filter(user__is_active=True).count()
+    nb_bannis  = membres.filter(user__is_active=False).count()
+    nb_experts = membres.filter(niveau='expert').count()
+    nb_admins  = membres.filter(type_membre='administrateur').count()
     nb_demandes_en_attente = DemandePromotion.objects.filter(statut='en_attente').count()
+
+    # ── Inscriptions récentes (7 derniers jours) ──
+    sept_jours = timezone.now() - timedelta(days=7)
+    nb_recents = membres.filter(user__date_joined__gte=sept_jours).count()
+
+    # ── Répartition par niveau (mini graphique) ──
+    niveaux_count = {
+        'debutant'     : membres.filter(niveau='debutant').count(),
+        'intermediaire': membres.filter(niveau='intermediaire').count(),
+        'avance'       : membres.filter(niveau='avance').count(),
+        'expert'       : nb_experts,
+    }
+
+    # ── Stats IoT ──
+    produits_qs        = Produit.objects.all()
+    nb_produits        = produits_qs.count()
+    nb_iot_actifs      = produits_qs.filter(etat='ACTIF').count()
+    nb_iot_pannes      = produits_qs.filter(etat='PANNE').count()
+    nb_iot_maintenance = produits_qs.filter(etat='MAINTENANCE').count()
+    nb_iot_batt_low    = produits_qs.filter(Bactterie__lt=30).count()
+    batt_moy           = produits_qs.aggregate(avg=Avg('Bactterie'))['avg'] or 0
+    temp_moy           = produits_qs.aggregate(avg=Avg('temperature'))['avg'] or 0
+
+    # ── DB counts ──
+    nb_lieux        = Lieu.objects.count()
+    nb_signalements = Signalement.objects.count()
+    nb_infos        = Information_locale.objects.count()
+
+    # ── Activité récente ──
+    derniers_signalements = (Signalement.objects
+                             .select_related('lieu', 'produit')
+                             .order_by('-date')[:5])
+    dernieres_demandes    = (DemandePromotion.objects
+                             .filter(statut='en_attente')
+                             .select_related('demandeur__user')
+                             .order_by('-date')[:3])
+
     return render(request, 'monapp/admin_dashboard.html', {
-        'membres': membres,
-        'page_active': 'admin',
+        'membres'              : membres,
+        'page_active'          : 'admin',
+        'nb_total'             : nb_total,
+        'nb_actifs'            : nb_actifs,
+        'nb_bannis'            : nb_bannis,
+        'nb_experts'           : nb_experts,
+        'nb_admins'            : nb_admins,
+        'nb_recents'           : nb_recents,
         'nb_demandes_en_attente': nb_demandes_en_attente,
+        'niveaux_count_json'   : json.dumps(niveaux_count),
+        'nb_produits'          : nb_produits,
+        'nb_iot_actifs'        : nb_iot_actifs,
+        'nb_iot_pannes'        : nb_iot_pannes,
+        'nb_iot_maintenance'   : nb_iot_maintenance,
+        'nb_iot_batt_low'      : nb_iot_batt_low,
+        'batt_moy'             : round(batt_moy, 1),
+        'temp_moy'             : round(temp_moy, 1),
+        'nb_lieux'             : nb_lieux,
+        'nb_signalements'      : nb_signalements,
+        'nb_infos'             : nb_infos,
+        'derniers_signalements': derniers_signalements,
+        'dernieres_demandes'   : dernieres_demandes,
     })
 
 
