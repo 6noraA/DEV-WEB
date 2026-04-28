@@ -3,6 +3,7 @@ from .form import ProduitForm, InscriptionForm, PersonneForm, SignalementForm, I
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q, Count, Avg
+from django.http import JsonResponse
 
 from .models import Produit, Personne, DemandePromotion
 
@@ -16,6 +17,7 @@ from .emails import (email_bienvenue, email_bannissement, email_reactivation,
     email_suppression, generer_token)
 
 import json
+import random
 
 
 # ── Décorateur niveau requis ──────────────────────────────────────
@@ -126,6 +128,68 @@ def detail_produit(request, id):
     return render(request, 'produits/detail_produit.html', {'produit': produit})
 
 
+# ── Simulation temps réel des objets connectés ────────────────────
+
+def _simuler_tick(produits):
+    """Simule l'évolution naturelle des objets connectés (température,
+    batterie, état) à chaque appel. Persiste les changements en base."""
+    for p in produits:
+        if p.etat == 'PANNE':
+            p.temperature = round(p.temperature + random.uniform(-0.3, 0.3), 1)
+        elif p.etat == 'INACTIF' or p.etat == 'DECONNECTE':
+            cible = 21.0
+            p.temperature = round(p.temperature + (cible - p.temperature) * 0.1
+                                  + random.uniform(-0.4, 0.4), 1)
+        elif p.etat == 'MAINTENANCE':
+            p.temperature = round(p.temperature + random.uniform(-1.0, 1.0), 1)
+        else:  # ACTIF
+            p.temperature = round(p.temperature + random.uniform(-1.5, 1.8), 1)
+
+        # Bornes physiques réalistes
+        if p.temperature < 5:   p.temperature = 5.0
+        if p.temperature > 70:  p.temperature = 70.0
+
+        # Décharge batterie selon l'état
+        if p.etat == 'ACTIF':
+            p.Bactterie = max(0, p.Bactterie - random.choice([0, 0, 1]))
+        elif p.etat == 'MAINTENANCE':
+            p.Bactterie = min(100, p.Bactterie + random.choice([0, 1, 2]))
+
+        # Évolution probabiliste de l'état
+        r = random.random()
+        if p.Bactterie <= 3 and p.etat != 'INACTIF':
+            p.etat = 'INACTIF'
+        elif p.etat == 'ACTIF':
+            if r < 0.02:   p.etat = 'MAINTENANCE'
+            elif r < 0.025: p.etat = 'PANNE'
+        elif p.etat == 'MAINTENANCE' and r < 0.15 and p.Bactterie > 30:
+            p.etat = 'ACTIF'
+        elif p.etat == 'PANNE' and r < 0.05:
+            p.etat = 'MAINTENANCE'
+        elif p.etat == 'INACTIF' and p.Bactterie > 20 and r < 0.10:
+            p.etat = 'ACTIF'
+        elif p.etat == 'DECONNECTE' and r < 0.08:
+            p.etat = 'ACTIF'
+
+        p.save(update_fields=['temperature', 'Bactterie', 'etat'])
+    return produits
+
+
+def api_produits_live(request):
+    """Endpoint JSON consommé par la page d'accueil pour rafraîchir
+    l'état des objets connectés en temps réel."""
+    produits = list(Produit.objects.all())
+    _simuler_tick(produits)
+    data = [{
+        'id'         : p.ID,
+        'etat'       : p.etat,
+        'temperature': p.temperature,
+        'batterie'   : p.Bactterie,
+        'mode'       : p.mode,
+    } for p in produits]
+    return JsonResponse({'produits': data})
+
+
 # ── Statistiques ──────────────────────────────────────────────────
 
 @niveau_requis('avance', 'expert')
@@ -182,6 +246,7 @@ def statistiques(request):
     nb_pannes      = produits.filter(etat='PANNE').count()
     nb_maintenance = produits.filter(etat='MAINTENANCE').count()
     batt_moyenne   = produits.aggregate(avg=Avg('Bactterie'))['avg'] or 0
+    temp_moyenne   = produits.aggregate(avg=Avg('temperature'))['avg'] or 0
 
     return render(request, 'produits/statistiques.html', {
         'total'           : total,
@@ -189,6 +254,7 @@ def statistiques(request):
         'nb_pannes'       : nb_pannes,
         'nb_maintenance'  : nb_maintenance,
         'batt_moyenne'    : round(batt_moyenne, 1),
+        'temp_moyenne'    : round(temp_moyenne, 1),
         # Graphiques (JSON)
         'etats_labels'    : json.dumps(etats_labels),
         'etats_data'      : json.dumps(etats_data),

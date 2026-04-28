@@ -5,6 +5,73 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'accueil.css' %}">
+<style>
+    .live-indicator-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        max-width: 480px;
+        margin: 0 auto 24px;
+        padding: 10px 18px;
+        background: rgba(16,185,129,0.08);
+        border: 1px solid rgba(16,185,129,0.25);
+        border-radius: 100px;
+        font-size: 13px;
+        color: #065f46;
+        font-weight: 600;
+        justify-content: center;
+    }
+    .live-dot {
+        width: 9px; height: 9px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 0 0 rgba(16,185,129,0.7);
+        animation: live-pulse 1.6s infinite;
+    }
+    @keyframes live-pulse {
+        0%   { box-shadow: 0 0 0 0   rgba(16,185,129,0.7); }
+        70%  { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
+        100% { box-shadow: 0 0 0 0   rgba(16,185,129,0); }
+    }
+    .live-clock {
+        margin-left: auto;
+        font-variant-numeric: tabular-nums;
+        color: #047857;
+        font-size: 12px;
+    }
+    .objet-live-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 12px 0;
+    }
+    .stat-live {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 10px 12px;
+        background: #f8fafc;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+    }
+    .stat-live-label {
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .stat-live-value {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+        font-variant-numeric: tabular-nums;
+        transition: color 0.4s, transform 0.4s;
+    }
+    .stat-live-value.flash-up   { color: #ef4444; transform: scale(1.08); }
+    .stat-live-value.flash-down { color: #2563eb; transform: scale(1.08); }
+    .etat-badge { transition: background 0.4s, color 0.4s; }
+</style>
 {% endblock %}
 
 {% block hero %}
@@ -246,8 +313,23 @@
                 <span class="eyebrow">Objets connectés</span>
                 <h3>Les équipements<br>de votre ville</h3>
                 <p>Consultez l'état en temps réel des objets connectés de la ville.</p>
-                {% if user.is_authenticated and user.personne.niveau == 'expert' %}
+                {% if user.is_authenticated and user.personne %}
+                {% with niv=user.personne.niveau type=user.personne.type_membre %}
+                {% if niv == 'expert' or type == 'administrateur' or user.is_superuser %}
                 <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                    {% if niv == 'expert' or type == 'administrateur' or user.is_superuser %}
+                    <a href="{% url 'statistiques' %}" style="
+                        display:inline-flex;align-items:center;gap:8px;
+                        background:linear-gradient(135deg,#10b981,#059669);
+                        color:white;padding:12px 22px;border-radius:10px;
+                        font-weight:700;font-size:0.9rem;text-decoration:none;
+                        box-shadow:0 4px 14px rgba(16,185,129,0.4);
+                        transition:transform 0.2s;"
+                        onmouseover="this.style.transform='translateY(-2px)'"
+                        onmouseout="this.style.transform=''">
+                        📊 Voir les statistiques
+                    </a>
+                    {% endif %}
                     <a href="{% url 'creer_produit' %}" style="
                         display:inline-flex;align-items:center;gap:8px;
                         background:linear-gradient(135deg,#3b82f6,#2563eb);
@@ -270,11 +352,19 @@
                     </a>
                 </div>
                 {% endif %}
+                {% endwith %}
+                {% endif %}
             </div>
 
-            <div class="objets-grid">
+            <div class="live-indicator-bar">
+                <span class="live-dot"></span>
+                <span class="live-text">Données mises à jour automatiquement</span>
+                <span class="live-clock" id="live-clock">--:--:--</span>
+            </div>
+
+            <div class="objets-grid" id="objets-grid">
                 {% for produit in produits %}
-                <article class="objet-card">
+                <article class="objet-card" data-id="{{ produit.ID }}">
 
                     <div class="objet-card-header">
                         {% if produit.photo %}
@@ -311,8 +401,7 @@
                             </div>
                         {% endif %}
 
-                        <span class="etat-badge etat-{{ produit.etat|lower }}">
-                            
+                        <span class="etat-badge etat-{{ produit.etat|lower }}" data-field="etat">
                             {{ produit.etat }}
                         </span>
                     </div>
@@ -322,10 +411,20 @@
                         <p class="objet-id">ID : {{ produit.ID }}</p>
                         <p class="objet-desc">{{ produit.Description|truncatechars:80 }}</p>
 
+                        <div class="objet-live-stats">
+                            <div class="stat-live">
+                                <span class="stat-live-label">🌡️ Température</span>
+                                <span class="stat-live-value" data-field="temperature">{{ produit.temperature }}°C</span>
+                            </div>
+                            <div class="stat-live">
+                                <span class="stat-live-label">🔋 Batterie</span>
+                                <span class="stat-live-value" data-field="batterie">{{ produit.Bactterie }}%</span>
+                            </div>
+                        </div>
+
                         <div class="objet-meta">
                             <span>{{ produit.marque }}</span>
-                            <span>{{ produit.Bactterie }}%</span>
-                            <span>{{ produit.mode }}</span>
+                            <span data-field="mode">{{ produit.mode }}</span>
                         </div>
                     </div>
 
@@ -481,5 +580,79 @@
             hero.style.opacity = 1 - (scrolled / window.innerHeight) * 1.2;
         }
     }, { passive: true });
+
+    /* ================ POLLING TEMPS RÉEL DES OBJETS ================ */
+    (function() {
+        const grid = document.getElementById('objets-grid');
+        if (!grid) return;
+
+        const clockEl = document.getElementById('live-clock');
+        const API_URL = "{% url 'api_produits_live' %}";
+        const INTERVAL_MS = 5000;
+
+        function flash(el, oldVal, newVal) {
+            if (oldVal === newVal) return;
+            el.classList.remove('flash-up', 'flash-down');
+            void el.offsetWidth;  // restart anim
+            const oldNum = parseFloat(oldVal);
+            const newNum = parseFloat(newVal);
+            if (!isNaN(oldNum) && !isNaN(newNum)) {
+                el.classList.add(newNum > oldNum ? 'flash-up' : 'flash-down');
+                setTimeout(() => el.classList.remove('flash-up', 'flash-down'), 600);
+            }
+        }
+
+        function applyUpdate(produit) {
+            const card = grid.querySelector(`.objet-card[data-id="${produit.id}"]`);
+            if (!card) return;
+
+            const etatEl = card.querySelector('[data-field="etat"]');
+            if (etatEl && etatEl.textContent.trim() !== produit.etat) {
+                etatEl.textContent = produit.etat;
+                etatEl.className = 'etat-badge etat-' + produit.etat.toLowerCase();
+            }
+
+            const tempEl = card.querySelector('[data-field="temperature"]');
+            if (tempEl) {
+                const newTxt = produit.temperature + '°C';
+                flash(tempEl, tempEl.textContent, newTxt);
+                tempEl.textContent = newTxt;
+            }
+
+            const battEl = card.querySelector('[data-field="batterie"]');
+            if (battEl) {
+                const newTxt = produit.batterie + '%';
+                flash(battEl, battEl.textContent, newTxt);
+                battEl.textContent = newTxt;
+            }
+
+            const modeEl = card.querySelector('[data-field="mode"]');
+            if (modeEl) modeEl.textContent = produit.mode;
+        }
+
+        function tickClock() {
+            if (!clockEl) return;
+            const d = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            clockEl.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+        }
+
+        async function fetchAndApply() {
+            try {
+                const res = await fetch(API_URL, { headers: { 'Accept': 'application/json' } });
+                if (!res.ok) return;
+                const data = await res.json();
+                (data.produits || []).forEach(applyUpdate);
+                tickClock();
+            } catch (e) {
+                /* silencieux : on retentera au prochain tick */
+            }
+        }
+
+        tickClock();
+        setInterval(tickClock, 1000);
+        fetchAndApply();
+        setInterval(fetchAndApply, INTERVAL_MS);
+    })();
 </script>
 {% endblock %}

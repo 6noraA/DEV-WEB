@@ -80,6 +80,7 @@ class Produit(models.Model):
     marque                   = models.CharField(max_length=100)
     mode                     = models.CharField(max_length=20, choices=MODE.choices, default=MODE.AUTOMATIQUE)
     Bactterie                = models.IntegerField()
+    temperature              = models.FloatField(default=22.0)
     Adresse_IP               = models.GenericIPAddressField()
     Temp_restante            = models.DateField()
     Date_dernier_maintenance = models.DateField()
